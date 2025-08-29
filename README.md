@@ -5,6 +5,7 @@
 
 ---
 
+
 ## 🚀 Motivation
 
 Kotlin's `ReadWriteProperty` is powerful, but often repetitive:
@@ -112,6 +113,40 @@ Effects:
 3. Validation on length
 4. Logs changes
 5. Can only be set once
+
+
+```mermaid
+flowchart LR
+    A[Base ReadWriteProperty] --> B["or (fallback)"]
+    B --> C["map (to/from)"]
+    C --> D["validate (rule)"]
+    D --> E["log (old, new)"]
+    E --> F["once()"]
+    F --> G[Final Property]
+
+    style A fill:#2e3440,stroke:#d8dee9,stroke-width:1px,color:#d8dee9
+    style B fill:#3b4252,stroke:#d8dee9,stroke-width:1px,color:#eceff4
+    style C fill:#434c5e,stroke:#d8dee9,stroke-width:1px,color:#eceff4
+    style D fill:#4c566a,stroke:#d8dee9,stroke-width:1px,color:#eceff4
+    style E fill:#3b4252,stroke:#d8dee9,stroke-width:1px,color:#eceff4
+    style F fill:#434c5e,stroke:#d8dee9,stroke-width:1px,color:#eceff4
+    style G fill:#2e3440,stroke:#88c0d0,stroke-width:2px,color:#88c0d0
+```
+
+And more:
+
+```kt
+var username: String by stringDelegate(null)      // Base ReadWriteProperty
+    .or { "guest_$it" }                           // fallback if null
+    .map(to = { it.trim() }, from = { it })       // type mapping / formatting
+    .validate { require(it.length < 20) }        // validation
+    .log { old, new -> println("username: $old → $new") } // logging
+    .once()                                       // can only set once
+    .catch { _, _ -> "default_user" }            // exception handler fallback
+    .cacheIn(mutableMapOf())                     // cache in memory
+    .encrypt({ plain -> encryptor(plain) })      // encrypt value
+    .decrypt({ encrypted -> decryptor(encrypted) }) // decrypt on read
+```
 
 💡 Design Principles
 
