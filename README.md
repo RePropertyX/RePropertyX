@@ -107,25 +107,18 @@ var username: String by stringDelegate(null)
 
 Effects:
 
-Always non-null
-
-Trimmed automatically
-
-Validation on length
-
-Logs changes
-
-Can only be set once
+1. Always non-null
+2. Trimmed automatically
+3. Validation on length
+4. Logs changes
+5. Can only be set once
 
 💡 Design Principles
 
-Decorator pattern: each operator wraps a base delegate
-
-Composable: chain operators freely
-
-Reusable: works with any ReadWriteProperty, not limited to preferences or databases
-
-Extensible: add your own operators for logging, caching, encryption, or custom validation
+- Decorator pattern: each operator wraps a base delegate
+- Composable: chain operators freely
+- Reusable: works with any ReadWriteProperty, not limited to preferences or databases
+- Extensible: add your own operators for logging, caching, encryption, or custom validation
 
 🔗 Getting Started
 
