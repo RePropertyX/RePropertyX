@@ -1,6 +1,5 @@
 # 🌀 delegates-ktx
 
-![delegates-ktx](https://via.placeholder.com/200x50.png?text=delegates-ktx)
 
 **Composable, decorator-style Kotlin property delegates**. Build safer, cleaner, and more expressive data models with chainable operators like `or`, `map`, `validate`, `log`, `once`, and more.
 
