@@ -1,4 +1,4 @@
-# 🌀 delegates-ktx
+# 🌀 delegate-ktx
 
 
 **Composable, decorator-style Kotlin property delegates**. Build safer, cleaner, and more expressive data models with chainable operators like `or`, `map`, `validate`, `log`, `once`, and more.
@@ -16,7 +16,7 @@ Kotlin's `ReadWriteProperty` is powerful, but often repetitive:
 - Logging or observing changes
 - Caching or security
 
-`delegates-ktx` turns property delegates into a **pipeline**, separating concerns and allowing **composable, reusable operators**.
+`delegate-ktx` turns property delegates into a **pipeline**, separating concerns and allowing **composable, reusable operators**.
 
 ---
 
@@ -43,7 +43,20 @@ var username: String by nullableDelegate()
     .or { "guest_$it" }
 ```
 
-2. Type mapping / formatting
+### 2. Null assertion
+
+```kotlin
+fun <P, R> ReadWriteProperty<P, R?>.notNull(message: String? = null): ReadWriteProperty<P, R>
+```
+
+Ensures a property is never null by throwing an exception if a null value is attempted.
+
+```kt
+var requiredField: String by nullableDelegate()
+    .notNull("Required field cannot be null")
+```
+
+3. Type mapping / formatting
 
 ```kt
 fun <P, A, B> ReadWriteProperty<P, A>.map(to: (A) -> B, from: (B) -> A): ReadWriteProperty<P, B>
@@ -56,7 +69,7 @@ var age: Int by stringDelegate("0")
     .map(to = { it.toInt() }, from = { it.toString() })
 ```
 
-3. Validation
+4. Validation
 
 ```kt
 fun <P, R> ReadWriteProperty<P, R>.validate(validator: (R) -> Unit): ReadWriteProperty<P, R>
@@ -70,7 +83,7 @@ var email: String by stringDelegate("")
     .validate { require(it.contains("@")) }
 ```
 
-4. Logging / Observing
+5. Logging / Observing
 
 ```kt
 fun <P, R> ReadWriteProperty<P, R>.log(listener: (old: R, new: R) -> Unit)
@@ -80,7 +93,7 @@ var counter: Int by intDelegate(0)
     .observable { old, new -> println("Counter: $old → $new") }
 ```
 
-5. Lifecycle / state control
+6. Lifecycle / state control
 
 ```kt
 fun <P, R> ReadWriteProperty<P, R>.once(): ReadWriteProperty<P, R>
@@ -146,6 +159,9 @@ var username: String by stringDelegate(null)      // Base ReadWriteProperty
     .cacheIn(mutableMapOf())                     // cache in memory
     .encrypt({ plain -> encryptor(plain) })      // encrypt value
     .decrypt({ encrypted -> decryptor(encrypted) }) // decrypt on read
+
+var requiredField: String by stringDelegate(null) // Base ReadWriteProperty
+    .notNull("Required field cannot be null")     // throws exception if null
 ```
 
 💡 Design Principles
@@ -157,14 +173,84 @@ var username: String by stringDelegate(null)      // Base ReadWriteProperty
 
 🔗 Getting Started
 
-You can implement a simple delegate:
+## Installation
 
-```kt
-fun stringDelegate(default: String? = null) = object : ReadWriteProperty<Any?, String?> {
-    private var value: String? = default
-    override fun getValue(thisRef: Any?, property: KProperty<*>) = value
-    override fun setValue(thisRef: Any?, property: KProperty<*>, value: String?) { this.value = value }
+### Core Module (JVM)
+
+```kotlin
+// build.gradle.kts
+dependencies {
+    implementation("com.github.yongjhih:delegatex:0.1.0-SNAPSHOT")
 }
 ```
 
-Then apply the operators to make it powerful and expressive.
+### Android Module
+
+```kotlin
+// build.gradle.kts
+dependencies {
+    implementation("com.github.yongjhih:delegatex-android:0.1.0-SNAPSHOT")
+}
+```
+
+## Basic Usage
+
+### 1. Import the library
+
+```kotlin
+import com.github.yongjhih.delegatex.*
+```
+
+### 2. Use built-in delegates
+
+```kotlin
+class UserSettings {
+    var username: String by stringDelegate(null)
+        .or { "guest_$it" }
+    
+    var age: Int by stringDelegate("0")
+        .map(to = { it.toInt() }, from = { it.toString() })
+    
+    var email: String by stringDelegate("")
+        .validate { require(it.contains("@")) }
+}
+```
+
+### 3. Android SharedPreferences
+
+```kotlin
+import com.github.yongjhih.delegatex.android.*
+
+class AndroidSettings(context: Context) {
+    private val prefs = context.getDefaultSharedPreferences()
+    
+    var username: String? by prefs.stringPreference("username")
+        .or { "guest_$it" }
+    
+    var age: Int by prefs.intPreference("age", 0)
+        .validate { require(it >= 0) }
+    
+    var isEnabled: Boolean by prefs.booleanPreference("is_enabled", false)
+        .log { old, new -> println("Enabled: $old → $new") }
+}
+```
+
+## Building from Source
+
+```bash
+# Clone the repository
+git clone https://github.com/yongjhih/delegate-ktx.git
+cd delegate-ktx
+
+# Build the project
+./gradlew build
+
+# Run tests
+./gradlew test
+
+# Build Android module
+./gradlew :delegate-ktx-android:assembleRelease
+
+# Build core module
+./gradlew :delegate-ktx:build
+```

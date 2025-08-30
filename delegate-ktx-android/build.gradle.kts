@@ -1,0 +1,96 @@
+plugins {
+    id("com.android.library")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.dokka")
+    id("maven-publish")
+}
+
+android {
+    namespace = "com.github.yongjhih.delegatex.android"
+    compileSdk = 34
+    
+    defaultConfig {
+        minSdk = 21
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+    }
+    
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+    
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+dependencies {
+    implementation(project(":delegate-ktx"))
+    
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    
+    // Kotlin test dependencies
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+    androidTestImplementation("org.jetbrains.kotlin:kotlin-test")
+    androidTestImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    androidTestImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+
+    // Mockito for testing
+    testImplementation("org.mockito:mockito-core:5.7.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.7.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+    androidTestImplementation("org.mockito:mockito-core:5.7.0")
+    androidTestImplementation("org.mockito:mockito-junit-jupiter:5.7.0")
+    androidTestImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+
+    // Android test dependencies
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            afterEvaluate {
+                from(components["release"])
+            }
+            
+            pom {
+                name.set("delegatex-android")
+                description.set("Android-specific extensions for delegatex")
+                url.set("https://github.com/yongjhih/delegate-ktx")
+                
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
+                    }
+                }
+                
+                developers {
+                    developer {
+                        id.set("yongjhih")
+                        name.set("Yongjhih Chen")
+                        email.set("yongjhih@gmail.com")
+                    }
+                }
+            }
+        }
+    }
+}
