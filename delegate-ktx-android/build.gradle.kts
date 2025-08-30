@@ -39,8 +39,8 @@ android {
 dependencies {
     implementation(project(":delegate-ktx"))
     
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.core:core-ktx:1.17.0")
+    //implementation("androidx.appcompat:appcompat:1.6.1")
     
     // Kotlin test dependencies
     testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -78,8 +78,8 @@ publishing {
                 
                 licenses {
                     license {
-                        name.set("MIT License")
-                        url.set("https://opensource.org/licenses/MIT")
+                        name.set("Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0")
                     }
                 }
                 

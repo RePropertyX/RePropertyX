@@ -3,6 +3,10 @@
 
 **Composable, decorator-style Kotlin property delegates**. Build safer, cleaner, and more expressive data models with chainable operators like `or`, `map`, `validate`, `log`, `once`, and more.
 
+## License
+
+This project is licensed under the Apache License, Version 2.0 - see the [LICENSE](LICENSE) file for details.
+
 ---
 
 
