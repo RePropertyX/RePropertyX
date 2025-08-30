@@ -5,113 +5,65 @@ import androidx.core.content.edit
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-fun SharedPreferences.byString(key: (SharedPreferences.(String) -> String)? = null) =
-    object : ReadWriteProperty<Any, String?> {
-        override fun getValue(thisRef: Any, property: KProperty<*>): String? =
-            getStringOrNull(key?.invoke(this@byString, property.name) ?: property.name)
-
-        override fun setValue(thisRef: Any, property: KProperty<*>, value: String?) =
-            edit { put(key?.invoke(this@byString, property.name) ?: property.name, value) }
+inline fun <T> bySharedPreference(
+    crossinline getter: SharedPreferences.(String) -> T?,
+    crossinline setter: SharedPreferences.Editor.(String, T?) -> SharedPreferences.Editor,
+    noinline key: (SharedPreferences.(String) -> String)? = null
+): ReadWriteProperty<SharedPreferences, T?> =
+    object : ReadWriteProperty<SharedPreferences, T?> {
+        override fun getValue(thisRef: SharedPreferences, property: KProperty<*>): T? =
+            thisRef.getter(key?.invoke(thisRef, property.name) ?: property.name)
+        override fun setValue(thisRef: SharedPreferences, property: KProperty<*>, value: T?) =
+            thisRef.edit { setter(key?.invoke(thisRef, property.name) ?: property.name, value) }
     }
+
+inline fun <T> SharedPreferences.by(
+    crossinline getter: SharedPreferences.(String) -> T?,
+    crossinline setter: SharedPreferences.Editor.(String, T?) -> SharedPreferences.Editor,
+    noinline key: (SharedPreferences.(String) -> String)? = null
+): ReadWriteProperty<Any, T?> =
+    object : ReadWriteProperty<Any, T?> {
+        override fun getValue(thisRef: Any, property: KProperty<*>): T? =
+            getter(key?.invoke(this@by, property.name) ?: property.name)
+        override fun setValue(thisRef: Any, property: KProperty<*>, value: T?) =
+            edit { setter(key?.invoke(this@by, property.name) ?: property.name, value) }
+    }
+
+fun SharedPreferences.byString(key: (SharedPreferences.(String) -> String)? = null) =
+    by(SharedPreferences::getStringOrNull, SharedPreferences.Editor::put, key)
 
 fun bySharedPreferenceString(key: (SharedPreferences.(String) -> String)? = null) =
-    object : ReadWriteProperty<SharedPreferences, String?> {
-    override fun getValue(thisRef: SharedPreferences, property: KProperty<*>): String? =
-        thisRef.getStringOrNull(key?.invoke(thisRef, property.name) ?: property.name)
-
-    override fun setValue(thisRef: SharedPreferences, property: KProperty<*>, value: String?) =
-        thisRef.edit { put(key?.invoke(thisRef, property.name) ?: property.name, value) }
-}
+    bySharedPreference(SharedPreferences::getStringOrNull, SharedPreferences.Editor::put, key)
 
 fun bySharedPreferenceInt(key: (SharedPreferences.(String) -> String)? = null) =
-    object : ReadWriteProperty<SharedPreferences, Int?> {
-    override fun getValue(thisRef: SharedPreferences, property: KProperty<*>): Int? =
-        thisRef.getIntOrNull(key?.invoke(thisRef, property.name) ?: property.name)
-
-    override fun setValue(thisRef: SharedPreferences, property: KProperty<*>, value: Int?) =
-        thisRef.edit { put(key?.invoke(thisRef, property.name) ?: property.name, value) }
-}
+    bySharedPreference(SharedPreferences::getIntOrNull, SharedPreferences.Editor::put, key)
 
 fun SharedPreferences.byInt(key: (SharedPreferences.(String) -> String)? = null) =
-    object : ReadWriteProperty<Any, Int?> {
-        override fun getValue(thisRef: Any, property: KProperty<*>): Int? =
-            getIntOrNull(key?.invoke(this@byInt, property.name) ?: property.name)
-
-        override fun setValue(thisRef: Any, property: KProperty<*>, value: Int?) =
-            edit { put(key?.invoke(this@byInt, property.name) ?: property.name, value) }
-    }
+    by(SharedPreferences::getIntOrNull, SharedPreferences.Editor::put, key)
 
 fun bySharedPreferenceBoolean(key: (SharedPreferences.(String) -> String)? = null) =
-    object : ReadWriteProperty<SharedPreferences, Boolean?> {
-    override fun getValue(thisRef: SharedPreferences, property: KProperty<*>): Boolean? =
-        thisRef.getBooleanOrNull(key?.invoke(thisRef, property.name) ?: property.name)
-
-    override fun setValue(thisRef: SharedPreferences, property: KProperty<*>, value: Boolean?) =
-        thisRef.edit { put(key?.invoke(thisRef, property.name) ?: property.name, value) }
-}
+    bySharedPreference(SharedPreferences::getBooleanOrNull, SharedPreferences.Editor::put, key)
 
 fun SharedPreferences.byBoolean(key: (SharedPreferences.(String) -> String)? = null) =
-    object : ReadWriteProperty<Any, Boolean?> {
-        override fun getValue(thisRef: Any, property: KProperty<*>): Boolean? =
-            getBooleanOrNull(key?.invoke(this@byBoolean, property.name) ?: property.name)
-
-        override fun setValue(thisRef: Any, property: KProperty<*>, value: Boolean?) =
-            edit { put(key?.invoke(this@byBoolean, property.name) ?: property.name, value) }
-    }
+    by(SharedPreferences::getBooleanOrNull, SharedPreferences.Editor::put, key)
 
 fun bySharedPreferenceStringSet(key: (SharedPreferences.(String) -> String)? = null) =
-    object : ReadWriteProperty<SharedPreferences, Set<String>?> {
-        override fun getValue(thisRef: SharedPreferences, property: KProperty<*>): Set<String>? =
-            thisRef.getStringSet(key?.invoke(thisRef, property.name) ?: property.name, null)
-
-        override fun setValue(thisRef: SharedPreferences, property: KProperty<*>, value: Set<String>?) =
-            thisRef.edit { put(key?.invoke(thisRef, property.name) ?: property.name, value) }
-    }
+    bySharedPreference(SharedPreferences::getStringSetOrNull, SharedPreferences.Editor::put, key)
 
 fun SharedPreferences.byStringSet(key: (SharedPreferences.(String) -> String)? = null) =
-    object : ReadWriteProperty<Any, Set<String>?> {
-        override fun getValue(thisRef: Any, property: KProperty<*>): Set<String>? =
-            getStringSetOrNull(key?.invoke(this@byStringSet, property.name) ?: property.name)
-
-        override fun setValue(thisRef: Any, property: KProperty<*>, value: Set<String>?) =
-            edit { put(key?.invoke(this@byStringSet, property.name) ?: property.name, value) }
-    }
+    by(SharedPreferences::getStringSetOrNull, SharedPreferences.Editor::put, key)
 
 fun bySharedPreferenceFloat(key: (SharedPreferences.(String) -> String)? = null) =
-    object : ReadWriteProperty<SharedPreferences, Float?> {
-    override fun getValue(thisRef: SharedPreferences, property: KProperty<*>): Float? =
-        thisRef.getFloatOrNull(key?.invoke(thisRef, property.name) ?: property.name)
-
-    override fun setValue(thisRef: SharedPreferences, property: KProperty<*>, value: Float?) =
-        thisRef.edit { put(key?.invoke(thisRef, property.name) ?: property.name, value) }
-}
+    bySharedPreference(SharedPreferences::getFloatOrNull, SharedPreferences.Editor::put, key)
 
 fun SharedPreferences.byFloat(key: (SharedPreferences.(String) -> String)? = null) =
-    object : ReadWriteProperty<Any, Float?> {
-        override fun getValue(thisRef: Any, property: KProperty<*>): Float? =
-            getFloatOrNull(key?.invoke(this@byFloat, property.name) ?: property.name)
-
-        override fun setValue(thisRef: Any, property: KProperty<*>, value: Float?) =
-            edit { put(key?.invoke(this@byFloat, property.name) ?: property.name, value) }
-    }
+    by(SharedPreferences::getFloatOrNull, SharedPreferences.Editor::put, key)
 
 fun bySharedPreferenceLong(key: (SharedPreferences.(String) -> String)? = null) =
-    object : ReadWriteProperty<SharedPreferences, Long?> {
-    override fun getValue(thisRef: SharedPreferences, property: KProperty<*>): Long? =
-        thisRef.getLongOrNull(key?.invoke(thisRef, property.name) ?: property.name)
-
-    override fun setValue(thisRef: SharedPreferences, property: KProperty<*>, value: Long?) =
-        thisRef.edit { put(key?.invoke(thisRef, property.name) ?: property.name, value) }
-}
+    bySharedPreference(SharedPreferences::getLongOrNull, SharedPreferences.Editor::put, key)
 
 fun SharedPreferences.byLong(key: (SharedPreferences.(String) -> String)? = null) =
-    object : ReadWriteProperty<Any, Long?> {
-        override fun getValue(thisRef: Any, property: KProperty<*>): Long? =
-            getLongOrNull(key?.invoke(this@byLong, property.name) ?: property.name)
-
-        override fun setValue(thisRef: Any, property: KProperty<*>, value: Long?) =
-            edit { put(key?.invoke(this@byLong, property.name) ?: property.name, value) }
-    }
+    by(SharedPreferences::getLongOrNull, SharedPreferences.Editor::put, key)
 
 fun SharedPreferences.getStringOrNull(key: String): String? =
     if (contains(key)) getString(key, null)
