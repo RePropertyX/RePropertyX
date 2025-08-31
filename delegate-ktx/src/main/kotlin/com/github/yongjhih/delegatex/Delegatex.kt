@@ -113,51 +113,6 @@ fun <P, R> ReadWriteProperty<P, R>.validate(validator: (R) -> Unit): ReadWritePr
 }
 
 
-fun <P, R: Any> ReadWriteProperty<P, R>.takeIf(test: (R) -> Boolean): ReadWriteProperty<P, R> {
-    return object : ReadWriteProperty<P, R> {
-        override fun getValue(thisRef: P, property: KProperty<*>): R {
-            return this@takeIf.getValue(thisRef, property)
-        }
-
-        override fun setValue(thisRef: P, property: KProperty<*>, value: R) {
-            if (test(value)) {
-                this@takeIf.setValue(thisRef, property, value)
-            }
-        }
-    }
-}
-
-/*
-fun <P, R: Any> ReadWriteProperty<P, R>.takeIf(test: (R?) -> Boolean): ReadWriteProperty<P, R?> {
-    return object : ReadWriteProperty<P, R?> {
-        override fun getValue(thisRef: P, property: KProperty<*>): R? {
-            return this@takeIf.getValue(thisRef, property).takeIf(test)
-        }
-
-        override fun setValue(thisRef: P, property: KProperty<*>, value: R?) {
-            if (test(value) && value != null) {
-                this@takeIf.setValue(thisRef, property, value)
-            }
-        }
-    }
-}
-
-@JvmName("takeIfNullable")
-fun <P, R: Any?> ReadWriteProperty<P, R?>.takeIfNullable(test: (R?) -> Boolean): ReadWriteProperty<P, R?> {
-    return object : ReadWriteProperty<P, R?> {
-        override fun getValue(thisRef: P, property: KProperty<*>): R? {
-            return this@takeIfNullable.getValue(thisRef, property).takeIf(test)
-        }
-
-        override fun setValue(thisRef: P, property: KProperty<*>, value: R?) {
-            if (test(value) && value != null) {
-                this@takeIfNullable.setValue(thisRef, property, value)
-            }
-        }
-    }
-}
-*/
-
 /**
  * Logs property changes using the provided listener function.
  *
@@ -319,5 +274,47 @@ fun <P, R> ReadWriteProperty<P, String>.decrypt(decryptor: (String) -> R): ReadW
             // This is just a placeholder for the concept
             throw UnsupportedOperationException("Decrypted properties cannot be set directly")
         }
+    }
+}
+
+fun <P, R: Any> ReadWriteProperty<P, R>.takeIf(test: (R) -> Boolean): ReadWriteProperty<P, R> {
+    return object : ReadWriteProperty<P, R> {
+        override fun getValue(thisRef: P, property: KProperty<*>): R {
+            return this@takeIf.getValue(thisRef, property)
+        }
+
+        override fun setValue(thisRef: P, property: KProperty<*>, value: R) {
+            if (test(value)) {
+                this@takeIf.setValue(thisRef, property, value)
+            }
+        }
+    }
+}
+
+fun <P, T> ReadWriteProperty<P, String>.serialized(
+    serializer: (T) -> String,
+    deserializer: (String) -> T?,
+): ReadWriteProperty<P, T?> = object : ReadWriteProperty<P, T?> {
+    override fun getValue(thisRef: P, property: KProperty<*>): T? =
+        deserializer(this@serialized.getValue(thisRef, property))
+
+    override fun setValue(thisRef: P, property: KProperty<*>, value: T?) {
+        if (value == null) {
+            this@serialized.setValue(thisRef, property, "")
+        } else {
+            this@serialized.setValue(thisRef, property, serializer(value))
+        }
+    }
+}
+
+fun <P, T> ReadWriteProperty<P, String?>.serialized(
+    serializer: (T) -> String,
+    deserializer: (String) -> T?,
+): ReadWriteProperty<P, T?> = object : ReadWriteProperty<P, T?> {
+    override fun getValue(thisRef: P, property: KProperty<*>): T? =
+        this@serialized.getValue(thisRef, property)?.let { deserializer(it) }
+
+    override fun setValue(thisRef: P, property: KProperty<*>, value: T?) {
+        this@serialized.setValue(thisRef, property, value?.let { serializer(it) })
     }
 }
