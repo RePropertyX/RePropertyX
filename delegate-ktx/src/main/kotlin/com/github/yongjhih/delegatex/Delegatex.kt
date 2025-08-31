@@ -16,9 +16,12 @@
 
 package com.github.yongjhih.delegatex
 
+import java.util.concurrent.Flow
+import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+import kotlin.properties.Delegates
 
 /**
  * Returns a non-null property by providing a fallback when the original delegate returns null.
@@ -109,6 +112,52 @@ fun <P, R> ReadWriteProperty<P, R>.validate(validator: (R) -> Unit): ReadWritePr
     }
 }
 
+
+fun <P, R: Any> ReadWriteProperty<P, R>.takeIf(test: (R) -> Boolean): ReadWriteProperty<P, R> {
+    return object : ReadWriteProperty<P, R> {
+        override fun getValue(thisRef: P, property: KProperty<*>): R {
+            return this@takeIf.getValue(thisRef, property)
+        }
+
+        override fun setValue(thisRef: P, property: KProperty<*>, value: R) {
+            if (test(value)) {
+                this@takeIf.setValue(thisRef, property, value)
+            }
+        }
+    }
+}
+
+/*
+fun <P, R: Any> ReadWriteProperty<P, R>.takeIf(test: (R?) -> Boolean): ReadWriteProperty<P, R?> {
+    return object : ReadWriteProperty<P, R?> {
+        override fun getValue(thisRef: P, property: KProperty<*>): R? {
+            return this@takeIf.getValue(thisRef, property).takeIf(test)
+        }
+
+        override fun setValue(thisRef: P, property: KProperty<*>, value: R?) {
+            if (test(value) && value != null) {
+                this@takeIf.setValue(thisRef, property, value)
+            }
+        }
+    }
+}
+
+@JvmName("takeIfNullable")
+fun <P, R: Any?> ReadWriteProperty<P, R?>.takeIfNullable(test: (R?) -> Boolean): ReadWriteProperty<P, R?> {
+    return object : ReadWriteProperty<P, R?> {
+        override fun getValue(thisRef: P, property: KProperty<*>): R? {
+            return this@takeIfNullable.getValue(thisRef, property).takeIf(test)
+        }
+
+        override fun setValue(thisRef: P, property: KProperty<*>, value: R?) {
+            if (test(value) && value != null) {
+                this@takeIfNullable.setValue(thisRef, property, value)
+            }
+        }
+    }
+}
+*/
+
 /**
  * Logs property changes using the provided listener function.
  *
@@ -135,9 +184,25 @@ fun <P, R> ReadWriteProperty<P, R>.log(listener: (old: R, new: R) -> Unit): Read
  * @param listener Function called when the property value changes
  * @return A ReadWriteProperty with observation
  */
-fun <P, R> ReadWriteProperty<P, R>.observable(listener: (old: R, new: R) -> Unit): ReadWriteProperty<P, R> {
-    return log(listener)
+fun <P, R> ReadWriteProperty<P, R>.observable(listener: (old: R, new: R) -> Unit): ReadWriteProperty<P, R> =
+    log(listener)
+
+class ObservedProperty<P, R>(private val prop: ReadWriteProperty<P, R>) : ReadWriteProperty<P, R> {
+    val observers = mutableSetOf<(old: R, new: R) -> Unit>()
+
+    override fun getValue(thisRef: P, property: KProperty<*>): R =
+        prop.getValue(thisRef, property)
+
+    override fun setValue(thisRef: P, property: KProperty<*>, value: R) {
+        val oldValue = prop.getValue(thisRef, property)
+        prop.setValue(thisRef, property, value)
+        observers.forEach { it(oldValue, value) }
+    }
 }
+
+fun <P, R> ReadWriteProperty<P, R>.observed(): ObservedProperty<P, R> =
+    ObservedProperty(this)
+
 
 /**
  * Ensures the property can only be set once. Subsequent set operations are ignored.
