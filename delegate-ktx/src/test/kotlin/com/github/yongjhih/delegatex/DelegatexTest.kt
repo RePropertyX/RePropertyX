@@ -16,6 +16,7 @@
 
 package com.github.yongjhih.delegatex
 
+import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 import kotlin.test.*
@@ -29,6 +30,14 @@ class DelegatexTest {
         // The or operator should handle null values from the underlying delegate
         assertEquals("guest_username", testClass.username)
     }
+
+    @Test
+    fun `ReadOnlyPropert_or`() {
+        val readOnly: ReadOnlyProperty<Any?, String?> = ReadOnlyProperty { _, _ -> null }
+        val value by readOnly.or { "fallback" }
+        assertEquals("fallback", value)
+    }
+
 
     @Test
     fun `or operator uses custom fallback logic`() {

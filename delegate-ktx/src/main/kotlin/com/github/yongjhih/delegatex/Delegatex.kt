@@ -16,6 +16,7 @@
 
 package com.github.yongjhih.delegatex
 
+import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -36,6 +37,15 @@ fun <P, R> ReadWriteProperty<P, R?>.or(orElse: P.(String) -> R): ReadWriteProper
         }
     }
 }
+
+/**
+ * Returns a non-null property by providing a fallback when the original delegate returns null.
+ *
+ * @param orElse A function that provides a fallback value based on the property name
+ * @return A ReadOnlyProperty that never returns null
+ */
+fun <P, R> ReadOnlyProperty<P, R?>.or(orElse: P.(String) -> R): ReadOnlyProperty<P, R> =
+    ReadOnlyProperty { thisRef, property -> this@or.getValue(thisRef, property) ?: thisRef.orElse(property.name) }
 
 /**
  * Ensures a property is never null by throwing an exception if a null value is attempted.
