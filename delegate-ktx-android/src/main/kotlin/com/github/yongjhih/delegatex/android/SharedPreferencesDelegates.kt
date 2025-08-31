@@ -21,6 +21,15 @@ import androidx.core.content.edit
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+/**
+ * Creates a [ReadWriteProperty] delegate for accessing values in [SharedPreferences].
+ *
+ * @param getter A function to read the value from [SharedPreferences] by key.
+ * @param setter A function to write the value to [SharedPreferences.Editor] by key.
+ * @param key Optional transformation of the property name into a custom preference key.
+ *
+ * @return A property delegate bound to [SharedPreferences].
+ */
 inline fun <T> bySharedPreference(
     crossinline getter: SharedPreferences.(String) -> T?,
     crossinline setter: SharedPreferences.Editor.(String, T?) -> SharedPreferences.Editor,
@@ -33,6 +42,15 @@ inline fun <T> bySharedPreference(
             thisRef.edit { setter(key?.invoke(thisRef, property.name) ?: property.name, value) }
     }
 
+/**
+ * Creates a [ReadWriteProperty] delegate tied to a specific [SharedPreferences] instance.
+ *
+ * @param getter Function to retrieve a value by key.
+ * @param setter Function to persist a value by key.
+ * @param key Optional key transformer.
+ *
+ * @return A property delegate usable inside any class.
+ */
 inline fun <T> SharedPreferences.by(
     crossinline getter: SharedPreferences.(String) -> T?,
     crossinline setter: SharedPreferences.Editor.(String, T?) -> SharedPreferences.Editor,
