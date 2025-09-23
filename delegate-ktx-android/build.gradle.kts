@@ -40,6 +40,7 @@ dependencies {
     implementation(project(":delegate-ktx"))
     
     implementation("androidx.core:core-ktx:1.17.0")
+    implementation("androidx.interpolator:interpolator:1.0.0")
     //implementation("androidx.appcompat:appcompat:1.6.1")
     
     // Kotlin test dependencies

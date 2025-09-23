@@ -12,7 +12,8 @@ java {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")

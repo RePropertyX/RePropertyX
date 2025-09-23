@@ -16,12 +16,11 @@
 
 package com.github.yongjhih.delegatex
 
-import java.util.concurrent.Flow
-import kotlin.properties.ObservableProperty
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
-import kotlin.properties.Delegates
 
 /**
  * Returns a non-null property by providing a fallback when the original delegate returns null.
@@ -291,22 +290,6 @@ fun <P, R: Any> ReadWriteProperty<P, R>.takeIf(test: (R) -> Boolean): ReadWriteP
     }
 }
 
-fun <P, T> ReadWriteProperty<P, String>.serialized(
-    serializer: (T) -> String,
-    deserializer: (String) -> T?,
-): ReadWriteProperty<P, T?> = object : ReadWriteProperty<P, T?> {
-    override fun getValue(thisRef: P, property: KProperty<*>): T? =
-        deserializer(this@serialized.getValue(thisRef, property))
-
-    override fun setValue(thisRef: P, property: KProperty<*>, value: T?) {
-        if (value == null) {
-            this@serialized.setValue(thisRef, property, "")
-        } else {
-            this@serialized.setValue(thisRef, property, serializer(value))
-        }
-    }
-}
-
 fun <P, T> ReadWriteProperty<P, String?>.serialized(
     serializer: (T) -> String,
     deserializer: (String) -> T?,
@@ -318,3 +301,96 @@ fun <P, T> ReadWriteProperty<P, String?>.serialized(
         this@serialized.setValue(thisRef, property, value?.let { serializer(it) })
     }
 }
+
+/**
+ * Returns a new [ReadWriteProperty] that only updates its value
+ * if [onEqual] returns false (i.e. the new value is different from the old value).
+ *
+ * ```
+ * var distinctValue by propertyOf(0)
+ *     .distinctUntilChanged { old, new -> old == new }
+ *     .onEach { println("Changed to $it") }
+ * ```
+ */
+fun <T, V> ReadWriteProperty<T, V>.distinctUntilChanged(
+    onEqual: (old: V, new: V) -> Boolean = { old, new -> old == new }
+): ReadWriteProperty<T, V> = object : ReadWriteProperty<T, V> by this {
+    override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
+        val oldValue = this@distinctUntilChanged.getValue(thisRef, property)
+        if (!onEqual(oldValue, value)) {
+            this@distinctUntilChanged.setValue(thisRef, property, value)
+        }
+    }
+}
+
+/**
+ * Executes [block] every time the value is updated.
+ */
+fun <T, V> ReadWriteProperty<T, V>.onEach(
+    block: (V) -> Unit
+): ReadWriteProperty<T, V> = object : ReadWriteProperty<T, V> by this {
+    override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
+        this@onEach.setValue(thisRef, property, value)
+        block(value)
+    }
+}
+
+
+fun <T, V> ReadWriteProperty<T, V>.onEachBefore(
+    block: (V) -> Unit
+): ReadWriteProperty<T, V> = object : ReadWriteProperty<T, V> by this {
+    override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
+        block(value)
+        this@onEachBefore.setValue(thisRef, property, value)
+    }
+}
+
+fun <V> propertyOf(
+    get: Any?.(KProperty<*>) -> V,
+): ReadOnlyProperty<Any?, V> = ReadOnlyProperty { thisRef, property -> thisRef.get(property) }
+
+fun <V> propertyOf(
+    get: Any?.(KProperty<*>) -> V,
+    set: Any?.(V) -> Unit,
+): ReadWriteProperty<Any?, V> = object : ReadWriteProperty<Any?, V> {
+    override fun getValue(thisRef: Any?, property: KProperty<*>): V =
+        thisRef.get(property)
+
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: V) {
+        thisRef.set(value)
+    }
+}
+
+fun <V> mutablePropertyOf(
+    value: V,
+    set: Any?.(V) -> Unit = {},
+): ReadWriteProperty<Any?, V> = object : ReadWriteProperty<Any?, V> {
+    private var value: V = value
+
+    override fun getValue(thisRef: Any?, property: KProperty<*>): V = value
+
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: V) {
+        thisRef.set(value)
+    }
+}
+
+/**
+ * Allows using StateFlow as a delegated property:
+ *
+ * val current by someStateFlow
+ */
+operator fun <T, V> StateFlow<V>.getValue(
+    thisRef: T,
+    property: KProperty<*>
+): V = value
+
+/**
+ * Allows using MutableStateFlow as a delegated property:
+ *
+ * var counter by MutableStateFlow(0)
+ */
+suspend fun <T, V> MutableStateFlow<V>.setValue(
+    thisRef: T,
+    property: KProperty<*>,
+    value: V
+) = emit(value)
