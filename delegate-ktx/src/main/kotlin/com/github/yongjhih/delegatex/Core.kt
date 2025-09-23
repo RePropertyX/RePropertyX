@@ -32,19 +32,5 @@ fun <T> byWeakReference(value: T? = null, queue: ReferenceQueue<in T?>? = null) 
         }
     }
 
-/**
- * ```
- * inline fun <reified V : Any> byCancel(
- *     crossinline onCancel: (V) -> Unit
- * ): ReadWriteProperty<Any?, V?> = object : ReadWriteProperty<Any?, V?> {
- *     private var value: V? = null
- *     override fun getValue(thisRef: Any?, property: KProperty<*>): V? = value
- *     override fun setValue(thisRef: Any?, property: KProperty<*>, value: V?) {
- *         this.value?.let(onCancel)
- *         this.value = value
- *     }
- * }
- * ```
- */
-fun <T, V: AutoCloseable> ReadWriteProperty<T, V>.byClose(): ReadWriteProperty<T, V> =
+fun <T, V: AutoCloseable> ReadWriteProperty<T, V>.close(): ReadWriteProperty<T, V> =
     onEachBefore { it.close() }

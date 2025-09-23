@@ -313,11 +313,11 @@ fun <P, T> ReadWriteProperty<P, String?>.serialized(
  * ```
  */
 fun <T, V> ReadWriteProperty<T, V>.distinctUntilChanged(
-    onEqual: (old: V, new: V) -> Boolean = { old, new -> old == new }
+    onEqual: T.(old: V, new: V) -> Boolean = { old, new -> old == new }
 ): ReadWriteProperty<T, V> = object : ReadWriteProperty<T, V> by this {
     override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
         val oldValue = this@distinctUntilChanged.getValue(thisRef, property)
-        if (!onEqual(oldValue, value)) {
+        if (!thisRef.onEqual(oldValue, value)) {
             this@distinctUntilChanged.setValue(thisRef, property, value)
         }
     }
@@ -327,20 +327,20 @@ fun <T, V> ReadWriteProperty<T, V>.distinctUntilChanged(
  * Executes [block] every time the value is updated.
  */
 fun <T, V> ReadWriteProperty<T, V>.onEach(
-    block: (V) -> Unit
+    block: T.(V) -> Unit
 ): ReadWriteProperty<T, V> = object : ReadWriteProperty<T, V> by this {
     override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
         this@onEach.setValue(thisRef, property, value)
-        block(value)
+        thisRef.block(value)
     }
 }
 
 
 fun <T, V> ReadWriteProperty<T, V>.onEachBefore(
-    block: (V) -> Unit
+    block: T.(V) -> Unit
 ): ReadWriteProperty<T, V> = object : ReadWriteProperty<T, V> by this {
     override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
-        block(value)
+        thisRef.block(value)
         this@onEachBefore.setValue(thisRef, property, value)
     }
 }
@@ -363,14 +363,13 @@ fun <V> propertyOf(
 
 fun <V> mutablePropertyOf(
     value: V,
-    set: Any?.(V) -> Unit = {},
 ): ReadWriteProperty<Any?, V> = object : ReadWriteProperty<Any?, V> {
     private var value: V = value
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): V = value
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: V) {
-        thisRef.set(value)
+        this.value = value
     }
 }
 

@@ -40,6 +40,20 @@ fun <T, V : Any> ReadWriteProperty<T, V>.animatedTyped(
     }
 }
 
+/**
+ * Usage:
+ *
+ * ```
+ * var viewAnimatedY by propertyOf(
+ *     get = { view.translateY },
+ *     set = { view.translateY = it },
+ *   )
+ *   .distinctUntilChanged()
+ *   .onEach { … }
+ *   .animated()
+ *   .distinctUntilChanged()
+ * ```
+ */
 @JvmName("animatedInt")
 fun <T> ReadWriteProperty<T, Int>.animated(
     duration: Duration = 300.milliseconds,
