@@ -1,14 +1,14 @@
-# DelegateX
+# RePropertyX
 
 A **Kotlin-first property delegation toolkit** that makes your code cleaner, safer, and more expressive.
 
-DelegateX brings the power of Kotlin's `ReadWriteProperty` and `provideDelegate` features to life by letting you easily build **reactive, composable, and testable property delegates**.
+RePropertyX brings the power of Kotlin's `ReadWriteProperty` and `provideDelegate` features to life by letting you easily build **reactive, composable, and testable property delegates**.
 
 ---
 
-## 🚀 Why DelegateX?
+## 🚀 Why RePropertyX?
 
-Instead of manually writing boilerplate `get` / `set` logic for properties, DelegateX lets you:
+Instead of manually writing boilerplate `get` / `set` logic for properties, RePropertyX lets you:
 
 - **Compose delegates** just like functional streams: `.map()`, `.distinctUntilChanged()`, `.onEach()`
 - **Animate values** with `.animated()` — no more writing manual `ValueAnimator` code.
@@ -31,7 +31,7 @@ dependencies {
 
 ## ✨ Quick Example
 
-### Before DelegateX
+### Before RePropertyX
 
 ```kotlin
 val prefs = context.getSharedPreferences("user", MODE_PRIVATE)
@@ -43,7 +43,7 @@ var userNickname: String
     set(value) { prefs.edit().putString("userNickname_${userToken}", value).apply() }
 ```
 
-### After DelegateX
+### After RePropertyX
 
 ```kotlin
 var userToken: String? by prefs.byString()
@@ -115,7 +115,7 @@ runningAnimator = ValueAnimator.ofFloat(0f, 1f).apply { start() }
 
 ## ✅ Testing & Quality
 
-DelegateX ships with comprehensive unit tests covering core delegation logic and SharedPreferences behaviors.
+RePropertyX ships with comprehensive unit tests covering core delegation logic and SharedPreferences behaviors.
 This ensures your code stays predictable and maintainable.
 
 ---
@@ -135,4 +135,4 @@ Apache 2.0 - see [LICENSE](LICENSE) for details.
 
 ---
 
-DelegateX helps you **think in terms of property semantics** instead of boilerplate — making your Kotlin code more declarative, maintainable, and fun.
+RePropertyX helps you **think in terms of property semantics** instead of boilerplate — making your Kotlin code more declarative, maintainable, and fun.
