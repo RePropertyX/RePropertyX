@@ -76,16 +76,16 @@ fun <P, R> ReadWriteProperty<P, R?>.notNull(message: String? = null): ReadWriteP
  * @return A ReadWriteProperty with type transformation
  */
 fun <P, A, B> ReadWriteProperty<P, A>.map(
-    to: (A) -> B,
-    from: (B) -> A
+    to: P.(A) -> B,
+    from: P.(B) -> A
 ): ReadWriteProperty<P, B> {
     return object : ReadWriteProperty<P, B> {
         override fun getValue(thisRef: P, property: KProperty<*>): B {
-            return to(this@map.getValue(thisRef, property))
+            return thisRef.to(this@map.getValue(thisRef, property))
         }
 
         override fun setValue(thisRef: P, property: KProperty<*>, value: B) {
-            this@map.setValue(thisRef, property, from(value))
+            this@map.setValue(thisRef, property, thisRef.from(value))
         }
     }
 }
@@ -96,16 +96,16 @@ fun <P, A, B> ReadWriteProperty<P, A>.map(
  * @param validator Function that validates the value and throws an exception if invalid
  * @return A ReadWriteProperty with validation
  */
-fun <P, R> ReadWriteProperty<P, R>.validate(validator: (R) -> Unit): ReadWriteProperty<P, R> {
+fun <P, R> ReadWriteProperty<P, R>.validate(validator: P.(R) -> Unit): ReadWriteProperty<P, R> {
     return object : ReadWriteProperty<P, R> {
         override fun getValue(thisRef: P, property: KProperty<*>): R {
             val value = this@validate.getValue(thisRef, property)
-            validator(value)
+            thisRef.validator(value)
             return value
         }
 
         override fun setValue(thisRef: P, property: KProperty<*>, value: R) {
-            validator(value)
+            thisRef.validator(value)
             this@validate.setValue(thisRef, property, value)
         }
     }
@@ -118,7 +118,7 @@ fun <P, R> ReadWriteProperty<P, R>.validate(validator: (R) -> Unit): ReadWritePr
  * @param listener Function called when the property value changes
  * @return A ReadWriteProperty with logging
  */
-fun <P, R> ReadWriteProperty<P, R>.log(listener: (old: R, new: R) -> Unit): ReadWriteProperty<P, R> {
+fun <P, R> ReadWriteProperty<P, R>.log(listener: P.(old: R, new: R) -> Unit): ReadWriteProperty<P, R> {
     return object : ReadWriteProperty<P, R> {
         override fun getValue(thisRef: P, property: KProperty<*>): R {
             return this@log.getValue(thisRef, property)
@@ -127,7 +127,7 @@ fun <P, R> ReadWriteProperty<P, R>.log(listener: (old: R, new: R) -> Unit): Read
         override fun setValue(thisRef: P, property: KProperty<*>, value: R) {
             val oldValue = this@log.getValue(thisRef, property)
             this@log.setValue(thisRef, property, value)
-            listener(oldValue, value)
+            thisRef.listener(oldValue, value)
         }
     }
 }
@@ -138,7 +138,7 @@ fun <P, R> ReadWriteProperty<P, R>.log(listener: (old: R, new: R) -> Unit): Read
  * @param listener Function called when the property value changes
  * @return A ReadWriteProperty with observation
  */
-fun <P, R> ReadWriteProperty<P, R>.observable(listener: (old: R, new: R) -> Unit): ReadWriteProperty<P, R> =
+fun <P, R> ReadWriteProperty<P, R>.observable(listener: P.(old: R, new: R) -> Unit): ReadWriteProperty<P, R> =
     log(listener)
 
 class ObservedProperty<P, R>(private val prop: ReadWriteProperty<P, R>) : ReadWriteProperty<P, R> {
@@ -276,14 +276,27 @@ fun <P, R> ReadWriteProperty<P, String>.decrypt(decryptor: (String) -> R): ReadW
     }
 }
 
-fun <P, R: Any> ReadWriteProperty<P, R>.takeIf(test: (R) -> Boolean): ReadWriteProperty<P, R> {
+fun <P, R: Any> ReadWriteProperty<P, R>.setIf(test: (R) -> Boolean): ReadWriteProperty<P, R> {
     return object : ReadWriteProperty<P, R> {
         override fun getValue(thisRef: P, property: KProperty<*>): R {
-            return this@takeIf.getValue(thisRef, property)
+            return this@setIf.getValue(thisRef, property)
         }
 
         override fun setValue(thisRef: P, property: KProperty<*>, value: R) {
             if (test(value)) {
+                this@setIf.setValue(thisRef, property, value)
+            }
+        }
+    }
+}
+
+fun <P, R> ReadWriteProperty<P, R>.takeIf(test: (R) -> Boolean): ReadWriteProperty<P, R?> {
+    return object : ReadWriteProperty<P, R?> {
+        override fun getValue(thisRef: P, property: KProperty<*>): R? =
+            this@takeIf.getValue(thisRef, property).takeIf(test)
+
+        override fun setValue(thisRef: P, property: KProperty<*>, value: R?) {
+            if (value != null && test(value)) {
                 this@takeIf.setValue(thisRef, property, value)
             }
         }
@@ -363,12 +376,12 @@ fun <V> propertyOf(
 
 fun <V> mutablePropertyOf(
     value: V,
-): ReadWriteProperty<Any?, V> = object : ReadWriteProperty<Any?, V> {
+): ReadWriteProperty<V, V> = object : ReadWriteProperty<V, V> {
     private var value: V = value
 
-    override fun getValue(thisRef: Any?, property: KProperty<*>): V = value
+    override fun getValue(thisRef: V, property: KProperty<*>): V = value
 
-    override fun setValue(thisRef: Any?, property: KProperty<*>, value: V) {
+    override fun setValue(thisRef: V, property: KProperty<*>, value: V) {
         this.value = value
     }
 }

@@ -269,6 +269,17 @@ class DelegatexTest {
 
         var decryptedValue: String by stringDelegate("ENCRYPTED_STRING").decrypt { it.lowercase() }
     }
+
+    @Test
+    fun `takeIf test`() {
+        //val user by mutablePropertyOf(User()).map(to = { it.age }, from = { it })
+    }
+
+    data class User(
+        var name: String = "Andrew",
+        var age: Int? = null
+    )
+
 }
 
 
