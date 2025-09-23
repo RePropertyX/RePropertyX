@@ -272,7 +272,8 @@ class DelegatexTest {
 
     @Test
     fun `takeIf test`() {
-        //val user by mutablePropertyOf(User()).map(to = { it.age }, from = { it })
+        val adultAge: Int? by User().asProperty().map(to = { it.age }, from = { copy(age = it) }).or { 0 }.takeIf { it > 18 }
+        assertEquals(null, adultAge)
     }
 
     data class User(

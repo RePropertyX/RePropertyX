@@ -75,17 +75,17 @@ fun <P, R> ReadWriteProperty<P, R?>.notNull(message: String? = null): ReadWriteP
  * @param from Function to transform the desired type back to the stored type
  * @return A ReadWriteProperty with type transformation
  */
-fun <P, A, B> ReadWriteProperty<P, A>.map(
-    to: P.(A) -> B,
-    from: P.(B) -> A
-): ReadWriteProperty<P, B> {
-    return object : ReadWriteProperty<P, B> {
-        override fun getValue(thisRef: P, property: KProperty<*>): B {
+fun <P, V, R> ReadWriteProperty<P, V>.map(
+    to: P.(V) -> R,
+    from: V.(R) -> V
+): ReadWriteProperty<P, R> {
+    return object : ReadWriteProperty<P, R> {
+        override fun getValue(thisRef: P, property: KProperty<*>): R {
             return thisRef.to(this@map.getValue(thisRef, property))
         }
 
-        override fun setValue(thisRef: P, property: KProperty<*>, value: B) {
-            this@map.setValue(thisRef, property, thisRef.from(value))
+        override fun setValue(thisRef: P, property: KProperty<*>, value: R) {
+            this@map.setValue(thisRef, property, this@map.getValue(thisRef, property).from(value))
         }
     }
 }
@@ -388,6 +388,16 @@ fun <V> mutablePropertyOf(
         this.value = value
     }
 }
+
+fun <V> V.asProperty(): ReadWriteProperty<Any?, V> =
+    object : ReadWriteProperty<Any?, V> {
+        private var value: V = this@asProperty
+
+        override fun getValue(thisRef: Any?, property: KProperty<*>): V = value
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: V) {
+            this.value = value
+        }
+    }
 
 /**
  * Allows using StateFlow as a delegated property:
