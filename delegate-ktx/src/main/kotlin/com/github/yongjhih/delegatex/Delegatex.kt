@@ -303,6 +303,9 @@ fun <P, R> ReadWriteProperty<P, R>.takeIf(test: (R) -> Boolean): ReadWriteProper
     }
 }
 
+fun <P, R> ReadOnlyProperty<P, R>.takeIf(test: (R) -> Boolean): ReadOnlyProperty<P, R?> =
+    ReadOnlyProperty { thisRef, property -> this@takeIf.getValue(thisRef, property).takeIf(test) }
+
 fun <P, T> ReadWriteProperty<P, String?>.serialized(
     serializer: (T) -> String,
     deserializer: (String) -> T?,
@@ -406,3 +409,5 @@ suspend fun <T, V> MutableStateFlow<V>.setValue(
     property: KProperty<*>,
     value: V
 ) = emit(value)
+
+fun <T, V> ReadWriteProperty<T, V>.readOnly(): ReadOnlyProperty<T, V> = this
