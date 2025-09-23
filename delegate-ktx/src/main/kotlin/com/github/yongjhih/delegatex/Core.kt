@@ -32,5 +32,5 @@ fun <T> byWeakReference(value: T? = null, queue: ReferenceQueue<in T?>? = null) 
         }
     }
 
-fun <T, V: AutoCloseable> ReadWriteProperty<T, V>.close(): ReadWriteProperty<T, V> =
+fun <T, V: AutoCloseable> ReadWriteProperty<T, V>.closable(): ReadWriteProperty<T, V> =
     onEachBefore { it.close() }
