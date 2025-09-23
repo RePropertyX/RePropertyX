@@ -38,6 +38,9 @@ val prefs = context.getSharedPreferences("user", MODE_PRIVATE)
 var userToken: String?
     get() = prefs.getString("user_token", null)
     set(value) { prefs.edit().putString("user_token", value).apply() }
+var userNickname: String
+    get() = prefs.getString("userNickname_${userToken}", null) ?: "unknown"
+    set(value) { prefs.edit().putString("userNickname_${userToken}", value).apply() }
 ```
 
 ### After DelegateX
