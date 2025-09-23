@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import com.github.yongjhih.delegatex.*
+import com.github.repropertyx.*
 
 /**
- * Simple example demonstrating delegate-ktx usage
+ * Simple example demonstrating repropertyx usage
  */
 fun main() {
-    println("=== delegate-ktx Simple Example ===\n")
+    println("=== repropertyx Simple Example ===\n")
     
     // Create a simple settings class
     val settings = SimpleSettings()

@@ -20,6 +20,6 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-# Keep delegate-ktx classes
--keep class com.github.yongjhih.delegatex.** { *; }
--keepclassmembers class com.github.yongjhih.delegatex.** { *; }
+# Keep repropertyx classes
+-keep class com.github.repropertyx.** { *; }
+-keepclassmembers class com.github.repropertyx.** { *; }

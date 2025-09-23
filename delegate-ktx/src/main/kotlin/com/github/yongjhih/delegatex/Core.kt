@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.yongjhih.delegatex
+package com.github.repropertyx
 
 import java.lang.ref.ReferenceQueue
 import java.lang.ref.WeakReference

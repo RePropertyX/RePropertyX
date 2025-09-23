@@ -1,11 +1,11 @@
-package com.github.yongjhih.delegatex.android
+package com.github.repropertyx.android
 
 import android.animation.TypeEvaluator
 import android.animation.ValueAnimator
 import android.view.animation.Interpolator
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import com.github.yongjhih.delegatex.mutablePropertyOf
-import com.github.yongjhih.delegatex.onEachBefore
+import com.github.repropertyx.mutablePropertyOf
+import com.github.repropertyx.onEachBefore
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 import kotlin.time.Duration

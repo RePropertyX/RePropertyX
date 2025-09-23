@@ -21,7 +21,7 @@ Instead of manually writing boilerplate `get` / `set` logic for properties, Dele
 
 ```kotlin
 dependencies {
-    implementation("com.github.yongjhih:delegatex:<latest-version>")
+    implementation("com.github.repropertyx:repropertyx:<latest-version>")
 }
 ```
 

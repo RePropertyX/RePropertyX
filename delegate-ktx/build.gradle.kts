@@ -25,9 +25,9 @@ publishing {
             from(components["java"])
             
             pom {
-                name.set("delegatex")
+                name.set("repropertyx")
                 description.set("Composable, decorator-style Kotlin property delegates")
-                url.set("https://github.com/yongjhih/delegate-ktx")
+                url.set("https://github.com/repropertyx/repropertyx")
                 
                 licenses {
                     license {

@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package com.github.yongjhih.delegatex.android
-
-import android.content.SharedPreferences
-import android.content.SharedPreferences.Editor
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import com.github.yongjhih.delegatex.observable
-import com.github.yongjhih.delegatex.observed
-import com.github.yongjhih.delegatex.or
-import com.github.yongjhih.delegatex.takeIf
-import com.github.yongjhih.delegatex.validate
+package com.github.repropertyx.android
+import com.github.repropertyx.observable
+import com.github.repropertyx.observed
+import com.github.repropertyx.or
+import com.github.repropertyx.takeIf
+import com.github.repropertyx.validate
 import kotlin.test.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

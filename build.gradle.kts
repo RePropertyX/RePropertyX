@@ -7,7 +7,7 @@ plugins {
 }
 
 allprojects {
-    group = "com.github.yongjhih"
+    group = "com.github.repropertyx"
     version = "0.1.0-SNAPSHOT"
 }
 

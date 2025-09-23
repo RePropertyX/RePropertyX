@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.yongjhih.delegatex.android
+package com.github.repropertyx.android
 
 import android.content.SharedPreferences
 import androidx.core.content.edit

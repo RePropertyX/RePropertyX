@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.github.yongjhih.delegatex.android"
+    namespace = "com.github.repropertyx.android"
     compileSdk = 34
     
     defaultConfig {
@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":delegate-ktx"))
+    implementation(project(":repropertyx"))
     
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.interpolator:interpolator:1.0.0")
@@ -73,9 +73,9 @@ publishing {
             }
             
             pom {
-                name.set("delegatex-android")
-                description.set("Android-specific extensions for delegatex")
-                url.set("https://github.com/yongjhih/delegate-ktx")
+                name.set("repropertyx-android")
+                description.set("Android-specific extensions for repropertyx")
+                url.set("https://github.com/repropertyx/repropertyx")
                 
                 licenses {
                     license {

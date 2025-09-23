@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.yongjhih.delegatex
+package com.github.repropertyx
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
