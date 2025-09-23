@@ -34,6 +34,10 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    lint {
+        checkTestSources = false
+    }
 }
 
 dependencies {
@@ -43,13 +47,7 @@ dependencies {
     implementation("androidx.interpolator:interpolator:1.0.0")
     //implementation("androidx.appcompat:appcompat:1.6.1")
     
-    // Kotlin test dependencies
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
-    androidTestImplementation("org.jetbrains.kotlin:kotlin-test")
-    androidTestImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    androidTestImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+    // Use JUnit4; avoid kotlin-test to prevent capability conflicts during lint
 
     // Mockito for testing
     testImplementation("org.mockito:mockito-core:5.7.0")
