@@ -17,6 +17,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "repropertyx"
 include(":repropertyx")
-project(":repropertyx").projectDir = file("delegate-ktx")
 include(":repropertyx-android")
 project(":repropertyx-android").projectDir = file("delegate-ktx-android")
