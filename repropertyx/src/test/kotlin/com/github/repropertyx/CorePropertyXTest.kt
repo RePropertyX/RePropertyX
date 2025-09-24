@@ -19,7 +19,7 @@ package com.github.repropertyx
 import kotlin.test.*
 import kotlin.test.Test
 
-class CoreTest {
+class CorePropertyXTest {
     @Test
     fun testByWeakReference() {
         class Example {

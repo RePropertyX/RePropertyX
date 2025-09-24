@@ -18,13 +18,16 @@ package com.github.repropertyx
 
 import java.lang.ref.ReferenceQueue
 import java.lang.ref.WeakReference
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.atomic.AtomicLong
-import java.util.concurrent.atomic.AtomicReference
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+/**
+ * Usage:
+ *
+ * ```
+ * var activity: Activity? by byWeakReference()
+ * ```
+ */
 fun <T> byWeakReference(value: T? = null, queue: ReferenceQueue<in T?>? = null) =
     WeakReference(value, queue).let {
         object : ReadWriteProperty<Any, T?> {
