@@ -34,7 +34,7 @@ class DelegatexTest {
     @Test
     fun `ReadOnlyPropert_or`() {
         val readOnly: ReadOnlyProperty<Any?, String?> = ReadOnlyProperty { _, _ -> null }
-        val value by readOnly.or { "fallback" }
+        val value by readOnly.orElse { "fallback" }
         assertEquals("fallback", value)
     }
 
@@ -230,9 +230,9 @@ class DelegatexTest {
     }
 
     private class TestClass(cache: MutableMap<String, Any> = mutableMapOf()) {
-        var username: String by stringDelegate().or { "guest_$it" }
+        var username: String by stringDelegate().orElse { "guest_$it" }
 
-        var customFallback: String by stringDelegate().or { "fallback_$it" }
+        var customFallback: String by stringDelegate().orElse { "fallback_$it" }
 
         var notNullProperty: String by stringDelegate().notNull()
 
@@ -260,7 +260,7 @@ class DelegatexTest {
             .validate { require(it.isNotEmpty()) }
 
         var complexPropertyWithFallback: String by stringDelegate(null)
-            .or { "guest_$it" }
+            .orElse { "guest_$it" }
             .map(to = { it.trim() }, from = { it })
 
         var observableValue: String by stringDelegate("").observable { old, new -> println("Observable: $old -> $new") }
@@ -272,7 +272,7 @@ class DelegatexTest {
 
     @Test
     fun `takeIf test`() {
-        val adultAge: Int? by User().asProperty().map(to = { it.age }, from = { copy(age = it) }).or { 0 }.takeIf { it > 18 }
+        val adultAge: Int? by User().asProperty().map(to = { it.age }, from = { copy(age = it) }).orElse { 0 }.takeIf { it > 18 }
         assertEquals(null, adultAge)
     }
 

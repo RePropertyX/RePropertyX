@@ -28,14 +28,14 @@ import kotlin.reflect.KProperty
  * @param orElse A function that provides a fallback value based on the property name
  * @return A ReadWriteProperty that never returns null
  */
-fun <P, R> ReadWriteProperty<P, R?>.or(orElse: P.(String) -> R): ReadWriteProperty<P, R> {
+fun <P, R> ReadWriteProperty<P, R?>.orElse(orElse: P.(String) -> R): ReadWriteProperty<P, R> {
     return object : ReadWriteProperty<P, R> {
         override fun getValue(thisRef: P, property: KProperty<*>): R {
-            return this@or.getValue(thisRef, property) ?: thisRef.orElse(property.name)
+            return this@orElse.getValue(thisRef, property) ?: thisRef.orElse(property.name)
         }
 
         override fun setValue(thisRef: P, property: KProperty<*>, value: R) {
-            this@or.setValue(thisRef, property, value)
+            this@orElse.setValue(thisRef, property, value)
         }
     }
 }
@@ -46,27 +46,8 @@ fun <P, R> ReadWriteProperty<P, R?>.or(orElse: P.(String) -> R): ReadWriteProper
  * @param orElse A function that provides a fallback value based on the property name
  * @return A ReadOnlyProperty that never returns null
  */
-fun <P, R> ReadOnlyProperty<P, R?>.or(orElse: P.(String) -> R): ReadOnlyProperty<P, R> =
-    ReadOnlyProperty { thisRef, property -> this@or.getValue(thisRef, property) ?: thisRef.orElse(property.name) }
-
-/**
- * Ensures a property is never null by throwing an exception if a null value is attempted.
- *
- * @param message Optional custom error message for null value exceptions
- * @return A ReadWriteProperty that throws an exception for null values
- */
-fun <P, R> ReadWriteProperty<P, R?>.notNull(message: String? = null): ReadWriteProperty<P, R> {
-    return object : ReadWriteProperty<P, R> {
-        override fun getValue(thisRef: P, property: KProperty<*>): R {
-            return this@notNull.getValue(thisRef, property) 
-                ?: throw IllegalStateException(message ?: "Property '${property.name}' cannot be null")
-        }
-
-        override fun setValue(thisRef: P, property: KProperty<*>, value: R) {
-            this@notNull.setValue(thisRef, property, value)
-        }
-    }
-}
+fun <P, R> ReadOnlyProperty<P, R?>.orElse(orElse: P.(String) -> R): ReadOnlyProperty<P, R> =
+    ReadOnlyProperty { thisRef, property -> this@orElse.getValue(thisRef, property) ?: thisRef.orElse(property.name) }
 
 /**
  * Transforms the value on get/set using provided transformation functions.
