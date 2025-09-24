@@ -68,5 +68,6 @@ fun Int.byAtomic() = AtomicInteger(this).by()
 fun Long.byAtomic() = AtomicLong(this).by()
 
 fun Boolean.byAtomic() = AtomicBoolean(this).by()
+fun String.byAtomic() = AtomicReference(this).by()
 
 fun CharSequence.byAtomic() = AtomicReference(this).by()
