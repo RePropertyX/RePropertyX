@@ -11,12 +11,9 @@ import kotlin.reflect.KProperty
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
-
 fun <T, V : Any> ReadWriteProperty<T, V>.animatedTyped(
-    duration: Duration = 300.milliseconds,
-    interpolator: Interpolator = FastOutSlowInInterpolator(),
     evaluator: TypeEvaluator<V>,
-    onApply: ValueAnimator.(V) -> Unit = {}
+    onApply: ValueAnimator.(V, V) -> Unit = { _, _ -> },
 ): ReadWriteProperty<T, V> {
     val original = this
     var runningAnimator: ValueAnimator? by mutablePropertyOf<ValueAnimator?>(null).onEachBefore { it?.cancel() }
@@ -26,14 +23,12 @@ fun <T, V : Any> ReadWriteProperty<T, V>.animatedTyped(
             val from = original.getValue(thisRef, property)
 
             runningAnimator = ValueAnimator.ofObject(evaluator, from, value).apply {
-                this.duration = duration.inWholeMilliseconds
-                this.interpolator = interpolator
+                onApply(from, value)
                 addUpdateListener { animation ->
                     @Suppress("UNCHECKED_CAST")
                     val animatedValue = animation.animatedValue as V
                     original.setValue(thisRef, property, animatedValue)
                 }
-                onApply(from)
                 start()
             }
         }
@@ -56,18 +51,20 @@ fun <T, V : Any> ReadWriteProperty<T, V>.animatedTyped(
  */
 @JvmName("animatedInt")
 fun <T> ReadWriteProperty<T, Int>.animated(
-    duration: Duration = 300.milliseconds,
-    interpolator: Interpolator = FastOutSlowInInterpolator(),
-    onApply: ValueAnimator.(Int) -> Unit = { }
-): ReadWriteProperty<T, Int> = animatedTyped(duration, interpolator, { fraction, start, end ->
+    onApply: ValueAnimator.(Int, Int) -> Unit = { _, _ ->
+        duration = 300
+        interpolator = FastOutSlowInInterpolator()
+    }
+): ReadWriteProperty<T, Int> = animatedTyped(duration, interpolator, onApply) { fraction, start, end ->
     start + ((end - start) * fraction).toInt()
-}, onApply)
+}
 
 @JvmName("animatedFloat")
 fun <T> ReadWriteProperty<T, Float>.animated(
-    duration: Duration = 300.milliseconds,
-    interpolator: Interpolator = FastOutSlowInInterpolator(),
-    onApply: ValueAnimator.(Float) -> Unit = { },
-): ReadWriteProperty<T, Float> = animatedTyped(duration, interpolator, { fraction, start, end ->
+    onApply: ValueAnimator.(Float, Float) -> Unit = { _, _ ->
+        duration = 300
+        interpolator = FastOutSlowInInterpolator()
+    }
+): ReadWriteProperty<T, Float> = animatedTyped(duration, interpolator, onApply) { fraction, start, end ->
     start + ((end - start) * fraction)
-}, onApply)
+}
