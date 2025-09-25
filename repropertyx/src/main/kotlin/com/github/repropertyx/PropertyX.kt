@@ -41,9 +41,6 @@ fun <P, R> ReadWriteProperty<P, R?>.orElse(orElse: P.(String) -> R): ReadWritePr
     }
 }
 
-fun <P, R> ReadWriteProperty<P, R?>.notNull(message: (P.(String) -> String)? = null): ReadWriteProperty<P, R> =
-    orElse { throw NullPointerException(message?.invoke(this, it) ?: "Property $it is null") }
-
 /**
  * Returns a non-null property by providing a fallback when the original delegate returns null.
  *
@@ -52,6 +49,30 @@ fun <P, R> ReadWriteProperty<P, R?>.notNull(message: (P.(String) -> String)? = n
  */
 fun <P, R> ReadOnlyProperty<P, R?>.orElse(orElse: P.(String) -> R): ReadOnlyProperty<P, R> =
     ReadOnlyProperty { thisRef, property -> this@orElse.getValue(thisRef, property) ?: thisRef.orElse(property.name) }
+
+fun <P, R> ReadWriteProperty<P, R?>.notNull(message: (P.(String) -> String)? = null): ReadWriteProperty<P, R> =
+    orElse { throw NullPointerException(message?.invoke(this, it) ?: "Property $it is null") }
+
+fun <P, R: Any> ReadWriteProperty<P, R>.orNull(
+    orElse: (P.(KProperty<*>) -> R)? = null,
+    onThrow: P.(Exception, KProperty<*>) -> R? = { _, _ -> null },
+): ReadWriteProperty<P, R?> = object : ReadWriteProperty<P, R?> {
+    override fun getValue(thisRef: P, property: KProperty<*>): R? =
+        try {
+            this@orNull.getValue(thisRef, property)
+        } catch (e: Exception) {
+            thisRef.onThrow(e, property)
+        }
+
+    override fun setValue(thisRef: P, property: KProperty<*>, value: R?) {
+        try {
+            value?.let { this@orNull.setValue(thisRef, property, it) }
+                ?: orElse?.invoke(thisRef, property)?.let { this@orNull.setValue(thisRef, property, it) }
+        } catch (e: Exception) {
+            // ignore
+        }
+    }
+}
 
 /**
  * Transforms the value on get/set using provided transformation functions.
