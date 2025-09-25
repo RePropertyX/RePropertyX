@@ -1,6 +1,9 @@
 package com.github.repropertyx
 
 import java.lang.reflect.Field
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -13,26 +16,27 @@ inline fun <reified T: Any, V> byField(
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(thisRef: T, property: KProperty<*>): V =
-        (cachedField.takeIf { cache } ?: thisRef.field(name(thisRef, property.name), field)
-            .also { it.isAccessible = true }
-            .also { if (cache) cachedField = it })
-            .get(thisRef) as V
+        cachedField(thisRef, property).get(thisRef) as V
 
     override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
-        (cachedField.takeIf { cache } ?: thisRef.field(name(thisRef, property.name), field)
-            .also { it.isAccessible = true }
-            .also { if (cache) cachedField = it })
-            .set(thisRef, value)
+        cachedField(thisRef, property).set(thisRef, value)
     }
+
+    fun cachedField(thisRef: T, property: KProperty<*>): Field =
+        (cachedField.takeIf { cache }
+            ?: thisRef.tryRunInfer({ it is NoSuchFieldException })
+            { field(name(thisRef, property.name)) }
+                .also { it.isAccessible = true }
+                .also { if (cache) cachedField = it })
 }
 
-inline fun <reified T: Any> T.field(
-    name: String,
-    crossinline onField: Class<T>.(String) -> Field,
-): Field = try {
-    javaClass.onField(name)
-} catch (e: NoSuchFieldException) {
-    if (T::class.java != javaClass) T::class.java.onField(name)
+inline fun <reified T: Any, R> T.tryRunInfer(
+    should: (Exception) -> Boolean = { true },
+    block: Class<T>.() -> R,
+): R = try {
+    javaClass.block()
+} catch (e: Exception) {
+    if (T::class.java != javaClass && should(e)) T::class.java.block()
     else throw e
 }
 

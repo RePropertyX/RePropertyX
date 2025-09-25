@@ -19,6 +19,7 @@ package com.github.repropertyx
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.lang.NullPointerException
+import java.lang.reflect.Field
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -238,6 +239,13 @@ fun <P, R> ReadWriteProperty<P, R>.cacheIn(cache: MutableMap<String, Any>): Read
             cache[key] = value as Any
             this@cacheIn.setValue(thisRef, property, value)
         }
+    }
+}
+
+fun <T, V: Any> ReadOnlyProperty<T, V>.cache(onCache: (T, KProperty<*>) -> V): ReadOnlyProperty<T, V> {
+    var cached: V? = null
+    return ReadOnlyProperty { thisRef, property ->
+        (cached ?: onCache(thisRef, property).also { cached = it })
     }
 }
 
