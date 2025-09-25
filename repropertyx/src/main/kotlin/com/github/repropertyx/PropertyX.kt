@@ -66,8 +66,8 @@ fun <P, R: Any> ReadWriteProperty<P, R>.orNull(
 
     override fun setValue(thisRef: P, property: KProperty<*>, value: R?) {
         try {
-            value?.let { this@orNull.setValue(thisRef, property, it) }
-                ?: orElse?.invoke(thisRef, property)?.let { this@orNull.setValue(thisRef, property, it) }
+            (value ?: orElse?.invoke(thisRef, property))
+                ?.let { this@orNull.setValue(thisRef, property, it) }
         } catch (e: Exception) {
             // ignore
         }
