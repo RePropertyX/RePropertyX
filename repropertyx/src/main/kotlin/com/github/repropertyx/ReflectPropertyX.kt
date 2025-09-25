@@ -5,21 +5,22 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 fun <T: Any, V> byField(
+    field: Class<T>.(String) -> Field,
     cache: Boolean = true,
     name: T.(String) -> String = { it },
-    field: Class<T>.(String) -> Field,
 ) = object : ReadWriteProperty<T, V> {
     private var cachedField: Field? = null
-        set(value) { field = value?.also { it.isAccessible = true } }
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(thisRef: T, property: KProperty<*>): V =
         (cachedField.takeIf { cache } ?: thisRef.javaClass.field(name(thisRef, property.name))
+            .also { it.isAccessible = true }
             .also { if (cache) cachedField = it })
             .get(thisRef) as V
 
     override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
         (cachedField.takeIf { cache } ?: thisRef.javaClass.field(name(thisRef, property.name))
+            .also { it.isAccessible = true }
             .also { if (cache) cachedField = it })
             .set(thisRef, value)
     }
