@@ -184,7 +184,7 @@ class PropertyDelegateTest {
 
     @Test
     fun testCustomErrorHandling() {
-        val customErrorField: String? by person.by<Person, String>(byDeclaredField { "_nonExistent" })
+        val customErrorField: String? by person.byDeclaredField<Person, String> { "_nonExistent" }
             .orNull { e, property ->
                 when (e) {
                     is NoSuchFieldException -> "default_value"

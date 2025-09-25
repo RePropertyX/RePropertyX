@@ -49,8 +49,8 @@ fun <T: Any, V> byDeclaredField(cache: Boolean = true, name: T.(String) -> Strin
         field = { getDeclaredField(it) }
     )
 
-fun <T: Any, V: Any> T.declaredFieldBy(cache: Boolean = true, name: T.(String) -> String = { it }) =
-    by<T, V>(byDeclaredField(cache, name))
+fun <T: Any, V> T.byDeclaredField(cache: Boolean = true, name: T.(String) -> String = { it }) =
+    by<T, V>(com.github.repropertyx.byDeclaredField(cache, name))
 
 fun <T: Any, V> byFirstDeclaredField(cache: Boolean = true, name: T.(String) -> String = { it }) =
     byField<T, V>(
@@ -66,7 +66,7 @@ fun <T: Any, V> byField(cache: Boolean = true, name: T.(String) -> String = { it
         field = { getField(it) }
     )
 
-fun Class<*>.firstDeclaredField(name: String): Field {
+fun <T> Class<T>.firstDeclaredField(name: String): Field {
     var clazz: Class<*>? = this
     while (clazz != null) {
         try {
@@ -79,7 +79,7 @@ fun Class<*>.firstDeclaredField(name: String): Field {
     throw NoSuchFieldException(name)
 }
 
-fun Class<*>.allDeclaredFields(name: String): Sequence<Field> = sequence {
+fun <T> Class<T>.allDeclaredFields(name: String): Sequence<Field> = sequence {
     var clazz: Class<*>? = this@allDeclaredFields
     while (clazz != null) {
         try {
