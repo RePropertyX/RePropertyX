@@ -53,9 +53,9 @@ fun <P, R> ReadOnlyProperty<P, R?>.notNull(message: (P.(String) -> String)? = nu
     orElse { throw IllegalStateException(message?.invoke(this, it) ?: "Property $it is null") }
 
 @JvmOverloads
-inline fun <P, reified R: Any> ReadWriteProperty<P, R>.orNull(
-    noinline orElse: (P.(KProperty<*>) -> R)? = null,
-    crossinline onThrow: P.(Exception, KProperty<*>) -> R? = { _, _ -> null },
+fun <P, R: Any> ReadWriteProperty<P, R>.orNull(
+    orElse: (P.(KProperty<*>) -> R)? = null,
+    onThrow: P.(Exception, KProperty<*>) -> R? = { _, _ -> null },
 ): ReadWriteProperty<P, R?> = object : ReadWriteProperty<P, R?>, ReadOnlyProperty<P, R?> by orNull(onThrow) {
     override fun setValue(thisRef: P, property: KProperty<*>, value: R?) {
         try {
@@ -68,8 +68,8 @@ inline fun <P, reified R: Any> ReadWriteProperty<P, R>.orNull(
 }
 
 @JvmOverloads
-inline fun <P, reified R: Any> ReadOnlyProperty<P, R>.orNull(
-    crossinline onThrow: P.(Exception, KProperty<*>) -> R? = { _, _ -> null },
+fun <P, R: Any> ReadOnlyProperty<P, R>.orNull(
+    onThrow: P.(Exception, KProperty<*>) -> R? = { _, _ -> null },
 ): ReadOnlyProperty<P, R?> = ReadOnlyProperty { thisRef, property ->
     try {
         this@orNull.getValue(thisRef, property)
@@ -467,7 +467,7 @@ fun <T, V> ReadWriteProperty<T, V>.readOnly(): ReadOnlyProperty<T, V> = this
  * var Person.name: String by byDeclaredField<Person, String> { "_name" }
  * ```
  */
-inline fun <T, reified V> T.by(property: ReadWriteProperty<T, V>): ReadWriteProperty<Any?, V> = object : ReadWriteProperty<Any?, V> {
+fun <T, V> T.by(property: ReadWriteProperty<T, V>): ReadWriteProperty<Any?, V> = object : ReadWriteProperty<Any?, V> {
     override fun getValue(thisRef: Any?, prop: KProperty<*>): V =
         property.getValue(this@by, prop)
     override fun setValue(thisRef: Any?, prop: KProperty<*>, value: V) {
