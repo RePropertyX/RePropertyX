@@ -30,32 +30,27 @@ fun <T: Any, V> byField(
  * Usage:
  *
  * ```
- * byDeclaredField<T, V>(
- *   cache = cache,
- *   name = name
- * ).orNull()
+ * var Person.name: String by byDeclaredField<Person, String?> { "_name" }
  * ```
  *
  * ```
- * byDeclaredField<T, V>(
- *   cache = cache,
- *   name = name
- * ).orNull().readOnly()
+ * val Person.name: String? by byDeclaredField<Person, String?> { "_name" }.orNull().readOnly()
  * ```
  *
  * ```
- * byDeclaredField<T, V>(
- *   cache = cache,
- *   name = name
- * ).orNull { e, _ -> if (e is NoSuchFieldException) null else throw e }.readOnly()
+ * val Person.name: String? by byDeclaredField<Person, String?> { "_name" }
+ *   .orNull { e, _ -> if (e is NoSuchFieldException) null else throw e }.readOnly()
  * ```
  */
-fun <T: Any, V: Any> byDeclaredField(cache: Boolean = true, name: T.(String) -> String = { it }) =
+fun <T: Any, V> byDeclaredField(cache: Boolean = true, name: T.(String) -> String = { it }) =
     byField<T, V>(
         cache = cache,
         name = name,
         field = { getDeclaredField(it) }
     )
+
+fun <T: Any, V: Any> T.declaredFieldBy(cache: Boolean = true, name: T.(String) -> String = { it }) =
+    by<T, V>(byDeclaredField(cache, name))
 
 fun <T: Any, V> byFirstDeclaredField(cache: Boolean = true, name: T.(String) -> String = { it }) =
     byField<T, V>(

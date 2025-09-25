@@ -182,18 +182,19 @@ class PropertyDelegateTest {
         assertNull(person.nonExistentField)
     }
 
-    val Person.customErrorField: String? by byDeclaredField<Person, String> { "_nonExistent" }
-        .orNull { e, property ->
-            when (e) {
-                is NoSuchFieldException -> "default_value"
-                else -> throw e
-            }
-        }
-
     @Test
     fun testCustomErrorHandling() {
+        val customErrorField: String by person.by(byDeclaredField { "_nonExistent" })
+        val customErrorFieldOrNull: String? by person.by<Person, String>(byDeclaredField { "_nonExistent" })
+            .orNull { e, property ->
+                when (e) {
+                    is NoSuchFieldException -> "default_value"
+                    else -> throw e
+                }
+            }
 
-        assertEquals("default_value", person.customErrorField)
+
+        assertEquals("default_value", customErrorField)
     }
 
     // Caching Tests
@@ -210,15 +211,14 @@ class PropertyDelegateTest {
         assertEquals("John Doe", name1)
     }
 
-    val Person.nameWithoutCache: String by byDeclaredField<Person, String>(cache = true) { "_name" }
-
     @Test
     fun testNoCaching() {
         // Test with caching disabled
+        val nameWithoutCache: String by person.by(byDeclaredField(cache = true) { "_name" })
 
-        assertEquals("John Doe", person.nameWithoutCache)
+        assertEquals("John Doe", nameWithoutCache)
         person.name = "Modified"
-        assertEquals("Modified", person.nameWithoutCache)
+        assertEquals("Modified", nameWithoutCache)
     }
 
     // Additional edge case tests

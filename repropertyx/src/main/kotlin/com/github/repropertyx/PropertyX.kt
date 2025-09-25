@@ -29,17 +29,13 @@ import kotlin.reflect.KProperty
  * @param orElse A function that provides a fallback value based on the property name
  * @return A ReadWriteProperty that never returns null
  */
-fun <P, R> ReadWriteProperty<P, R?>.orElse(orElse: P.(String) -> R): ReadWriteProperty<P, R> {
-    return object : ReadWriteProperty<P, R> {
-        override fun getValue(thisRef: P, property: KProperty<*>): R {
-            return this@orElse.getValue(thisRef, property) ?: thisRef.orElse(property.name)
-        }
-
+fun <P, R> ReadWriteProperty<P, R?>.orElse(orElse: P.(String) -> R): ReadWriteProperty<P, R> =
+    @Suppress("UNCHECKED_CAST")
+    object : ReadWriteProperty<P, R>, ReadOnlyProperty<P, R> by (this as ReadOnlyProperty<P, R>).orElse(orElse) {
         override fun setValue(thisRef: P, property: KProperty<*>, value: R) {
             this@orElse.setValue(thisRef, property, value)
         }
     }
-}
 
 /**
  * Returns a non-null property by providing a fallback when the original delegate returns null.
@@ -51,19 +47,15 @@ fun <P, R> ReadOnlyProperty<P, R?>.orElse(orElse: P.(String) -> R): ReadOnlyProp
     ReadOnlyProperty { thisRef, property -> this@orElse.getValue(thisRef, property) ?: thisRef.orElse(property.name) }
 
 fun <P, R> ReadWriteProperty<P, R?>.notNull(message: (P.(String) -> String)? = null): ReadWriteProperty<P, R> =
-    orElse { throw NullPointerException(message?.invoke(this, it) ?: "Property $it is null") }
+    orElse { throw IllegalStateException(message?.invoke(this, it) ?: "Property $it is null") }
+
+fun <P, R> ReadOnlyProperty<P, R?>.notNull(message: (P.(String) -> String)? = null): ReadOnlyProperty<P, R> =
+    orElse { throw IllegalStateException(message?.invoke(this, it) ?: "Property $it is null") }
 
 fun <P, R: Any> ReadWriteProperty<P, R>.orNull(
     orElse: (P.(KProperty<*>) -> R)? = null,
     onThrow: P.(Exception, KProperty<*>) -> R? = { _, _ -> null },
-): ReadWriteProperty<P, R?> = object : ReadWriteProperty<P, R?> {
-    override fun getValue(thisRef: P, property: KProperty<*>): R? =
-        try {
-            this@orNull.getValue(thisRef, property)
-        } catch (e: Exception) {
-            thisRef.onThrow(e, property)
-        }
-
+): ReadWriteProperty<P, R?> = object : ReadWriteProperty<P, R?>, ReadOnlyProperty<P, R?> by orNull(onThrow) {
     override fun setValue(thisRef: P, property: KProperty<*>, value: R?) {
         try {
             (value ?: orElse?.invoke(thisRef, property))
@@ -71,6 +63,16 @@ fun <P, R: Any> ReadWriteProperty<P, R>.orNull(
         } catch (e: Exception) {
             // ignore
         }
+    }
+}
+
+fun <P, R: Any> ReadOnlyProperty<P, R>.orNull(
+    onThrow: P.(Exception, KProperty<*>) -> R? = { _, _ -> null },
+): ReadOnlyProperty<P, R?> = ReadOnlyProperty { thisRef, property ->
+    try {
+        this@orNull.getValue(thisRef, property)
+    } catch (e: Exception) {
+        thisRef.onThrow(e, property)
     }
 }
 
@@ -84,17 +86,14 @@ fun <P, R: Any> ReadWriteProperty<P, R>.orNull(
 fun <P, V, R> ReadWriteProperty<P, V>.map(
     to: P.(V) -> R,
     from: V.(R) -> V
-): ReadWriteProperty<P, R> {
-    return object : ReadWriteProperty<P, R> {
-        override fun getValue(thisRef: P, property: KProperty<*>): R {
-            return thisRef.to(this@map.getValue(thisRef, property))
-        }
-
-        override fun setValue(thisRef: P, property: KProperty<*>, value: R) {
-            this@map.setValue(thisRef, property, this@map.getValue(thisRef, property).from(value))
-        }
+): ReadWriteProperty<P, R> = object : ReadWriteProperty<P, R>, ReadOnlyProperty<P, R> by map(to) {
+    override fun setValue(thisRef: P, property: KProperty<*>, value: R) {
+        this@map.setValue(thisRef, property, this@map.getValue(thisRef, property).from(value))
     }
 }
+
+fun <P, V, R> ReadOnlyProperty<P, V>.map(to: P.(V) -> R): ReadOnlyProperty<P, R> =
+    ReadOnlyProperty { thisRef, property -> thisRef.to(this@map.getValue(thisRef, property)) }
 
 /**
  * Validates values on read/write using the provided validator function.
@@ -425,3 +424,51 @@ suspend fun <T, V> MutableStateFlow<V>.setValue(
 ) = emit(value)
 
 fun <T, V> ReadWriteProperty<T, V>.readOnly(): ReadOnlyProperty<T, V> = this
+
+/**
+ * Usage:
+ *
+ * ```
+ * var name: String by byDeclaredField { "_name" }.by(person)
+ * name = "Yongjhih
+ * ```
+ *
+ * Before:
+ *
+ * ```
+ * var Person.name: String by byDeclaredField<Person, String> { "_name" }
+ * ```
+ *
+ * ```
+ * fun <T, V> ReadWriteProperty<T, V>.by(ref: T): ReadWriteProperty<Any?, V> = object : ReadWriteProperty<Any?, V> {
+ *     override fun getValue(thisRef: Any?, property: KProperty<*>): V =
+ *         this@by.getValue(ref, property)
+ *
+ *     override fun setValue(thisRef: Any?, property: KProperty<*>, value: V) {
+ *         this@by.setValue(ref, property, value)
+ *     }
+ * }
+ * ```
+ */
+
+/**
+ * Usage:
+ *
+ * ```
+ * var name: String by person.by(byDeclaredField { "_name" })
+ * name = "Yongjhih
+ * ```
+ *
+ * Before:
+ *
+ * ```
+ * var Person.name: String by byDeclaredField<Person, String> { "_name" }
+ * ```
+ */
+fun <T, V> T.by(property: ReadWriteProperty<T, V>): ReadWriteProperty<Any?, V> = object : ReadWriteProperty<Any?, V> {
+    override fun getValue(thisRef: Any?, prop: KProperty<*>): V =
+        property.getValue(this@by, prop)
+    override fun setValue(thisRef: Any?, prop: KProperty<*>, value: V) {
+        property.setValue(this@by, prop, value)
+    }
+}
