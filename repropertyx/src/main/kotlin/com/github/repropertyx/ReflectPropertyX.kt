@@ -4,26 +4,36 @@ import java.lang.reflect.Field
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-fun <T: Any, V> byField(
-    field: Class<T>.(String) -> Field,
+inline fun <reified T: Any, V> byField(
+    crossinline field: Class<T>.(String) -> Field,
     cache: Boolean = true,
-    name: T.(String) -> String = { it },
+    crossinline name: T.(String) -> String = { it },
 ) = object : ReadWriteProperty<T, V> {
     private var cachedField: Field? = null
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(thisRef: T, property: KProperty<*>): V =
-        (cachedField.takeIf { cache } ?: thisRef.javaClass.field(name(thisRef, property.name))
+        (cachedField.takeIf { cache } ?: thisRef.field(name(thisRef, property.name), field)
             .also { it.isAccessible = true }
             .also { if (cache) cachedField = it })
             .get(thisRef) as V
 
     override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
-        (cachedField.takeIf { cache } ?: thisRef.javaClass.field(name(thisRef, property.name))
+        (cachedField.takeIf { cache } ?: thisRef.field(name(thisRef, property.name), field)
             .also { it.isAccessible = true }
             .also { if (cache) cachedField = it })
             .set(thisRef, value)
     }
+}
+
+inline fun <reified T: Any> T.field(
+    name: String,
+    crossinline onField: Class<T>.(String) -> Field,
+): Field = try {
+    javaClass.onField(name)
+} catch (e: NoSuchFieldException) {
+    if (T::class.java != javaClass) T::class.java.onField(name)
+    else throw e
 }
 
 /**
@@ -42,24 +52,21 @@ fun <T: Any, V> byField(
  *   .orNull { e, _ -> if (e is NoSuchFieldException) null else throw e }.readOnly()
  * ```
  */
-fun <T: Any, V> byDeclaredField(cache: Boolean = true, name: T.(String) -> String = { it }) =
+inline fun <reified T: Any, V> byDeclaredField(cache: Boolean = true, crossinline name: T.(String) -> String = { it }) =
     byField<T, V>(
         cache = cache,
         name = name,
         field = { getDeclaredField(it) }
     )
 
-fun <T: Any, V> T.byDeclaredField(cache: Boolean = true, name: T.(String) -> String = { it }) =
-    by<T, V>(com.github.repropertyx.byDeclaredField(cache, name))
-
-fun <T: Any, V> byFirstDeclaredField(cache: Boolean = true, name: T.(String) -> String = { it }) =
+inline fun <reified T: Any, V> byFirstDeclaredField(cache: Boolean = true, crossinline name: T.(String) -> String = { it }) =
     byField<T, V>(
         cache = cache,
         name = name,
         field = { firstDeclaredField(it) }
     )
 
-fun <T: Any, V> byField(cache: Boolean = true, name: T.(String) -> String = { it }) =
+inline fun <reified T: Any, V> byField(cache: Boolean = true, crossinline name: T.(String) -> String = { it }) =
     byField<T, V>(
         cache = cache,
         name = name,
@@ -77,16 +84,4 @@ fun <T> Class<T>.firstDeclaredField(name: String): Field {
         clazz = clazz.superclass
     }
     throw NoSuchFieldException(name)
-}
-
-fun <T> Class<T>.allDeclaredFields(name: String): Sequence<Field> = sequence {
-    var clazz: Class<*>? = this@allDeclaredFields
-    while (clazz != null) {
-        try {
-            yield(clazz.getDeclaredField(name))
-        } catch (e: NoSuchFieldException) {
-            // Ignore
-        }
-        clazz = clazz.superclass
-    }
 }

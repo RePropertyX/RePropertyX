@@ -467,7 +467,7 @@ fun <T, V> ReadWriteProperty<T, V>.readOnly(): ReadOnlyProperty<T, V> = this
  * var Person.name: String by byDeclaredField<Person, String> { "_name" }
  * ```
  */
-fun <T, V> T.by(property: ReadWriteProperty<T, V>): ReadWriteProperty<Any?, V> = object : ReadWriteProperty<Any?, V> {
+inline fun <reified T, V> T.by(property: ReadWriteProperty<T, V>): ReadWriteProperty<Any?, V> = object : ReadWriteProperty<Any?, V> {
     override fun getValue(thisRef: Any?, prop: KProperty<*>): V =
         property.getValue(this@by, prop)
     override fun setValue(thisRef: Any?, prop: KProperty<*>, value: V) {
