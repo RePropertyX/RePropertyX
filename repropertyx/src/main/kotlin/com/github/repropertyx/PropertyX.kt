@@ -18,6 +18,7 @@ package com.github.repropertyx
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.lang.NullPointerException
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -39,6 +40,9 @@ fun <P, R> ReadWriteProperty<P, R?>.orElse(orElse: P.(String) -> R): ReadWritePr
         }
     }
 }
+
+fun <P, R> ReadWriteProperty<P, R?>.notNull(message: (P.(String) -> String)? = null): ReadWriteProperty<P, R> =
+    orElse { throw NullPointerException(message?.invoke(this, it) ?: "Property $it is null") }
 
 /**
  * Returns a non-null property by providing a fallback when the original delegate returns null.
@@ -358,14 +362,12 @@ fun <V> propertyOf(
     }
 }
 
-fun <V> mutablePropertyOf(
-    value: V,
-): ReadWriteProperty<V, V> = object : ReadWriteProperty<V, V> {
+fun <V> mutablePropertyOf(value: V): ReadWriteProperty<Any?, V> = object : ReadWriteProperty<Any?, V> {
     private var value: V = value
 
-    override fun getValue(thisRef: V, property: KProperty<*>): V = value
+    override fun getValue(thisRef: Any?, property: KProperty<*>): V = value
 
-    override fun setValue(thisRef: V, property: KProperty<*>, value: V) {
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: V) {
         this.value = value
     }
 }

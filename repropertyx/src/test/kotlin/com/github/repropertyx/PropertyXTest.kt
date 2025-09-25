@@ -236,7 +236,7 @@ class DelegatexTest {
 
         var notNullProperty: String by stringDelegate().notNull()
 
-        var notNullPropertyWithMessage: String by stringDelegate().notNull("Custom null error message")
+        var notNullPropertyWithMessage: String by stringDelegate().notNull { "Custom null error message" }
 
         var ageString: String by stringDelegate("0")
         var age: Int by stringDelegate("0").map(to = { it.toInt() }, from = { it.toString() })
