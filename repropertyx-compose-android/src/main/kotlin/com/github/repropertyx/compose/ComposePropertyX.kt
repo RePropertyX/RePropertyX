@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -71,3 +72,6 @@ fun <V> mutableStateOf(property: ReadWriteProperty<Any?, V>): ReadWriteProperty<
 fun <V> ReadWriteProperty<Any?, V>.rememberAsMutableState(): ReadWriteProperty<Any?, V> {
     return remember { this@rememberAsMutableState.asMutableState() }
 }
+
+fun <V> ReadWriteProperty<Any?, V>.cast(): ReadWriteProperty<Any?, V> =
+    this@cast.asMutableState()

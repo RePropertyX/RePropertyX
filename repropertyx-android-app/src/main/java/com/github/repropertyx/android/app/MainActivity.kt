@@ -59,8 +59,11 @@ import com.github.repropertyx.android.byInt
 import com.github.repropertyx.android.byLong
 import com.github.repropertyx.android.byString
 import com.github.repropertyx.compose.asMutableState
+import com.github.repropertyx.compose.cast
+import com.github.repropertyx.orNull
 import com.github.repropertyx.compose.mutableStateOf
 import com.github.repropertyx.compose.rememberAsMutableState
+import com.github.repropertyx.orElse
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -84,15 +87,15 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun PrefsEditorScreen(prefs: SharedPreferences, prefsEditor: PrefsEditor) {
     // Clean syntax - no verbose type parameters needed
-    var username: String? by prefs.byString().rememberAsMutableState()
-    var userAge: Int? by prefs.byInt().rememberAsMutableState()
-    var notificationsEnabled: Boolean? by prefs.byBoolean().rememberAsMutableState()
-    var volumeLevel: Float? by prefs.byFloat().rememberAsMutableState()
-    var lastLoginTime: Long? by prefs.byLong().rememberAsMutableState()
-
-    // Custom key transformation examples
-    var themeMode: String? by prefs.byString { "theme_$it" }.rememberAsMutableState()
-    var maxRetries: Int? by prefs.byInt { "network_max_retries" }.rememberAsMutableState()
+    var username: String? by remember { prefs.byString().asMutableState() }.cast()
+    var userAge: Int? by remember { prefs.byInt().asMutableState() }.cast()
+    var notificationsEnabled: Boolean? by remember { prefs.byBoolean().asMutableState() }.cast()
+    var volumeLevel: Float? by remember { prefs.byFloat().asMutableState() }.cast()
+    var lastLoginTime: Long? by remember { prefs.byLong().asMutableState() }.cast()
+.cast()
+    // Custom key transformation examples.cast()
+    var themeMode: String? by remember { prefs.byString { "theme_$it" }.asMutableState() }.cast()
+    var maxRetries: Int? by remember { prefs.byInt { "network_max_retries" }.asMutableState() }.cast()
 
     // Alternative syntaxes (all work the same way):
     // var username: String? by remember { prefs.byString().asMutableState() }
