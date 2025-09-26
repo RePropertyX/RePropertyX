@@ -60,6 +60,7 @@ import com.github.repropertyx.android.byLong
 import com.github.repropertyx.android.byString
 import com.github.repropertyx.compose.asMutableState
 import com.github.repropertyx.compose.mutableStateOf
+import com.github.repropertyx.compose.rememberAsMutableState
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -82,30 +83,21 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun PrefsEditorScreen(prefs: SharedPreferences, prefsEditor: PrefsEditor) {
-    var username: String? by prefs.byString().asMutableState()
+    // Clean syntax - no verbose type parameters needed
+    var username: String? by prefs.byString().rememberAsMutableState()
+    var userAge: Int? by prefs.byInt().rememberAsMutableState()
+    var notificationsEnabled: Boolean? by prefs.byBoolean().rememberAsMutableState()
+    var volumeLevel: Float? by prefs.byFloat().rememberAsMutableState()
+    var lastLoginTime: Long? by prefs.byLong().rememberAsMutableState()
 
-    // Int preference for user age
-    var userAge: Int? by prefs.byInt().asMutableState()
+    // Custom key transformation examples
+    var themeMode: String? by prefs.byString { "theme_$it" }.rememberAsMutableState()
+    var maxRetries: Int? by prefs.byInt { "network_max_retries" }.rememberAsMutableState()
 
-    // Boolean preference for notifications
-    var notificationsEnabled: Boolean? by prefs.byBoolean().asMutableState()
-
-    // Float preference for volume level
-    var volumeLevel: Float? by prefs.byFloat().asMutableState()
-
-    // Long preference for last login timestamp
-    var lastLoginTime: Long? by prefs.byLong().asMutableState()
-
-    // Custom key transformation example
-    var themeMode: String? by prefs.byString { "theme_$it" }.asMutableState()
-
-    // Another custom key example with prefix
-    var maxRetries: Int? by prefs.byInt { "network_max_retries" }.asMutableState()
-
-    // Alternative syntax examples (both syntaxes work the same way):
-    // var username: String? by mutableStateOf(prefs.byString())
-    // var userAge: Int? by mutableStateOf(prefs.byInt())
-    // var themeMode: String? by mutableStateOf(prefs.byString { "theme_$it" })
+    // Alternative syntaxes (all work the same way):
+    // var username: String? by remember { prefs.byString().asMutableState() }
+    // var username: String? by remember { mutableStateOf(prefs.byString()) }
+    // var username: String? by prefs.byString().asMutableState()  // Without remember (less efficient)
 
     Column(
         modifier = Modifier

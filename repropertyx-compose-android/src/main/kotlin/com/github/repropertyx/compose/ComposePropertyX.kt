@@ -17,6 +17,7 @@
 package com.github.repropertyx.compose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import kotlin.properties.ReadWriteProperty
@@ -40,35 +41,13 @@ fun <V> mutableStateOf(
 }
 */
 
-@Composable
 fun <V> ReadWriteProperty<Any?, V>.asMutableState(): ReadWriteProperty<Any?, V> {
-    val originalProperty = this@asMutableState
-    val compositionLocalState = remember { mutableStateOf<V?>(null) }
-    val initialized = remember { mutableStateOf(false) }
-
-    return remember(originalProperty) {
-        object : ReadWriteProperty<Any?, V> {
-            override fun getValue(thisRef: Any?, property: KProperty<*>): V {
-                if (!initialized.value) {
-                    val initialValue = originalProperty.getValue(thisRef, property)
-                    compositionLocalState.value = initialValue
-                    initialized.value = true
-                }
-                @Suppress("UNCHECKED_CAST")
-                return compositionLocalState.value as V
-            }
-
-            override fun setValue(thisRef: Any?, property: KProperty<*>, value: V) {
-                originalProperty.setValue(thisRef, property, value)
-                compositionLocalState.value = value
-            }
-        }
-    }
+    return com.github.repropertyx.compose.mutableStateOf(this@asMutableState)
 }
 
 fun <V> mutableStateOf(property: ReadWriteProperty<Any?, V>): ReadWriteProperty<Any?, V> {
-    val internalState = mutableStateOf<V?>(null)
-    val initialized = mutableStateOf(false)
+    val internalState = androidx.compose.runtime.mutableStateOf<V?>(null)
+    val initialized = androidx.compose.runtime.mutableStateOf(false)
 
     return object : ReadWriteProperty<Any?, V> {
         override fun getValue(thisRef: Any?, prop: KProperty<*>): V {
@@ -86,4 +65,9 @@ fun <V> mutableStateOf(property: ReadWriteProperty<Any?, V>): ReadWriteProperty<
             internalState.value = value
         }
     }
+}
+
+@Composable
+fun <V> ReadWriteProperty<Any?, V>.rememberAsMutableState(): ReadWriteProperty<Any?, V> {
+    return remember { this@rememberAsMutableState.asMutableState() }
 }
