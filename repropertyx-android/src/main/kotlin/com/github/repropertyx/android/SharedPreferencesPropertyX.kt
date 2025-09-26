@@ -18,6 +18,7 @@ package com.github.repropertyx.android
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.github.repropertyx.by
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -42,29 +43,8 @@ inline fun <T> bySharedPreference(
             thisRef.edit { setter(key?.invoke(thisRef, property.name) ?: property.name, value) }
     }
 
-/**
- * Creates a [ReadWriteProperty] delegate tied to a specific [SharedPreferences] instance.
- *
- * @param getter Function to retrieve a value by key.
- * @param setter Function to persist a value by key.
- * @param key Optional key transformer.
- *
- * @return A property delegate usable inside any class.
- */
-inline fun <T> SharedPreferences.by(
-    crossinline getter: SharedPreferences.(String) -> T?,
-    crossinline setter: SharedPreferences.Editor.(String, T?) -> SharedPreferences.Editor,
-    noinline key: (SharedPreferences.(String) -> String)? = null
-): ReadWriteProperty<Any, T?> =
-    object : ReadWriteProperty<Any, T?> {
-        override fun getValue(thisRef: Any, property: KProperty<*>): T? =
-            getter(key?.invoke(this@by, property.name) ?: property.name)
-        override fun setValue(thisRef: Any, property: KProperty<*>, value: T?) =
-            edit { setter(key?.invoke(this@by, property.name) ?: property.name, value) }
-    }
-
 fun SharedPreferences.byString(key: (SharedPreferences.(String) -> String)? = null) =
-    by(SharedPreferences::getStringOrNull, SharedPreferences.Editor::put, key)
+    by(bySharedPreferenceString(key))
 
 fun bySharedPreferenceString(key: (SharedPreferences.(String) -> String)? = null) =
     bySharedPreference(SharedPreferences::getStringOrNull, SharedPreferences.Editor::put, key)
@@ -73,31 +53,31 @@ fun bySharedPreferenceInt(key: (SharedPreferences.(String) -> String)? = null) =
     bySharedPreference(SharedPreferences::getIntOrNull, SharedPreferences.Editor::put, key)
 
 fun SharedPreferences.byInt(key: (SharedPreferences.(String) -> String)? = null) =
-    by(SharedPreferences::getIntOrNull, SharedPreferences.Editor::put, key)
+    by(bySharedPreferenceInt(key))
 
 fun bySharedPreferenceBoolean(key: (SharedPreferences.(String) -> String)? = null) =
     bySharedPreference(SharedPreferences::getBooleanOrNull, SharedPreferences.Editor::put, key)
 
 fun SharedPreferences.byBoolean(key: (SharedPreferences.(String) -> String)? = null) =
-    by(SharedPreferences::getBooleanOrNull, SharedPreferences.Editor::put, key)
+    by(bySharedPreferenceBoolean(key))
 
 fun bySharedPreferenceStringSet(key: (SharedPreferences.(String) -> String)? = null) =
     bySharedPreference(SharedPreferences::getStringSetOrNull, SharedPreferences.Editor::put, key)
 
 fun SharedPreferences.byStringSet(key: (SharedPreferences.(String) -> String)? = null) =
-    by(SharedPreferences::getStringSetOrNull, SharedPreferences.Editor::put, key)
+    by(bySharedPreferenceStringSet(key))
 
 fun bySharedPreferenceFloat(key: (SharedPreferences.(String) -> String)? = null) =
     bySharedPreference(SharedPreferences::getFloatOrNull, SharedPreferences.Editor::put, key)
 
 fun SharedPreferences.byFloat(key: (SharedPreferences.(String) -> String)? = null) =
-    by(SharedPreferences::getFloatOrNull, SharedPreferences.Editor::put, key)
+    by(bySharedPreferenceFloat(key))
 
 fun bySharedPreferenceLong(key: (SharedPreferences.(String) -> String)? = null) =
     bySharedPreference(SharedPreferences::getLongOrNull, SharedPreferences.Editor::put, key)
 
 fun SharedPreferences.byLong(key: (SharedPreferences.(String) -> String)? = null) =
-    by(SharedPreferences::getLongOrNull, SharedPreferences.Editor::put, key)
+    by(bySharedPreferenceLong(key))
 
 fun SharedPreferences.getStringOrNull(key: String): String? =
     if (contains(key)) getString(key, null)

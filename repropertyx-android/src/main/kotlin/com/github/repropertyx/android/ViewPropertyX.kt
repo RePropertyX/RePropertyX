@@ -12,8 +12,8 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
 fun <T, V : Any> ReadWriteProperty<T, V>.animatedTyped(
-    evaluator: TypeEvaluator<V>,
     onApply: ValueAnimator.(V, V) -> Unit = { _, _ -> },
+    evaluator: TypeEvaluator<V>,
 ): ReadWriteProperty<T, V> {
     val original = this
     var runningAnimator: ValueAnimator? by mutablePropertyOf<ValueAnimator?>(null).onEachBefore { it?.cancel() }
@@ -55,7 +55,7 @@ fun <T> ReadWriteProperty<T, Int>.animated(
         duration = 300
         interpolator = FastOutSlowInInterpolator()
     }
-): ReadWriteProperty<T, Int> = animatedTyped(duration, interpolator, onApply) { fraction, start, end ->
+): ReadWriteProperty<T, Int> = animatedTyped(onApply) { fraction, start, end ->
     start + ((end - start) * fraction).toInt()
 }
 
@@ -65,6 +65,6 @@ fun <T> ReadWriteProperty<T, Float>.animated(
         duration = 300
         interpolator = FastOutSlowInInterpolator()
     }
-): ReadWriteProperty<T, Float> = animatedTyped(duration, interpolator, onApply) { fraction, start, end ->
+): ReadWriteProperty<T, Float> = animatedTyped(onApply) { fraction, start, end ->
     start + ((end - start) * fraction)
 }
