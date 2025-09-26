@@ -73,5 +73,4 @@ fun <V> ReadWriteProperty<Any?, V>.rememberAsMutableState(): ReadWriteProperty<A
     return remember { this@rememberAsMutableState.asMutableState() }
 }
 
-fun <V> ReadWriteProperty<Any?, V>.cast(): ReadWriteProperty<Any?, V> =
-    this@cast.asMutableState()
+inline fun <reified V> ReadWriteProperty<Any?, V>.cast(): ReadWriteProperty<Any?, V> = this@cast

@@ -18,8 +18,8 @@ package com.github.repropertyx.android.app
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -43,9 +43,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -58,12 +60,8 @@ import com.github.repropertyx.android.byFloat
 import com.github.repropertyx.android.byInt
 import com.github.repropertyx.android.byLong
 import com.github.repropertyx.android.byString
-import com.github.repropertyx.compose.asMutableState
 import com.github.repropertyx.compose.cast
-import com.github.repropertyx.orNull
 import com.github.repropertyx.compose.mutableStateOf
-import com.github.repropertyx.compose.rememberAsMutableState
-import com.github.repropertyx.orElse
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -86,21 +84,34 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun PrefsEditorScreen(prefs: SharedPreferences, prefsEditor: PrefsEditor) {
-    // Clean syntax - no verbose type parameters needed
-    var username: String? by remember { prefs.byString().asMutableState() }.cast()
-    var userAge: Int? by remember { prefs.byInt().asMutableState() }.cast()
-    var notificationsEnabled: Boolean? by remember { prefs.byBoolean().asMutableState() }.cast()
-    var volumeLevel: Float? by remember { prefs.byFloat().asMutableState() }.cast()
-    var lastLoginTime: Long? by remember { prefs.byLong().asMutableState() }.cast()
-.cast()
-    // Custom key transformation examples.cast()
-    var themeMode: String? by remember { prefs.byString { "theme_$it" }.asMutableState() }.cast()
-    var maxRetries: Int? by remember { prefs.byInt { "network_max_retries" }.asMutableState() }.cast()
+    var key by remember { mutableLongStateOf(0L) }
+    DisposableEffect(Unit) {
+        val listener = OnSharedPreferenceChangeListener { _, k ->
+            println("OnSharedPreferenceChangeListener: $k")
+            key = System.currentTimeMillis()
+        }
+        prefs.registerOnSharedPreferenceChangeListener(listener)
+        onDispose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
+    }
 
-    // Alternative syntaxes (all work the same way):
-    // var username: String? by remember { prefs.byString().asMutableState() }
-    // var username: String? by remember { mutableStateOf(prefs.byString()) }
-    // var username: String? by prefs.byString().asMutableState()  // Without remember (less efficient)
+    var username: String? by remember(key) { mutableStateOf(prefs.byString()) }.cast()
+    var userAge: Int? by remember(key) { mutableStateOf(prefs.byInt()) }.cast()
+    var notificationsEnabled: Boolean? by remember(key) { mutableStateOf(prefs.byBoolean()) }.cast()
+    var volumeLevel: Float? by remember(key) { mutableStateOf(prefs.byFloat()) }.cast()
+    var lastLoginTime: Long? by remember(key) { mutableStateOf(prefs.byLong()) }.cast()
+    // Custom key transformation examples.cast()
+    var themeMode: String? by remember(key) { mutableStateOf(prefs.byString { "theme_$it" }) }.cast()
+    var maxRetries: Int? by remember(key) { mutableStateOf(prefs.byInt { "network_max_retries" }) }.cast()
+
+    /*
+    var username: String? by remember { androidx.compose.runtime.mutableStateOf(null) }
+    var userAge: Int? by remember { androidx.compose.runtime.mutableStateOf(null) }
+    var notificationsEnabled: Boolean? by remember { androidx.compose.runtime.mutableStateOf(null) }
+    var volumeLevel: Float? by remember { androidx.compose.runtime.mutableStateOf(null) }
+    var lastLoginTime: Long? by remember { androidx.compose.runtime.mutableStateOf(null) }
+    var themeMode: String? by remember { androidx.compose.runtime.mutableStateOf(null) }
+    var maxRetries: Int? by remember { androidx.compose.runtime.mutableStateOf(null) }
+    */
 
     Column(
         modifier = Modifier
