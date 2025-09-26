@@ -3,6 +3,8 @@ package com.github.repropertyx.android
 import android.animation.TypeEvaluator
 import android.animation.ValueAnimator
 import android.view.animation.Interpolator
+import android.widget.Checkable
+import android.widget.CompoundButton
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.github.repropertyx.mutablePropertyOf
 import com.github.repropertyx.onEachBefore
@@ -67,4 +69,14 @@ fun <T> ReadWriteProperty<T, Float>.animated(
     }
 ): ReadWriteProperty<T, Float> = animatedTyped(onApply) { fraction, start, end ->
     start + ((end - start) * fraction)
+}
+
+fun CompoundButton.setOnCheckedChangeListener(
+    property: ReadWriteProperty<Any?, Boolean>,
+) {
+    var isCheckedState by property
+    isChecked = isCheckedState
+    setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
+        isCheckedState = isChecked
+    }
 }
