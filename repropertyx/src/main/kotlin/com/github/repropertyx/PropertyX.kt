@@ -358,13 +358,19 @@ fun <T, V> ReadWriteProperty<T, V>.distinctUntilChanged(
  * Executes [block] every time the value is updated.
  */
 fun <T, V> ReadWriteProperty<T, V>.onEach(
-    block: T.(V) -> Unit
-): ReadWriteProperty<T, V> = object : ReadWriteProperty<T, V> by this {
+    get: T.(V) -> Unit = {},
+    block: T.(V) -> Unit,
+): ReadWriteProperty<T, V> = object : ReadWriteProperty<T, V> {
+    override fun getValue(thisRef: T, property: KProperty<*>): V =
+        this@onEach.getValue(thisRef, property)
+            .also { thisRef.get(it) }
+
     override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
         this@onEach.setValue(thisRef, property, value)
         thisRef.block(value)
     }
 }
+
 
 
 fun <T, V> ReadWriteProperty<T, V>.onEachBefore(

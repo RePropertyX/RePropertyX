@@ -43,12 +43,23 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.github.repropertyx.android.byBoolean
+import com.github.repropertyx.android.byFloat
+import com.github.repropertyx.android.byInt
+import com.github.repropertyx.android.byLong
+import com.github.repropertyx.android.byString
+import com.github.repropertyx.compose.asMutableState
+import com.github.repropertyx.compose.mutableStateOf
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -56,11 +67,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         setContent {
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    val prefsEditor = remember { PrefsEditor(this@MainActivity) }
-                    PrefsEditorScreen(prefsEditor)
+                    val prefs = getSharedPreferences("demo", Context.MODE_PRIVATE)
+                    val prefsEditor = remember { PrefsEditor(prefs) }
+                    PrefsEditorScreen(prefs, prefsEditor)
                 }
             }
         }
@@ -68,7 +81,32 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun PrefsEditorScreen(prefsEditor: PrefsEditor) {
+private fun PrefsEditorScreen(prefs: SharedPreferences, prefsEditor: PrefsEditor) {
+    var username: String? by prefs.byString().asMutableState()
+
+    // Int preference for user age
+    var userAge: Int? by prefs.byInt().asMutableState()
+
+    // Boolean preference for notifications
+    var notificationsEnabled: Boolean? by prefs.byBoolean().asMutableState()
+
+    // Float preference for volume level
+    var volumeLevel: Float? by prefs.byFloat().asMutableState()
+
+    // Long preference for last login timestamp
+    var lastLoginTime: Long? by prefs.byLong().asMutableState()
+
+    // Custom key transformation example
+    var themeMode: String? by prefs.byString { "theme_$it" }.asMutableState()
+
+    // Another custom key example with prefix
+    var maxRetries: Int? by prefs.byInt { "network_max_retries" }.asMutableState()
+
+    // Alternative syntax examples (both syntaxes work the same way):
+    // var username: String? by mutableStateOf(prefs.byString())
+    // var userAge: Int? by mutableStateOf(prefs.byInt())
+    // var themeMode: String? by mutableStateOf(prefs.byString { "theme_$it" })
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -99,8 +137,8 @@ private fun PrefsEditorScreen(prefsEditor: PrefsEditor) {
                 )
 
                 OutlinedTextField(
-                    value = prefsEditor.username.value ?: "",
-                    onValueChange = { prefsEditor.username.value = it.takeIf { it.isNotBlank() } },
+                    value = username ?: "",
+                    onValueChange = { username = it.takeIf { it.isNotBlank() } },
                     label = { Text("Username") },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -108,9 +146,9 @@ private fun PrefsEditorScreen(prefsEditor: PrefsEditor) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
-                    value = prefsEditor.userAge.value?.toString() ?: "",
+                    value = userAge?.toString() ?: "",
                     onValueChange = { text ->
-                        prefsEditor.userAge.value = text.toIntOrNull()
+                        userAge = text.toIntOrNull()
                     },
                     label = { Text("Age") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -135,17 +173,17 @@ private fun PrefsEditorScreen(prefsEditor: PrefsEditor) {
                 ) {
                     Text("Enable Notifications")
                     Switch(
-                        checked = prefsEditor.notificationsEnabled.value ?: false,
-                        onCheckedChange = { prefsEditor.notificationsEnabled.value = it }
+                        checked = notificationsEnabled ?: false,
+                        onCheckedChange = { notificationsEnabled = it }
                     )
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Text("Volume Level: ${((prefsEditor.volumeLevel.value ?: 0.5f) * 100).roundToInt()}%")
+                Text("Volume Level: ${((volumeLevel ?: 0.5f) * 100).roundToInt()}%")
                 Slider(
-                    value = prefsEditor.volumeLevel.value ?: 0.5f,
-                    onValueChange = { prefsEditor.volumeLevel.value = it },
+                    value = volumeLevel ?: 0.5f,
+                    onValueChange = { volumeLevel = it },
                     valueRange = 0f..1f,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -153,8 +191,8 @@ private fun PrefsEditorScreen(prefsEditor: PrefsEditor) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 OutlinedTextField(
-                    value = prefsEditor.themeMode.value ?: "",
-                    onValueChange = { prefsEditor.themeMode.value = it.takeIf { it.isNotBlank() } },
+                    value = themeMode ?: "",
+                    onValueChange = { themeMode = it.takeIf { it.isNotBlank() } },
                     label = { Text("Theme Mode") },
                     placeholder = { Text("light, dark, auto") },
                     modifier = Modifier.fillMaxWidth()
