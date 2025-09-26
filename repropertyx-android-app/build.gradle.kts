@@ -47,6 +47,7 @@ android {
 
 dependencies {
     implementation(project(":repropertyx-android"))
+    implementation(project(":repropertyx-compose-android"))
     implementation(project(":repropertyx"))
 
     implementation("androidx.core:core-ktx:1.12.0")
