@@ -4,10 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-RePropertyX is a Kotlin-first property delegation toolkit with three main modules:
+RePropertyX is a Kotlin-first property delegation toolkit with four main modules:
 - **repropertyx**: Core JVM module with composable property delegates
 - **repropertyx-android**: Android-specific extensions (SharedPreferences, View properties)
-- **repropertyx-android-app**: Sample Android application
+- **repropertyx-compose-android**: Compose integration with MutableState bindings
+- **repropertyx-android-app**: Sample Android application demonstrating usage
 
 ## Development Commands
 
@@ -17,6 +18,7 @@ RePropertyX is a Kotlin-first property delegation toolkit with three main module
 ./gradlew test           # Run all tests
 ./gradlew :repropertyx:test                    # Test core module only
 ./gradlew :repropertyx-android:test            # Test Android module only
+./gradlew :repropertyx-compose-android:test    # Test Compose module only
 ./gradlew :repropertyx-android:connectedTest   # Run Android instrumentation tests
 ```
 
@@ -53,6 +55,10 @@ var property: String by baseDelegate()
   - `SharedPreferencesPropertyX.kt`: SharedPreferences integration
   - `ViewPropertyX.kt`: Android View property delegates with animation support
 
+- **repropertyx-compose-android/src/main/kotlin/com/github/repropertyx/compose/**:
+  - `ComposePropertyX.kt`: MutableState bindings for SharedPreferences
+  - `StatefulPropertyX.kt`: Generic MutableState/State conversion utilities
+
 ### Key Extension Functions
 - `.orElse()` / `.notNull()`: Null handling and fallbacks
 - `.map()`: Type transformation between exposed and stored types
@@ -60,6 +66,8 @@ var property: String by baseDelegate()
 - `.distinctUntilChanged()`: Prevents redundant updates
 - `.animated()`: Animates value changes using ValueAnimator (Android only)
 - `.closable()`: Auto-closes Closable resources when replaced
+- `.asMutableState()`: Convert any ReadWriteProperty to Compose MutableState
+- `.asState()`: Convert any ReadWriteProperty to Compose State
 
 ### Property Access Pattern
 The `T.by(Property)` pattern allows accessing class properties as delegates:

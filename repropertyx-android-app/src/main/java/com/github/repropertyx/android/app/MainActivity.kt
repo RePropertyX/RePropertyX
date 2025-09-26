@@ -24,59 +24,43 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.github.repropertyx.android.byBoolean
-import com.github.repropertyx.android.byInt
-import com.github.repropertyx.android.bySharedPreference
-import com.github.repropertyx.android.bySharedPreferenceBoolean
-import com.github.repropertyx.android.bySharedPreferenceInt
-import com.github.repropertyx.android.bySharedPreferenceString
-import com.github.repropertyx.android.byString
-import com.github.repropertyx.orElse
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var prefs: SharedPreferences
-
-    var SharedPreferences.username by bySharedPreferenceString{ "username" }.orElse { "" }
-    var SharedPreferences.age by bySharedPreferenceInt { "age" }.orElse { 0 }
-    var SharedPreferences.enabled by bySharedPreferenceBoolean { "enabled" }.orElse { false }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        prefs = getSharedPreferences("repropertyx_demo", Context.MODE_PRIVATE)
+
         setContent {
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    PrefsEditor(
-                        initialName = prefs.username,
-                        initialAge = prefs.age,
-                        initialEnabled = prefs.enabled,
-                        onSave = { name, age, enabled ->
-                            prefs.username = name
-                            prefs.age = age
-                            prefs.enabled = enabled
-                            Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show()
-                        },
-                        onLoad = {
-                            Triple(prefs.username, prefs.age, prefs.enabled)
-                        }
-                    )
+                    val prefsEditor = remember { PrefsEditor(this@MainActivity) }
+                    PrefsEditorScreen(prefsEditor)
                 }
             }
         }
@@ -84,52 +68,161 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun PrefsEditor(
-    initialName: String,
-    initialAge: Int,
-    initialEnabled: Boolean,
-    onSave: (String, Int, Boolean) -> Unit,
-    onLoad: () -> Triple<String, Int, Boolean>,
-) {
-    val (name, setName) = remember { mutableStateOf(initialName) }
-    val (ageText, setAgeText) = remember { mutableStateOf(initialAge.toString()) }
-    val (enabled, setEnabled) = remember { mutableStateOf(initialEnabled) }
-
+private fun PrefsEditorScreen(prefsEditor: PrefsEditor) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(text = "RePropertyX SharedPreferences Editor", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(16.dp))
+        // Title
+        Text(
+            text = "RePropertyX Compose Demo",
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
 
-        TextField(value = name, onValueChange = setName, label = { Text("Username") })
-        Spacer(Modifier.height(8.dp))
+        Text(
+            text = "MutableState ↔ SharedPreferences Binding",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
 
-        TextField(value = ageText, onValueChange = setAgeText, label = { Text("Age") })
-        Spacer(Modifier.height(8.dp))
+        // User Profile Section
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "User Profile",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Enabled")
-            Switch(checked = enabled, onCheckedChange = setEnabled)
+                OutlinedTextField(
+                    value = prefsEditor.username.value ?: "",
+                    onValueChange = { prefsEditor.username.value = it.takeIf { it.isNotBlank() } },
+                    label = { Text("Username") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedTextField(
+                    value = prefsEditor.userAge.value?.toString() ?: "",
+                    onValueChange = { text ->
+                        prefsEditor.userAge.value = text.toIntOrNull()
+                    },
+                    label = { Text("Age") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
 
-        Spacer(Modifier.height(16.dp))
+        // Settings Section
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Settings",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
 
-        Button(onClick = {
-            val age = ageText.toIntOrNull() ?: 0
-            onSave(name, age, enabled)
-        }) { Text("Save") }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Enable Notifications")
+                    Switch(
+                        checked = prefsEditor.notificationsEnabled.value ?: false,
+                        onCheckedChange = { prefsEditor.notificationsEnabled.value = it }
+                    )
+                }
 
-        Spacer(Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-        Button(onClick = {
-            val (n, a, e) = onLoad()
-            setName(n)
-            setAgeText(a.toString())
-            setEnabled(e)
-        }) { Text("Load") }
+                Text("Volume Level: ${((prefsEditor.volumeLevel.value ?: 0.5f) * 100).roundToInt()}%")
+                Slider(
+                    value = prefsEditor.volumeLevel.value ?: 0.5f,
+                    onValueChange = { prefsEditor.volumeLevel.value = it },
+                    valueRange = 0f..1f,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    value = prefsEditor.themeMode.value ?: "",
+                    onValueChange = { prefsEditor.themeMode.value = it.takeIf { it.isNotBlank() } },
+                    label = { Text("Theme Mode") },
+                    placeholder = { Text("light, dark, auto") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+
+        // Actions
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Button(
+                onClick = { prefsEditor.setDefaultValues() },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Set Defaults")
+            }
+
+            OutlinedButton(
+                onClick = { prefsEditor.clearAll() },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Clear All")
+            }
+        }
+
+        // Debug Information
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Debug Information",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                Text(
+                    text = "From MutableState:",
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                Text(
+                    text = prefsEditor.getCurrentValuesString(),
+                    style = MaterialTheme.typography.bodySmall,
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+
+                Text(
+                    text = "Direct from SharedPreferences:",
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                Text(
+                    text = prefsEditor.getDirectFromPrefs(),
+                    style = MaterialTheme.typography.bodySmall,
+                    fontFamily = FontFamily.Monospace
+                )
+            }
+        }
+
+        // Info Text
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "💡 Changes to the UI controls are automatically persisted to SharedPreferences via MutableState binding. No manual save/load needed!",
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
     }
 }
