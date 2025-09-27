@@ -18,7 +18,6 @@ package com.github.repropertyx.android.app
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -43,13 +42,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
@@ -60,6 +53,7 @@ import com.github.repropertyx.android.byFloat
 import com.github.repropertyx.android.byInt
 import com.github.repropertyx.android.byLong
 import com.github.repropertyx.android.byString
+import com.github.repropertyx.compose.changesComposed
 import com.github.repropertyx.compose.mutableStateOf
 import com.github.repropertyx.compose.rememberProperty
 import kotlin.math.roundToInt
@@ -84,6 +78,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun PrefsEditorScreen(prefs: SharedPreferences, prefsEditor: PrefsEditor) {
+    /*
     var key by remember { mutableLongStateOf(0L) }
     DisposableEffect(Unit) {
         val listener = OnSharedPreferenceChangeListener { _, k ->
@@ -93,14 +88,18 @@ private fun PrefsEditorScreen(prefs: SharedPreferences, prefsEditor: PrefsEditor
         prefs.registerOnSharedPreferenceChangeListener(listener)
         onDispose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
     }
+    */
 
-    var username: String? by rememberProperty(key) { mutableStateOf(prefs.byString()) }
-    var userAge: Int? by rememberProperty(key) { mutableStateOf(prefs.byInt()) }
-    var notificationsEnabled: Boolean? by rememberProperty(key) { mutableStateOf(prefs.byBoolean()) }
-    var volumeLevel: Float? by rememberProperty(key) { mutableStateOf(prefs.byFloat()) }
-    var lastLoginTime: Long? by rememberProperty(key) { mutableStateOf(prefs.byLong()) }
-    var themeMode: String? by rememberProperty(key) { mutableStateOf(prefs.byString { "theme_$it" }) }
-    var maxRetries: Int? by rememberProperty(key) { mutableStateOf(prefs.byInt { "network_max_retries" }) }
+    //var usernameA: String? by rememberProperty(Unit) { mutableStateOf(prefs.byString()) }
+    //var usernameB: String? by rememberProperty(Unit) { prefs.byString() }
+    var username: String? by rememberProperty(prefs.changesComposed()) { prefs.byString() }
+    //var usernameC: String? by rememberProperty(prefs.changesComposed()) { mutableStateOf(prefs.byString()) }
+    var userAge: Int? by rememberProperty(prefs.changesComposed()) { prefs.byInt() }
+    var notificationsEnabled: Boolean? by rememberProperty(prefs.changesComposed()) { prefs.byBoolean() }
+    var volumeLevel: Float? by rememberProperty(prefs.changesComposed()) { prefs.byFloat() }
+    var lastLoginTime: Long? by rememberProperty(prefs.changesComposed()) { prefs.byLong() }
+    var themeMode: String? by rememberProperty(prefs.changesComposed()) { prefs.byString { "theme_$it" } }
+    var maxRetries: Int? by rememberProperty(prefs.changesComposed()) { prefs.byInt { "network_max_retries" } }
 
     /*
     var username: String? by remember { androidx.compose.runtime.mutableStateOf(null) }
