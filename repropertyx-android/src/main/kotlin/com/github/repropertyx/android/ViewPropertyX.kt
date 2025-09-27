@@ -1,26 +1,25 @@
 package com.github.repropertyx.android
 
+import android.animation.IntEvaluator
 import android.animation.TypeEvaluator
 import android.animation.ValueAnimator
-import android.view.animation.Interpolator
-import android.widget.Checkable
 import android.widget.CompoundButton
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import com.github.repropertyx.mutablePropertyOf
-import com.github.repropertyx.onEachBefore
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 
 fun <T, V : Any> ReadWriteProperty<T, V>.animatedTyped(
     onApply: ValueAnimator.(V, V) -> Unit = { _, _ -> },
     evaluator: TypeEvaluator<V>,
 ): ReadWriteProperty<T, V> {
     val original = this
-    var runningAnimator: ValueAnimator? by mutablePropertyOf<ValueAnimator?>(null).onEachBefore { it?.cancel() }
-
     return object : ReadWriteProperty<T, V> by original {
+        var runningAnimator: ValueAnimator? = null
+            set(value) {
+                field?.cancel()
+                field = value
+            }
+
         override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
             val from = original.getValue(thisRef, property)
 
@@ -57,9 +56,7 @@ fun <T> ReadWriteProperty<T, Int>.animated(
         duration = 300
         interpolator = FastOutSlowInInterpolator()
     }
-): ReadWriteProperty<T, Int> = animatedTyped(onApply) { fraction, start, end ->
-    start + ((end - start) * fraction).toInt()
-}
+): ReadWriteProperty<T, Int> = animatedTyped(onApply, IntEvaluator())
 
 @JvmName("animatedFloat")
 fun <T> ReadWriteProperty<T, Float>.animated(

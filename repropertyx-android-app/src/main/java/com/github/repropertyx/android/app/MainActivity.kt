@@ -17,6 +17,7 @@
 package com.github.repropertyx.android.app
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -77,6 +78,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun PrefsEditorScreen(prefs: SharedPreferences, prefsEditor: PrefsEditor) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     //var usernameA: String? by rememberProperty(Unit) { mutableStateOf(prefs.byString()) }
     //var usernameB: String? by rememberProperty(Unit) { prefs.byString() }
     var username: String? by rememberPropertyState(prefs.changesComposed()) { prefs.byString() }
@@ -209,6 +211,16 @@ private fun PrefsEditorScreen(prefs: SharedPreferences, prefsEditor: PrefsEditor
             ) {
                 Text("Clear All")
             }
+        }
+
+        // ViewPropertyX Demo Button
+        Button(
+            onClick = {
+                context.startActivity(Intent(context, ViewPropertyXDemoActivity::class.java))
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("🎨 ViewPropertyX Demo")
         }
 
         // Debug Information

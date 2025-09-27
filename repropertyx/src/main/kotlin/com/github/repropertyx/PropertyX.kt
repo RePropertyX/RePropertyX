@@ -398,6 +398,19 @@ fun <V> propertyOf(
     }
 }
 
+fun <T, V> readWriteProperty(
+    get: T.(KProperty<*>) -> V,
+    set: T.(V) -> Unit,
+): ReadWriteProperty<T, V> = object : ReadWriteProperty<T, V> {
+    override fun getValue(thisRef: T, property: KProperty<*>): V =
+        thisRef.get(property)
+
+    override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
+        thisRef.set(value)
+    }
+}
+
+
 fun <V> mutablePropertyOf(value: V): ReadWriteProperty<Any?, V> = object : ReadWriteProperty<Any?, V> {
     private var value: V = value
 
