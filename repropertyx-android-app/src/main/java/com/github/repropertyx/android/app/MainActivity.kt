@@ -60,8 +60,8 @@ import com.github.repropertyx.android.byFloat
 import com.github.repropertyx.android.byInt
 import com.github.repropertyx.android.byLong
 import com.github.repropertyx.android.byString
-import com.github.repropertyx.compose.cast
 import com.github.repropertyx.compose.mutableStateOf
+import com.github.repropertyx.compose.rememberProperty
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -94,14 +94,13 @@ private fun PrefsEditorScreen(prefs: SharedPreferences, prefsEditor: PrefsEditor
         onDispose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
     }
 
-    var username: String? by remember(key) { mutableStateOf(prefs.byString()) }.cast()
-    var userAge: Int? by remember(key) { mutableStateOf(prefs.byInt()) }.cast()
-    var notificationsEnabled: Boolean? by remember(key) { mutableStateOf(prefs.byBoolean()) }.cast()
-    var volumeLevel: Float? by remember(key) { mutableStateOf(prefs.byFloat()) }.cast()
-    var lastLoginTime: Long? by remember(key) { mutableStateOf(prefs.byLong()) }.cast()
-    // Custom key transformation examples.cast()
-    var themeMode: String? by remember(key) { mutableStateOf(prefs.byString { "theme_$it" }) }.cast()
-    var maxRetries: Int? by remember(key) { mutableStateOf(prefs.byInt { "network_max_retries" }) }.cast()
+    var username: String? by rememberProperty(key) { mutableStateOf(prefs.byString()) }
+    var userAge: Int? by rememberProperty(key) { mutableStateOf(prefs.byInt()) }
+    var notificationsEnabled: Boolean? by rememberProperty(key) { mutableStateOf(prefs.byBoolean()) }
+    var volumeLevel: Float? by rememberProperty(key) { mutableStateOf(prefs.byFloat()) }
+    var lastLoginTime: Long? by rememberProperty(key) { mutableStateOf(prefs.byLong()) }
+    var themeMode: String? by rememberProperty(key) { mutableStateOf(prefs.byString { "theme_$it" }) }
+    var maxRetries: Int? by rememberProperty(key) { mutableStateOf(prefs.byInt { "network_max_retries" }) }
 
     /*
     var username: String? by remember { androidx.compose.runtime.mutableStateOf(null) }

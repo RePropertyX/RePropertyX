@@ -17,10 +17,9 @@
 package com.github.repropertyx.compose
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.DisallowComposableCalls
 import androidx.compose.runtime.remember
-import kotlin.properties.ReadOnlyProperty
+import com.github.repropertyx.cast
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -41,10 +40,6 @@ fun <V> mutableStateOf(
     override fun component2(): (V) -> Unit = { value = it }
 }
 */
-
-fun <V> ReadWriteProperty<Any?, V>.asMutableState(): ReadWriteProperty<Any?, V> {
-    return com.github.repropertyx.compose.mutableStateOf(this@asMutableState)
-}
 
 fun <V> mutableStateOf(property: ReadWriteProperty<Any?, V>): ReadWriteProperty<Any?, V> {
     val internalState = androidx.compose.runtime.mutableStateOf<V?>(null)
@@ -69,8 +64,5 @@ fun <V> mutableStateOf(property: ReadWriteProperty<Any?, V>): ReadWriteProperty<
 }
 
 @Composable
-fun <V> ReadWriteProperty<Any?, V>.rememberAsMutableState(): ReadWriteProperty<Any?, V> {
-    return remember { this@rememberAsMutableState.asMutableState() }
-}
-
-inline fun <reified V> ReadWriteProperty<Any?, V>.cast(): ReadWriteProperty<Any?, V> = this@cast
+inline fun <reified V> rememberProperty(key: Any? = null, crossinline block: @DisallowComposableCalls () -> ReadWriteProperty<Any?, V>): ReadWriteProperty<Any?, V> =
+    remember(key) { block() }.cast()

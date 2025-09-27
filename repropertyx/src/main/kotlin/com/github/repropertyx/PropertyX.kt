@@ -488,3 +488,10 @@ inline fun <reified T, V> T.by(property: ReadWriteProperty<T, V>): ReadWriteProp
         property.setValue(this@by, prop, value)
     }
 }
+
+inline fun <reified V> ReadWriteProperty<Any?, V>.cast(): ReadWriteProperty<Any?, V> = this@cast
+
+interface AnyReadWriteProperty<V> : ReadWriteProperty<Any?, V>
+
+inline fun <reified V> ReadWriteProperty<Any?, V>.castAny(): AnyReadWriteProperty<V> =
+    object : AnyReadWriteProperty<V>, ReadWriteProperty<Any?, V> by this@castAny {}
