@@ -54,8 +54,7 @@ import com.github.repropertyx.android.byInt
 import com.github.repropertyx.android.byLong
 import com.github.repropertyx.android.byString
 import com.github.repropertyx.compose.changesComposed
-import com.github.repropertyx.compose.mutableStateOf
-import com.github.repropertyx.compose.rememberProperty
+import com.github.repropertyx.compose.rememberPropertyState
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
@@ -78,29 +77,17 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun PrefsEditorScreen(prefs: SharedPreferences, prefsEditor: PrefsEditor) {
-    /*
-    var key by remember { mutableLongStateOf(0L) }
-    DisposableEffect(Unit) {
-        val listener = OnSharedPreferenceChangeListener { _, k ->
-            println("OnSharedPreferenceChangeListener: $k")
-            key = System.currentTimeMillis()
-        }
-        prefs.registerOnSharedPreferenceChangeListener(listener)
-        onDispose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
-    }
-    */
-
     //var usernameA: String? by rememberProperty(Unit) { mutableStateOf(prefs.byString()) }
     //var usernameB: String? by rememberProperty(Unit) { prefs.byString() }
-    var username: String? by rememberProperty(prefs.changesComposed()) { prefs.byString() }
-    //var usernameC: String? by rememberProperty(prefs.changesComposed()) { mutableStateOf(prefs.byString()) }
-    var userAge: Int? by rememberProperty(prefs.changesComposed()) { prefs.byInt() }
-    var notificationsEnabled: Boolean? by rememberProperty(prefs.changesComposed()) { prefs.byBoolean() }
-    var volumeLevel: Float? by rememberProperty(prefs.changesComposed()) { prefs.byFloat() }
-    var lastLoginTime: Long? by rememberProperty(prefs.changesComposed()) { prefs.byLong() }
-    var themeMode: String? by rememberProperty(prefs.changesComposed()) { prefs.byString { "theme_$it" } }
-    var maxRetries: Int? by rememberProperty(prefs.changesComposed()) { prefs.byInt { "network_max_retries" } }
+    var username: String? by rememberPropertyState(prefs.changesComposed()) { prefs.byString() }
+    var userAge: Int? by rememberPropertyState(prefs.changesComposed()) { prefs.byInt() }
+    var notificationsEnabled: Boolean? by rememberPropertyState(prefs.changesComposed()) { prefs.byBoolean() }
+    var volumeLevel: Float? by rememberPropertyState(prefs.changesComposed()) { prefs.byFloat() }
+    var lastLoginTime: Long? by rememberPropertyState(prefs.changesComposed()) { prefs.byLong() }
+    var themeMode: String? by rememberPropertyState(prefs.changesComposed()) { prefs.byString { "theme_$it" } }
+    var maxRetries: Int? by rememberPropertyState(prefs.changesComposed()) { prefs.byInt { "network_max_retries" } }
 
+    // Without observing prefs changes
     /*
     var username: String? by remember { androidx.compose.runtime.mutableStateOf(null) }
     var userAge: Int? by remember { androidx.compose.runtime.mutableStateOf(null) }

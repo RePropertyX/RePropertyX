@@ -76,7 +76,7 @@ inline fun <reified V> rememberProperty(key: Any, crossinline block: @DisallowCo
     remember(key) { block() }.cast()
 
 @Composable
-fun <V> rememberProperty(
+fun <V> rememberPropertyState(
     disposable: DisposableEffectScope.(updateValue: () -> Unit) -> DisposableEffectResult = { _ -> onDispose { } },
     key: Any? = null,
     block: @DisallowComposableCalls () -> ReadWriteProperty<Any?, V>,
