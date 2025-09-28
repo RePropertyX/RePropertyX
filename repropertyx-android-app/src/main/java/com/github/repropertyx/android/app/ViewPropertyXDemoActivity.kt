@@ -66,53 +66,6 @@ import com.github.repropertyx.readWriteProperty
 import kotlin.math.roundToInt
 
 
-// ViewPropertyX extension properties for animated View properties
-var View.animatedTranslationX: Float by readWriteProperty<View, Float>(
-    get = { translationX },
-    set = { translationX = it }
-).distinctUntilChanged().animated().distinctUntilChanged()
-
-var View.animatedTranslationY: Float by readWriteProperty<View, Float>(
-    get = { translationY },
-    set = { translationY = it }
-).distinctUntilChanged().animated().distinctUntilChanged()
-
-var View.animatedScaleX: Float by readWriteProperty<View, Float>(
-    get = { scaleX },
-    set = { scaleX = it }
-).animated { _, _ ->
-    duration = 500
-}
-
-var View.animatedScaleY: Float by readWriteProperty<View, Float>(
-    get = { scaleY },
-    set = { scaleY = it }
-).animated { _, _ ->
-    duration = 500
-}
-
-var View.animatedAlpha: Float by readWriteProperty<View, Float>(
-    get = { alpha },
-    set = { alpha = it }
-).animated { _, _ ->
-    duration = 600
-}
-
-class ViewPropertyXDemoActivity : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContent {
-            MaterialTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    ViewPropertyXDemoScreen()
-                }
-            }
-        }
-    }
-}
-
 @Composable
 private fun ViewPropertyXDemoScreen() {
     Column(
