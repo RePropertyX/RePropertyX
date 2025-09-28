@@ -24,6 +24,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.CheckBox
+import com.google.android.material.slider.Slider
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -67,6 +68,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import kotlinx.coroutines.launch
+import com.github.repropertyx.android.app.databinding.ViewpropertyxViewsDemoBinding
 import com.github.repropertyx.android.animated
 import com.github.repropertyx.android.byBoolean
 import com.github.repropertyx.android.byFloat
@@ -135,9 +137,9 @@ class MainActivity : ComponentActivity() {
 @ExperimentalFoundationApi
 @Composable
 private fun MainScreenWithTabs(prefs: SharedPreferences, prefsEditor: PrefsEditor) {
-    val pagerState = rememberPagerState(pageCount = { 2 })
+    val tabs = listOf("PreferencesPropertyX", "ViewPropertyX (Compose)", "ViewPropertyX (Views)")
+    val pagerState = rememberPagerState(pageCount = { tabs.size })
     val scope = rememberCoroutineScope()
-    val tabs = listOf("PreferencesPropertyX", "ViewPropertyX")
 
     Column {
         TabRow(
@@ -164,6 +166,7 @@ private fun MainScreenWithTabs(prefs: SharedPreferences, prefsEditor: PrefsEdito
             when (page) {
                 0 -> PrefsEditorScreen(prefs, prefsEditor)
                 1 -> ViewPropertyXDemoScreen()
+                2 -> ViewPropertyXViewsDemoScreen()
             }
         }
     }
@@ -688,4 +691,107 @@ private fun CheckBoxPropertyDemo() {
             }
         }
     }
+}
+
+@Composable
+private fun ViewPropertyXViewsDemoScreen() {
+    AndroidView(
+        factory = { context ->
+            val binding = ViewpropertyxViewsDemoBinding.inflate(
+                android.view.LayoutInflater.from(context)
+            )
+
+            // Set up demos using extension functions
+            binding.setupTranslationDemo()
+            binding.setupScalingDemo()
+            binding.setupAlphaDemo()
+            binding.setupCheckBoxDemo()
+
+            binding.root
+        },
+        modifier = Modifier.fillMaxSize()
+    )
+}
+
+private fun ViewpropertyxViewsDemoBinding.setupTranslationDemo() {
+    seekBarX.addOnChangeListener { _, value, _ ->
+        animatedView.animatedTranslationX = value
+        translationXLabel.text = "Translation X: ${value.toInt()}px"
+    }
+
+    seekBarY.addOnChangeListener { _, value, _ ->
+        animatedView.animatedTranslationY = value
+        translationYLabel.text = "Translation Y: ${value.toInt()}px"
+    }
+
+    resetButton.setOnClickListener {
+        seekBarX.value = 0f
+        seekBarY.value = 0f
+    }
+
+    randomButton.setOnClickListener {
+        seekBarX.value = (-200..200).random().toFloat()
+        seekBarY.value = (-100..100).random().toFloat()
+    }
+}
+
+private fun ViewpropertyxViewsDemoBinding.setupScalingDemo() {
+    seekBarScaleX.addOnChangeListener { _, value, _ ->
+        scaleView.animatedScaleX = value
+        scaleXLabel.text = "Scale X: ${String.format("%.2f", value)}"
+    }
+
+    seekBarScaleY.addOnChangeListener { _, value, _ ->
+        scaleView.animatedScaleY = value
+        scaleYLabel.text = "Scale Y: ${String.format("%.2f", value)}"
+    }
+
+    resetScaleButton.setOnClickListener {
+        seekBarScaleX.value = 1f
+        seekBarScaleY.value = 1f
+    }
+
+    randomScaleButton.setOnClickListener {
+        seekBarScaleX.value = (50..200).random() / 100f
+        seekBarScaleY.value = (50..200).random() / 100f
+    }
+}
+
+private fun ViewpropertyxViewsDemoBinding.setupAlphaDemo() {
+    var currentAlpha = 1f
+
+    seekBarAlpha.addOnChangeListener { _, value, _ ->
+        currentAlpha = value
+        alphaView.animatedAlpha = currentAlpha
+        alphaLabel.text = "Alpha: ${String.format("%.2f", currentAlpha)}"
+    }
+
+    toggleButton.setOnClickListener {
+        seekBarAlpha.value = if (currentAlpha > 0.5f) 0f else 1f
+    }
+
+    randomAlphaButton.setOnClickListener {
+        seekBarAlpha.value = (0..100).random() / 100f
+    }
+}
+
+private fun ViewpropertyxViewsDemoBinding.setupCheckBoxDemo() {
+    // Property binding for checkbox
+    var checkBoxState by propertyOf(
+        get = { checkBox.isChecked },
+        set = {
+            checkBox.isChecked = it
+            println("CheckBox state changed: $it")
+        }
+    ).onEach { checked ->
+        println("Property changed: $checked")
+        statusText.text = "Current State: ${if (checked) "✅ Checked" else "❌ Unchecked"}"
+    }
+
+    checkBox.setOnCheckedChangeListener { _, isChecked ->
+        checkBoxState = isChecked
+    }
+
+    checkButton.setOnClickListener { checkBoxState = true }
+    uncheckButton.setOnClickListener { checkBoxState = false }
 }
