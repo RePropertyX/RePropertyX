@@ -18,6 +18,8 @@
 
 package com.github.repropertyx.android.app
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -67,9 +69,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.animation.doOnEnd
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import kotlinx.coroutines.launch
 import com.github.repropertyx.android.app.databinding.ViewpropertyxViewsDemoBinding
 import com.github.repropertyx.android.animated
+import com.github.repropertyx.android.animatedFloatAwait
+import com.github.repropertyx.android.animatedTyped
 import com.github.repropertyx.android.byBoolean
 import com.github.repropertyx.android.byFloat
 import com.github.repropertyx.android.byInt
@@ -82,7 +88,11 @@ import com.github.repropertyx.distinctUntilChanged
 import com.github.repropertyx.onEach
 import com.github.repropertyx.propertyOf
 import com.github.repropertyx.readWriteProperty
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 import kotlin.math.roundToInt
+import kotlin.reflect.KProperty
 
 // ViewPropertyX extension properties for animated View properties
 var View.animatedTranslationX: Float by readWriteProperty<View, Float>(
@@ -94,6 +104,7 @@ var View.animatedTranslationY: Float by readWriteProperty<View, Float>(
     get = { translationY },
     set = { translationY = it }
 ).distinctUntilChanged().animated().distinctUntilChanged()
+
 
 var View.animatedScaleX: Float by readWriteProperty<View, Float>(
     get = { scaleX },
@@ -408,9 +419,13 @@ private fun ViewPropertyXDemoScreen() {
 private fun AnimatedTranslationDemo() {
     var translationX by remember { mutableFloatStateOf(0f) }
     var translationY by remember { mutableFloatStateOf(0f) }
+    val isParallel by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     Card(modifier = Modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp).fillMaxWidth()
+        Column(modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
         ) {
             Text(
                 text = "Animated Translation",
@@ -433,8 +448,25 @@ private fun AnimatedTranslationDemo() {
                     }
                 },
                 update = { view ->
-                    view.animatedTranslationX = translationX
-                    view.animatedTranslationY = translationY
+                    // Parallel
+                    if (isParallel) {
+                        view.animatedTranslationX = translationX
+                        view.animatedTranslationY = translationY
+                    } else {
+                        // Sequential
+                        coroutineScope.launch {
+                            view.animatedFloatAwait(
+                                value = translationX,
+                                get = { this.translationX },
+                                set = { this.translationX = it }
+                            )
+                            view.animatedFloatAwait(
+                                value = translationY,
+                                get = { this.translationY },
+                                set = { this.translationY = it }
+                            )
+                        }
+                    }
                 },
             )
 

@@ -1,10 +1,19 @@
 package com.github.repropertyx.android
 
+import android.animation.Animator
 import android.animation.IntEvaluator
 import android.animation.TypeEvaluator
 import android.animation.ValueAnimator
+import android.view.View
 import android.widget.CompoundButton
+import androidx.core.animation.doOnEnd
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import com.github.repropertyx.distinctUntilChanged
+import com.github.repropertyx.onEach
+import com.github.repropertyx.propertyOf
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -76,4 +85,60 @@ fun CompoundButton.setOnCheckedChangeListener(
     setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
         isCheckedState = isChecked
     }
+}
+
+suspend fun ValueAnimator.await(): Unit = suspendCancellableCoroutine { cont ->
+    val listener = doOnEnd { if (cont.isActive) cont.resume(Unit) }
+    cont.invokeOnCancellation { removeListener(listener) }
+}
+
+suspend fun View.animatedFloatAwait(
+    value: Float,
+    onApply: ValueAnimator.(Float, Float) -> Unit = { _, _ ->
+        duration = 300
+        interpolator = FastOutSlowInInterpolator()
+    },
+    get: View.(KProperty<*>) -> Float,
+    set: View.(Float) -> Unit,
+): Unit = suspendCancellableCoroutine { cont ->
+    var listener: Animator.AnimatorListener? = null
+    var animator: ValueAnimator? = null
+    var animatedValue by propertyOf(
+        get = { this@animatedFloatAwait.get(it) },
+        set = { this@animatedFloatAwait.set(it) }
+    ).animated { from, to ->
+        onApply(from, to)
+        animator = this
+        listener = doOnEnd { if (cont.isActive) cont.resume(Unit) }
+    }.distinctUntilChanged { old, new ->
+        if (old == new) { if (cont.isActive) cont.resume(Unit) }
+        old == new
+    }
+    cont.invokeOnCancellation { listener?.let { animator?.removeListener(it) }  }
+    animatedValue = value
+}
+suspend fun View.animatedIntAwait(
+    value: Int,
+    onApply: ValueAnimator.(Int, Int) -> Unit = { _, _ ->
+        duration = 300
+        interpolator = FastOutSlowInInterpolator()
+    },
+    get: View.(KProperty<*>) -> Int,
+    set: View.(Int) -> Unit,
+): Unit = suspendCancellableCoroutine { cont ->
+    var listener: Animator.AnimatorListener? = null
+    var animator: ValueAnimator? = null
+    var animatedValue by propertyOf(
+        get = { this@animatedIntAwait.get(it) },
+        set = { this@animatedIntAwait.set(it) }
+    ).animated { from, to ->
+        onApply(from, to)
+        animator = this
+        listener = doOnEnd { if (cont.isActive) cont.resume(Unit) }
+    }.distinctUntilChanged { old, new ->
+        if (old == new) { if (cont.isActive) cont.resume(Unit) }
+        old == new
+    }
+    cont.invokeOnCancellation { listener?.let { animator?.removeListener(it) }  }
+    animatedValue = value
 }

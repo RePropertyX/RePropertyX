@@ -42,7 +42,8 @@ android {
 
 dependencies {
     implementation(project(":repropertyx"))
-    
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.interpolator:interpolator:1.0.0")
     //implementation("androidx.appcompat:appcompat:1.6.1")
