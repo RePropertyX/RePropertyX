@@ -17,13 +17,14 @@
   
   <!-- "by" text in center - using IDE orange color -->
   <text x="100" y="115" 
-        font-family="'JetBrains Mono', 'Roboto Mono', 'Courier New', monospace" 
+        font-family="monospace" 
         font-size="70" 
-        font-weight="700" 
+        font-weight="bold" 
         fill="#FF9800" 
         text-anchor="middle"
-        letter-spacing="-2"
-        style="paint-order: stroke; stroke: none;">by</text>
+        letter-spacing="0"
+        direction="ltr"
+        unicode-bidi="bidi-override">by</text>
   
   <!-- Right bracket ] -->
   <g fill="none" stroke="white" stroke-width="10" stroke-linecap="round" opacity="0.8">
