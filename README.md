@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="art/logo.svg" alt="RePropertyX Logo" width="200"/>
+</p>
+
 # RePropertyX
 
 A **Kotlin-first property delegation toolkit** that makes your code cleaner, safer, and more expressive.
