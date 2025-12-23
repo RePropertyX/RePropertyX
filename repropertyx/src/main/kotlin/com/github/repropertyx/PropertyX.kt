@@ -508,3 +508,111 @@ interface AnyReadWriteProperty<V> : ReadWriteProperty<Any?, V>
 
 inline fun <reified V> ReadWriteProperty<Any?, V>.castAny(): AnyReadWriteProperty<V> =
     object : AnyReadWriteProperty<V>, ReadWriteProperty<Any?, V> by this@castAny {}
+
+/**
+ * Switches to a child property when setting values, and optionally transforms the parent when the child operation completes.
+ *
+ * Usage example:
+ * ```
+ * var activeTab by propertyOf(TabType.MAIN)
+ *     .switchMap(
+ *         childProperty = { tabType ->
+ *             when (tabType) {
+ *                 TabType.MAIN -> mainContent.by(::content)
+ *                 TabType.SETTINGS -> settingsContent.by(::content)
+ *             }
+ *         },
+ *         onChildComplete = { parentTab, childValue ->
+ *             updateHistory(parentTab, childValue)
+ *         }
+ *     )
+ * ```
+ *
+ * @param childProperty Function that returns a child property based on the parent value
+ * @param onChildComplete Optional function called when the child property operation completes
+ * @return A ReadWriteProperty that delegates to child properties
+ */
+fun <P, V, C> ReadWriteProperty<P, V>.switchMap(
+    childProperty: P.(V) -> ReadWriteProperty<P, C>,
+    onChildComplete: (P.(V, C) -> Unit)? = null
+): ReadWriteProperty<P, C> = object : ReadWriteProperty<P, C> {
+    override fun getValue(thisRef: P, property: KProperty<*>): C {
+        val parentValue = this@switchMap.getValue(thisRef, property)
+        return thisRef.childProperty(parentValue).getValue(thisRef, property)
+    }
+
+    override fun setValue(thisRef: P, property: KProperty<*>, value: C) {
+        val parentValue = this@switchMap.getValue(thisRef, property)
+        val child = thisRef.childProperty(parentValue)
+        child.setValue(thisRef, property, value)
+        onChildComplete?.invoke(thisRef, parentValue, value)
+    }
+}
+
+/**
+ * Transforms the parent property based on a completed child operation.
+ *
+ * Usage example:
+ * ```
+ * var position by propertyOf(0f)
+ *     .flatMap { currentPos ->
+ *         // When position changes, animate to new position and update parent when done
+ *         animateToPosition(currentPos)
+ *     }
+ *     .onChildComplete { originalPos, finalPos ->
+ *         // Update parent property with final animated position
+ *         this@flatMap.setValue(thisRef, property, finalPos)
+ *     }
+ * ```
+ */
+fun <P, V, C> ReadWriteProperty<P, V>.flatMap(
+    transform: P.(V) -> ReadWriteProperty<P, C>
+): ReadWriteProperty<P, C> = switchMap(transform)
+
+/**
+ * Asynchronous version of switchMap for suspend operations.
+ *
+ * Usage example:
+ * ```
+ * var userId by propertyOf(0)
+ *     .switchMapAsync { id ->
+ *         async { userRepository.fetchUser(id) }
+ *     }
+ *     .onChildComplete { userId, user ->
+ *         updateUserCache(userId, user)
+ *     }
+ * ```
+ */
+fun <P, V, C> ReadWriteProperty<P, V>.switchMapAsync(
+    childOperation: suspend P.(V) -> C,
+    onChildComplete: (P.(V, C) -> Unit)? = null
+): ReadWriteProperty<P, suspend () -> C> = object : ReadWriteProperty<P, suspend () -> C> {
+    override fun getValue(thisRef: P, property: KProperty<*>): suspend () -> C = {
+        val parentValue = this@switchMapAsync.getValue(thisRef, property)
+        val childResult = thisRef.childOperation(parentValue)
+        onChildComplete?.invoke(thisRef, parentValue, childResult)
+        childResult
+    }
+
+    override fun setValue(thisRef: P, property: KProperty<*>, value: suspend () -> C) {
+        // Store the suspend operation to be executed later
+    }
+}
+
+fun <T: ReadWriteProperty<P, V>, P, V> ReadOnlyProperty<P, T>.by() = object : ReadWriteProperty<P, V> {
+    override fun getValue(thisRef: P, property: KProperty<*>): V =
+        this@by.getValue(thisRef, property).getValue(thisRef, property)
+
+    override fun setValue(thisRef: P, property: KProperty<*>, value: V) {
+        this@by.getValue(thisRef, property).setValue(thisRef, property, value)
+    }
+}
+
+fun <T: ReadWriteProperty<P, V>, P, V> Lazy<T>.by() = object : ReadWriteProperty<P, V> {
+    override fun getValue(thisRef: P, property: KProperty<*>): V =
+        this@by.value.getValue(thisRef, property)
+
+    override fun setValue(thisRef: P, property: KProperty<*>, value: V) {
+        this@by.value.setValue(thisRef, property, value)
+    }
+}

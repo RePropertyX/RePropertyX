@@ -29,15 +29,15 @@ import kotlin.reflect.KProperty
  * ```
  */
 fun <T> byWeakReference(value: T? = null, queue: ReferenceQueue<in T?>? = null) =
-    WeakReference(value, queue).let {
-        object : ReadWriteProperty<Any, T?> {
-            private var ref: WeakReference<T?> = it
-            override fun getValue(thisRef: Any, property: KProperty<*>): T? = ref.get()
-            override fun setValue(thisRef: Any, property: KProperty<*>, value: T?) {
-                ref = WeakReference(value, queue)
-            }
+    object : ReadWriteProperty<Any, T?> {
+        private var ref: WeakReference<T?> = WeakReference(value, queue)
+        override fun getValue(thisRef: Any, property: KProperty<*>): T? = ref.get()
+        override fun setValue(thisRef: Any, property: KProperty<*>, value: T?) {
+            ref = WeakReference(value, queue)
         }
     }
+
+operator fun <T> WeakReference<T>.getValue(thisRef: Any, property: KProperty<*>): T? = get()
 
 fun <T, V: AutoCloseable> ReadWriteProperty<T, V>.closable(): ReadWriteProperty<T, V> =
     onEachBefore { it.close() }
