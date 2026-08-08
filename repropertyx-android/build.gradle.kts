@@ -38,6 +38,13 @@ android {
     lint {
         checkTestSources = false
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {

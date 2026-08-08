@@ -1,0 +1,11 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+module:repropertyx
+com.github.repropertyx
+module:repropertyx-android
+com.github.repropertyx.android
+module:repropertyx-android-app
+com.github.repropertyx.android.app
+module:repropertyx-compose-android
+com.github.repropertyx.compose

@@ -2,12 +2,12 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.9.20" apply false
     id("org.jetbrains.kotlin.android") version "1.9.20" apply false
     id("com.android.library") version "8.1.4" apply false
-    id("org.jetbrains.dokka") version "1.9.10" apply false
+    id("org.jetbrains.dokka") version "1.9.10"
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0" apply false
 }
 
 allprojects {
-    group = "com.github.repropertyx"
+    group = "com.github.RePropertyX"
     version = "0.1.0-SNAPSHOT"
 }
 
@@ -28,3 +28,10 @@ subprojects {
         useJUnitPlatform()
     }
 }
+
+tasks.register<Copy>("copyDocs") {
+    dependsOn("dokkaHtmlMultiModule")
+    from(tasks.named("dokkaHtmlMultiModule").map { it.outputs.files })
+    into(file("docs"))
+}
+

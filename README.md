@@ -4,6 +4,8 @@
 
 # RePropertyX
 
+[![JitPack](https://jitpack.io/v/RePropertyX/RePropertyX.svg)](https://jitpack.io/#RePropertyX/RePropertyX)
+
 A **Kotlin-first property delegation toolkit** that makes your code cleaner, safer, and more expressive.
 
 RePropertyX brings the power of Kotlin's `ReadWriteProperty` and `provideDelegate` features to life by letting you easily build **reactive, composable, and testable property delegates**.
@@ -23,13 +25,33 @@ Instead of manually writing boilerplate `get` / `set` logic for properties, RePr
 
 ## 📦 Installation
 
+Add JitPack to your project repository list:
+
 ```kotlin
-dependencies {
-    implementation("com.github.repropertyx:repropertyx:<latest-version>")
+// settings.gradle.kts
+dependencyResolutionManagement {
+    repositories {
+        maven { url = uri("https://jitpack.io") }
+    }
 }
 ```
 
-*(Replace `<latest-version>` with the latest published version on Maven Central or Jitpack.)*
+Add dependencies to your module's `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    // Core JVM property delegates
+    implementation("com.github.RePropertyX.RePropertyX:repropertyx:<version>")
+
+    // Android extensions (SharedPreferences, View animations)
+    implementation("com.github.RePropertyX.RePropertyX:repropertyx-android:<version>")
+
+    // Compose extensions (MutableState & Compose bindings)
+    implementation("com.github.RePropertyX.RePropertyX:repropertyx-compose-android:<version>")
+}
+```
+
+*(Replace `<version>` with the release tag or commit hash on [JitPack](https://jitpack.io/#RePropertyX/RePropertyX).)*
 
 ---
 
