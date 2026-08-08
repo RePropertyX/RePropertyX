@@ -31,7 +31,8 @@ subprojects {
 
 tasks.register<Copy>("copyDocs") {
     dependsOn("dokkaHtmlMultiModule")
-    from(tasks.named("dokkaHtmlMultiModule").map { it.outputs.files })
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from(layout.buildDirectory.dir("dokka/htmlMultiModule"))
     into(file("docs"))
 }
 
