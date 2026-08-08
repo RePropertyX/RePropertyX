@@ -9,7 +9,7 @@
   <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx/1.0.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx-brightgreen.svg" alt="Javadocs Core"/></a>
   <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-android/1.0.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx--android-brightgreen.svg" alt="Javadocs Android"/></a>
   <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-compose-android/1.0.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx--compose--android-brightgreen.svg" alt="Javadocs Compose"/></a>
-  <a href="https://repropertyx.github.io/RePropertyX/"><img src="https://img.shields.io/badge/Dokka-API%20Docs-6F42C1.svg?logo=kotlin&logoColor=white" alt="Dokka API Docs"/></a>
+  <a href="https://repropertyx.github.io/RePropertyX/"><img src="https://img.shields.io/badge/Website-Official%20Site-7F52FF.svg?logo=googlechrome&logoColor=white" alt="Official Website"/></a>
   <a href="https://jitci.com/gh/RePropertyX/RePropertyX"><img src="https://jitci.com/gh/RePropertyX/RePropertyX/svg" alt="JitCI"/></a>
   <a href="https://github.com/RePropertyX/RePropertyX/actions"><img src="https://github.com/RePropertyX/RePropertyX/actions/workflows/docs.yml/badge.svg" alt="Docs CI"/></a>
   <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-1.9.20-7F52FF.svg?logo=kotlin&logoColor=white" alt="Kotlin"/></a>
@@ -63,7 +63,12 @@ dependencies {
 }
 ```
 
+---
 
+## 🌐 Website & Documentation
+
+- 🚀 **Official Website & Interactive Guides**: [repropertyx.github.io/RePropertyX](https://repropertyx.github.io/RePropertyX/)
+- 📖 **Multi-Module Dokka API Reference**: [repropertyx.github.io/RePropertyX/api](https://repropertyx.github.io/RePropertyX/api)
 
 ---
 
