@@ -5,6 +5,7 @@
 # RePropertyX
 
 [![JitPack](https://jitpack.io/v/RePropertyX/RePropertyX.svg)](https://jitpack.io/#RePropertyX/RePropertyX)
+[![JitCI](https://jitci.com/gh/RePropertyX/RePropertyX/svg)](https://jitci.com/gh/RePropertyX/RePropertyX)
 
 A **Kotlin-first property delegation toolkit** that makes your code cleaner, safer, and more expressive.
 
