@@ -33,6 +33,6 @@ tasks.register<Copy>("copyDocs") {
     dependsOn("dokkaHtmlMultiModule")
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from(layout.buildDirectory.dir("dokka/htmlMultiModule"))
-    into(file("docs"))
+    into(file("docs/api"))
 }
 

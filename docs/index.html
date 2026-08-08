@@ -1,120 +1,370 @@
 <!DOCTYPE html>
-<html class="no-js">
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
-    <title>All modules</title>
-    <link href="images/logo-icon.svg" rel="icon" type="image/svg">
-    <script>var pathToRoot = "";</script>
-    <script>document.documentElement.classList.replace("no-js","js");</script>
-    <script>const storage = localStorage.getItem("dokka-dark-mode")
-    if (storage == null) {
-        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-        if (osDarkSchemePreferred === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
-        }
-    } else {
-        const savedDarkMode = JSON.parse(storage)
-        if(savedDarkMode === true) {
-            document.getElementsByTagName("html")[0].classList.add("theme-dark")
-        }
-    }
-    </script>
-<script type="text/javascript" src="scripts/sourceset_dependencies.js" async="async"></script>
-<link href="styles/style.css" rel="Stylesheet">
-<link href="styles/main.css" rel="Stylesheet">
-<link href="styles/prism.css" rel="Stylesheet">
-<link href="styles/logo-styles.css" rel="Stylesheet">
-<link href="styles/font-jb-sans-auto.css" rel="Stylesheet">
-<script type="text/javascript" src="scripts/clipboard.js" async="async"></script>
-<script type="text/javascript" src="scripts/navigation-loader.js" async="async"></script>
-<script type="text/javascript" src="scripts/platform-content-handler.js" async="async"></script>
-<script type="text/javascript" src="scripts/main.js" defer="defer"></script>
-<script type="text/javascript" src="scripts/prism.js" async="async"></script>
-<script type="text/javascript" src="scripts/symbol-parameters-wrapper_deferred.js" defer="defer"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RePropertyX - Kotlin Property Delegation Toolkit</title>
+  <meta name="description" content="A Kotlin-first property delegation toolkit that makes your code cleaner, safer, and more expressive.">
+  <meta property="og:title" content="RePropertyX - Kotlin Property Delegates">
+  <meta property="og:description" content="Composable, reactive, and animated Kotlin property delegates for Android & JVM.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="art/logo.svg">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="root">
-<nav class="navigation" id="navigation-wrapper">
-    <div class="navigation--inner">
-        <div class="navigation-title">
-            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
-            <div class="library-name">
-                    <a class="library-name--link" href="index.html">
-                            repropertyx
-                    </a>
-            </div>
-            <div class="library-version">
-1.0.0            </div>
-        </div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-content">
+      <a href="#" class="logo-brand">
+        <img src="art/logo.svg" alt="RePropertyX Logo">
+        <span>RePropertyX</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#comparison">Showcase</a></li>
+        <li><a href="#modules">Modules & Docs</a></li>
+        <li><a href="#api">API Reference</a></li>
+        <li>
+          <a href="https://github.com/RePropertyX/RePropertyX" target="_blank" class="btn-github">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
+          </a>
+        </li>
+      </ul>
     </div>
-    <div class="navigation-controls">
-        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
-        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
-    </div>
-</nav>
-        <div id="container">
-            <div class="sidebar" id="leftColumn">
-                <div class="sidebar--inner" id="sideMenu"></div>
-            </div>
-            <div id="main">
-<div class="main-content" id="content" pageIds="repropertyx::.ext/allModules///PointingToDeclaration//0">
-  <div class="breadcrumbs"></div>
-  <div class="cover ">
-    <h2 class="">All modules:</h2>
-    <div class="table"><a data-name="-751496931%2FMain%2F0" anchor-label="repropertyx" id="-751496931%2FMain%2F0" data-filterable-set=""></a>
-      <div class="table-row">
-        <div class="main-subrow ">
-          <div class="w-100"><span class="inline-flex">
-              <div><a href="repropertyx/index.html">repropertyx</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-751496931%2FMain%2F0"></span>
-                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-              </span></span></div>
-          <div><span class="brief-comment"></span></div>
-        </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="badge-row">
+        <a href="https://jitpack.io/#RePropertyX/RePropertyX" target="_blank"><img src="https://jitpack.io/v/RePropertyX/RePropertyX.svg" alt="JitPack"></a>
+        <a href="https://jitci.com/gh/RePropertyX/RePropertyX" target="_blank"><img src="https://jitci.com/gh/RePropertyX/RePropertyX/svg" alt="JitCI"></a>
+        <a href="https://github.com/RePropertyX/RePropertyX/actions" target="_blank"><img src="https://github.com/RePropertyX/RePropertyX/actions/workflows/docs.yml/badge.svg" alt="Docs CI"></a>
+        <a href="https://kotlinlang.org" target="_blank"><img src="https://img.shields.io/badge/Kotlin-1.9.20-7F52FF.svg?logo=kotlin&logoColor=white" alt="Kotlin"></a>
+        <a href="https://developer.android.com" target="_blank"><img src="https://img.shields.io/badge/Android-API%2021%2B-3DDC84.svg?logo=android&logoColor=white" alt="Android API 21+"></a>
+        <a href="https://developer.android.com/jetpack/compose" target="_blank"><img src="https://img.shields.io/badge/Jetpack%20Compose-2024.06.00-4285F4.svg?logo=jetpackcompose&logoColor=white" alt="Compose"></a>
+        <a href="LICENSE" target="_blank"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
       </div>
-<a data-name="1425606075%2FMain%2F0" anchor-label="repropertyx-android" id="1425606075%2FMain%2F0" data-filterable-set=""></a>
-      <div class="table-row">
-        <div class="main-subrow ">
-          <div class="w-100"><span class="inline-flex">
-              <div><a href="repropertyx-android/index.html">repropertyx-android</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1425606075%2FMain%2F0"></span>
-                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-              </span></span></div>
-          <div><span class="brief-comment"></span></div>
-        </div>
-      </div>
-<a data-name="745330791%2FMain%2F0" anchor-label="repropertyx-android-app" id="745330791%2FMain%2F0" data-filterable-set=""></a>
-      <div class="table-row">
-        <div class="main-subrow ">
-          <div class="w-100"><span class="inline-flex">
-              <div><a href="repropertyx-android-app/index.html">repropertyx-android-app</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="745330791%2FMain%2F0"></span>
-                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-              </span></span></div>
-          <div><span class="brief-comment"></span></div>
-        </div>
-      </div>
-<a data-name="489779606%2FMain%2F0" anchor-label="repropertyx-compose-android" id="489779606%2FMain%2F0" data-filterable-set=""></a>
-      <div class="table-row">
-        <div class="main-subrow ">
-          <div class="w-100"><span class="inline-flex">
-              <div><a href="repropertyx-compose-android/index.html">repropertyx-compose-android</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="489779606%2FMain%2F0"></span>
-                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-              </span></span></div>
-          <div><span class="brief-comment"></span></div>
-        </div>
+
+      <h1 class="hero-title">Reactive & Composable<br>Kotlin Property Delegates</h1>
+      <p class="hero-subtitle">
+        Eliminate Android boilerplate. Compose, animate, store, and test your properties with declarative Kotlin semantics.
+      </p>
+
+      <div class="install-box">
+        <span class="install-code">implementation("com.github.RePropertyX.RePropertyX:repropertyx:1.0.0")</span>
+        <button class="btn-copy" onclick="copyToClipboard('implementation(&quot;com.github.RePropertyX.RePropertyX:repropertyx:1.0.0&quot;)')">Copy</button>
       </div>
     </div>
-  </div>
-</div>
-      <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span
-                class="pull-right"><span>Generated by </span><a
-                href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+  </section>
+
+  <!-- Showcase / Code Comparison -->
+  <section class="section" id="comparison">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">See the Magic</h2>
+        <p class="section-desc">Compare traditional boilerplate with RePropertyX's clean, declarative delegates.</p>
       </div>
-            </div>
+
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="prefs">SharedPreferences</button>
+        <button class="tab-btn" data-tab="anim">View Animations</button>
+        <button class="tab-btn" data-tab="compose">Jetpack Compose</button>
+      </div>
+
+      <!-- Tab 1: SharedPreferences -->
+      <div class="comparison-grid comparison-content" id="tab-prefs">
+        <div class="code-card">
+          <div class="code-header">
+            <span>Traditional Approach</span>
+            <span class="code-tag tag-before">Boilerplate</span>
+          </div>
+          <div class="code-body">
+<pre><span class="token comment">// Manual getter/setter boilerplate</span>
+<span class="token keyword">val</span> prefs = context.getSharedPreferences(<span class="token string">"user"</span>, MODE_PRIVATE)
+
+<span class="token keyword">var</span> userToken: String?
+    <span class="token keyword">get</span>() = prefs.getString(<span class="token string">"user_token"</span>, <span class="token keyword">null</span>)
+    <span class="token keyword">set</span>(value) {
+        prefs.edit().putString(<span class="token string">"user_token"</span>, value).apply()
+    }
+
+<span class="token keyword">var</span> userNickname: String
+    <span class="token keyword">get</span>() = prefs.getString(<span class="token string">"user_nickname"</span>, <span class="token keyword">null</span>) ?: <span class="token string">"unknown"</span>
+    <span class="token keyword">set</span>(value) {
+        prefs.edit().putString(<span class="token string">"user_nickname"</span>, value).apply()
+    }</pre>
+          </div>
         </div>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span>With RePropertyX</span>
+            <span class="code-tag tag-after">Clean & Type-Safe</span>
+          </div>
+          <div class="code-body">
+<pre><span class="token comment">// Expressive 1-line delegates!</span>
+<span class="token keyword">var</span> userToken: String? <span class="token keyword">by</span> prefs.byString()
+
+<span class="token keyword">var</span> userNickname: String <span class="token keyword">by</span> prefs.byString()
+    .or { <span class="token string">"unknown"</span> }
+
+<span class="token comment">// Reactive side effects on value change</span>
+<span class="token keyword">var</span> themeMode: Int <span class="token keyword">by</span> prefs.byInt(<span class="token string">"theme"</span>)
+    .distinctUntilChanged()
+    .onEach { updateTheme(it) }</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Animations -->
+      <div class="comparison-grid comparison-content" id="tab-anim" style="display: none;">
+        <div class="code-card">
+          <div class="code-header">
+            <span>Traditional ViewAnimator</span>
+            <span class="code-tag tag-before">Complex</span>
+          </div>
+          <div class="code-body">
+<pre><span class="token comment">// Manual ValueAnimator orchestration</span>
+<span class="token keyword">fun</span> animateY(targetY: Float) {
+    currentAnimator?.cancel()
+    currentAnimator = ValueAnimator.ofFloat(view.translationY, targetY).apply {
+        duration = <span class="token number">300</span>
+        addUpdateListener { anim ->
+            view.translationY = anim.animatedValue <span class="token keyword">as</span> Float
+        }
+        start()
+    }
+}</pre>
+          </div>
+        </div>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span>RePropertyX .animated()</span>
+            <span class="code-tag tag-after">Declarative</span>
+          </div>
+          <div class="code-body">
+<pre><span class="token comment">// Property assignment triggers smooth animation!</span>
+<span class="token keyword">var</span> translationY <span class="token keyword">by</span> view.animatedTranslationY()
+
+translationY = <span class="token number">200f</span> <span class="token comment">// Smoothly animates view to 200f!</span>
+
+<span class="token comment">// Custom animation duration & interpolator</span>
+<span class="token keyword">var</span> scaleX <span class="token keyword">by</span> propertyOf({ view.scaleX }, { view.scaleX = it })
+    .animated(duration = <span class="token number">400</span>, interpolator = FastOutSlowInInterpolator())</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Compose -->
+      <div class="comparison-grid comparison-content" id="tab-compose" style="display: none;">
+        <div class="code-card">
+          <div class="code-header">
+            <span>Standard Compose State</span>
+            <span class="code-tag tag-before">Disconnected</span>
+          </div>
+          <div class="code-body">
+<pre><span class="token comment">// Manual LaunchedEffect sync for storage</span>
+<span class="token keyword">var</span> count <span class="token keyword">by</span> remember { mutableStateOf(prefs.getInt(<span class="token string">"count"</span>, <span class="token number">0</span>)) }
+
+LaunchedEffect(count) {
+    prefs.edit().putInt(<span class="token string">"count"</span>, count).apply()
+}</pre>
+          </div>
+        </div>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span>RePropertyX Compose</span>
+            <span class="code-tag tag-after">Seamless</span>
+          </div>
+          <div class="code-body">
+<pre><span class="token comment">// Auto-synced MutableState property delegate!</span>
+<span class="token keyword">var</span> count <span class="token keyword">by</span> rememberProperty { prefs.byInt(<span class="token string">"count"</span>) }
+
+count++ <span class="token comment">// Updates Compose UI AND SharedPreferences!</span></pre>
+          </div>
+        </div>
+      </div>
     </div>
+  </section>
+
+  <!-- Features Cards -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Built for Modern Kotlin</h2>
+        <p class="section-desc">Composable, reactive, and modular extensions for property delegates.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3 class="feature-title">Functional Composition</h3>
+          <p class="feature-desc">Chain operations like <code>.map()</code>, <code>.distinctUntilChanged()</code>, and <code>.flatMap()</code> on any property delegate.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎬</div>
+          <h3 class="feature-title">Smooth Animations</h3>
+          <p class="feature-desc">Turn any numerical View property into a smooth, auto-cancelable animation with <code>.animated()</code>.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">💾</div>
+          <h3 class="feature-title">SharedPreferences</h3>
+          <p class="feature-desc">Type-safe storage delegates for primitive types, String sets, and serialized objects with reactive observers.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3 class="feature-title">Jetpack Compose</h3>
+          <p class="feature-desc">Bind properties directly to Compose <code>MutableState</code> with <code>rememberProperty()</code> for reactive UI updates.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modules & Javadocs Section -->
+  <section class="section" id="modules">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Modules & Documentation</h2>
+        <p class="section-desc">RePropertyX is split into focused, lightweight modules. Access Javadocs directly on JitPack.</p>
+      </div>
+
+      <div class="modules-grid">
+        <!-- Module 1 -->
+        <div class="module-card">
+          <div>
+            <span class="module-badge">repropertyx</span>
+            <h3 class="module-title">Core JVM</h3>
+            <p class="module-desc">Core delegation toolkit for Kotlin JVM. Property creation, functional composition, caching, and reactive side-effects.</p>
+          </div>
+          <div class="module-actions">
+            <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx/1.0.0/javadoc/" target="_blank" class="btn-action btn-javadoc">JitPack Javadoc</a>
+          </div>
+        </div>
+
+        <!-- Module 2 -->
+        <div class="module-card">
+          <div>
+            <span class="module-badge">repropertyx-android</span>
+            <h3 class="module-title">Android Extensions</h3>
+            <p class="module-desc">Android SharedPreferences delegates, View property delegation, and smooth ValueAnimator integration.</p>
+          </div>
+          <div class="module-actions">
+            <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-android/1.0.0/javadoc/" target="_blank" class="btn-action btn-javadoc">JitPack Javadoc</a>
+          </div>
+        </div>
+
+        <!-- Module 3 -->
+        <div class="module-card">
+          <div>
+            <span class="module-badge">repropertyx-compose-android</span>
+            <h3 class="module-title">Jetpack Compose</h3>
+            <p class="module-desc">Compose MutableState bindings, <code>rememberProperty</code>, and reactive preference synchronization for Compose UI.</p>
+          </div>
+          <div class="module-actions">
+            <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-compose-android/1.0.0/javadoc/" target="_blank" class="btn-action btn-javadoc">JitPack Javadoc</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- API Reference & Cheatsheet -->
+  <section class="section" id="api">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Quick API Reference</h2>
+        <p class="section-desc">Search and discover available property delegate operators.</p>
+      </div>
+
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="api-search" class="search-input" placeholder="Search API (e.g. animated, map, byString, onEach)...">
+      </div>
+
+      <div class="api-list">
+        <div class="api-item">
+          <div class="api-name">propertyOf(get, set)</div>
+          <div class="api-desc">Create a property delegate from getter & setter functions.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">.map(transform)</div>
+          <div class="api-desc">Transform values between exposed and stored types.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">.distinctUntilChanged()</div>
+          <div class="api-desc">Prevent redundant property assignments if value is unchanged.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">.onEach { action }</div>
+          <div class="api-desc">Observe property value changes with side-effect callback.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">.onEachBefore { action }</div>
+          <div class="api-desc">Execute side-effect callback before applying new property value.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">.animated()</div>
+          <div class="api-desc">Animate View property assignments smoothly with ValueAnimator.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">prefs.byString()</div>
+          <div class="api-desc">Type-safe SharedPreferences String delegate.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">prefs.byInt()</div>
+          <div class="api-desc">Type-safe SharedPreferences Int delegate.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">rememberProperty { delegate }</div>
+          <div class="api-desc">Remember a property delegate inside Jetpack Compose UI.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">.closable()</div>
+          <div class="api-desc">Automatically close previous Closable resource upon assigning a new one.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">.or { fallback }</div>
+          <div class="api-desc">Provide fallback default value when getter returns null.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">mutablePropertyOf(initial)</div>
+          <div class="api-desc">Create a simple in-memory mutable property delegate.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://github.com/RePropertyX/RePropertyX" target="_blank">GitHub Repository</a>
+        <a href="https://jitpack.io/#RePropertyX/RePropertyX" target="_blank">JitPack Release</a>
+        <a href="LICENSE" target="_blank">Apache 2.0 License</a>
+      </div>
+      <p>&copy; 2026 RePropertyX Open Source Project. Built for Kotlin & Android.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
