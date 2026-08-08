@@ -12,6 +12,13 @@ java {
     withJavadocJar()
 }
 
+val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
+
+tasks.named<Jar>("javadocJar") {
+    dependsOn(dokkaHtml)
+    from(dokkaHtml.outputDirectory)
+}
+
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
