@@ -6,6 +6,7 @@
 
 <p align="left">
   <a href="https://jitpack.io/#RePropertyX/RePropertyX"><img src="https://jitpack.io/v/RePropertyX/RePropertyX.svg" alt="JitPack"/></a>
+  <a href="https://jitpack.io/com/github/RePropertyX/RePropertyX/1.0.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-1.0.0-brightgreen.svg" alt="Javadocs"/></a>
   <a href="https://jitci.com/gh/RePropertyX/RePropertyX"><img src="https://jitci.com/gh/RePropertyX/RePropertyX/svg" alt="JitCI"/></a>
   <a href="https://github.com/RePropertyX/RePropertyX/actions"><img src="https://github.com/RePropertyX/RePropertyX/actions/workflows/docs.yml/badge.svg" alt="Docs CI"/></a>
   <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-1.9.20-7F52FF.svg?logo=kotlin&logoColor=white" alt="Kotlin"/></a>
