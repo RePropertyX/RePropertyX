@@ -41,13 +41,13 @@ Add dependencies to your module's `build.gradle.kts`:
 ```kotlin
 dependencies {
     // Core JVM property delegates
-    implementation("com.github.RePropertyX.RePropertyX:repropertyx:<version>")
+    implementation("com.github.RePropertyX.RePropertyX:repropertyx:1.0.0")
 
     // Android extensions (SharedPreferences, View animations)
-    implementation("com.github.RePropertyX.RePropertyX:repropertyx-android:<version>")
+    implementation("com.github.RePropertyX.RePropertyX:repropertyx-android:1.0.0")
 
     // Compose extensions (MutableState & Compose bindings)
-    implementation("com.github.RePropertyX.RePropertyX:repropertyx-compose-android:<version>")
+    implementation("com.github.RePropertyX.RePropertyX:repropertyx-compose-android:1.0.0")
 }
 ```
 
