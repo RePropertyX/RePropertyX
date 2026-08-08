@@ -50,9 +50,16 @@ android {
     publishing {
         singleVariant("release") {
             withSourcesJar()
-            withJavadocJar()
         }
     }
+}
+
+val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
+
+val javadocJar by tasks.registering(Jar::class) {
+    dependsOn(dokkaHtml)
+    archiveClassifier.set("javadoc")
+    from(dokkaHtml.outputDirectory)
 }
 
 dependencies {
@@ -80,6 +87,7 @@ publishing {
         create<MavenPublication>("maven") {
             afterEvaluate {
                 from(components["release"])
+                artifact(javadocJar)
             }
 
             pom {

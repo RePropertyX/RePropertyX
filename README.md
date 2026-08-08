@@ -6,7 +6,6 @@
 
 <p align="left">
   <a href="https://jitpack.io/#RePropertyX/RePropertyX"><img src="https://jitpack.io/v/RePropertyX/RePropertyX.svg" alt="JitPack"/></a>
-  <a href="https://jitpack.io/com/github/RePropertyX/RePropertyX/1.0.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-1.0.0-brightgreen.svg" alt="Javadocs"/></a>
   <a href="https://repropertyx.github.io/RePropertyX/"><img src="https://img.shields.io/badge/Dokka-API%20Docs-6F42C1.svg?logo=kotlin&logoColor=white" alt="Dokka API Docs"/></a>
   <a href="https://jitci.com/gh/RePropertyX/RePropertyX"><img src="https://jitci.com/gh/RePropertyX/RePropertyX/svg" alt="JitCI"/></a>
   <a href="https://github.com/RePropertyX/RePropertyX/actions"><img src="https://github.com/RePropertyX/RePropertyX/actions/workflows/docs.yml/badge.svg" alt="Docs CI"/></a>
@@ -61,7 +60,15 @@ dependencies {
 }
 ```
 
-*(Replace `<version>` with the release tag or commit hash on [JitPack](https://jitpack.io/#RePropertyX/RePropertyX).)*
+---
+
+## 📚 Module Documentation & Javadocs
+
+| Module | Description | JitPack Javadoc | Dokka Docs |
+|---|---|---|---|
+| **`repropertyx`** | Core JVM Kotlin Property Delegates | [![repropertyx javadoc](https://img.shields.io/badge/javadoc-repropertyx-brightgreen.svg)](https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx/1.0.0/javadoc/) | [View Docs](https://repropertyx.github.io/RePropertyX/repropertyx/) |
+| **`repropertyx-android`** | Android SharedPreferences & View Delegates | [![repropertyx-android javadoc](https://img.shields.io/badge/javadoc-repropertyx--android-brightgreen.svg)](https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-android/1.0.0/javadoc/) | [View Docs](https://repropertyx.github.io/RePropertyX/repropertyx-android/) |
+| **`repropertyx-compose-android`** | Jetpack Compose State & Preference Bindings | [![repropertyx-compose-android javadoc](https://img.shields.io/badge/javadoc-repropertyx--compose--android-brightgreen.svg)](https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-compose-android/1.0.0/javadoc/) | [View Docs](https://repropertyx.github.io/RePropertyX/repropertyx-compose-android/) |
 
 ---
 
