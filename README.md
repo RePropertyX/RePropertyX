@@ -4,8 +4,15 @@
 
 # RePropertyX
 
-[![JitPack](https://jitpack.io/v/RePropertyX/RePropertyX.svg)](https://jitpack.io/#RePropertyX/RePropertyX)
-[![JitCI](https://jitci.com/gh/RePropertyX/RePropertyX/svg)](https://jitci.com/gh/RePropertyX/RePropertyX)
+<p align="left">
+  <a href="https://jitpack.io/#RePropertyX/RePropertyX"><img src="https://jitpack.io/v/RePropertyX/RePropertyX.svg" alt="JitPack"/></a>
+  <a href="https://jitci.com/gh/RePropertyX/RePropertyX"><img src="https://jitci.com/gh/RePropertyX/RePropertyX/svg" alt="JitCI"/></a>
+  <a href="https://github.com/RePropertyX/RePropertyX/actions"><img src="https://github.com/RePropertyX/RePropertyX/actions/workflows/docs.yml/badge.svg" alt="Docs CI"/></a>
+  <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-1.9.20-7F52FF.svg?logo=kotlin&logoColor=white" alt="Kotlin"/></a>
+  <a href="https://developer.android.com"><img src="https://img.shields.io/badge/Android-API%2021%2B-3DDC84.svg?logo=android&logoColor=white" alt="Android API 21+"/></a>
+  <a href="https://developer.android.com/jetpack/compose"><img src="https://img.shields.io/badge/Jetpack%20Compose-2024.06.00-4285F4.svg?logo=jetpackcompose&logoColor=white" alt="Jetpack Compose"/></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"/></a>
+</p>
 
 A **Kotlin-first property delegation toolkit** that makes your code cleaner, safer, and more expressive.
 
