@@ -142,3 +142,18 @@ suspend fun View.animatedIntAwait(
     cont.invokeOnCancellation { listener?.let { animator?.removeListener(it) }  }
     animatedValue = value
 }
+
+fun View.animatedTranslationY(): ReadWriteProperty<Any?, Float> =
+    propertyOf(get = { translationY }, set = { translationY = it }).animated()
+
+fun View.animatedTranslationX(): ReadWriteProperty<Any?, Float> =
+    propertyOf(get = { translationX }, set = { translationX = it }).animated()
+
+fun View.animatedAlpha(): ReadWriteProperty<Any?, Float> =
+    propertyOf(get = { alpha }, set = { alpha = it }).animated()
+
+fun View.animatedScaleX(): ReadWriteProperty<Any?, Float> =
+    propertyOf(get = { scaleX }, set = { scaleX = it }).animated()
+
+fun View.animatedScaleY(): ReadWriteProperty<Any?, Float> =
+    propertyOf(get = { scaleY }, set = { scaleY = it }).animated()
