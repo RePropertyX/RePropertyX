@@ -111,47 +111,83 @@ peekHeight = 200 // smooth animation + event callback!
 
 ## 💡 Key APIs
 
-| API                                   | Description                                               |
-|---------------------------------------|-----------------------------------------------------------|
-| `propertyOf(get, set)`                | Create a property delegate from any getter & setter pair. |
-| `.map(transform)`                     | Transform values between exposed and stored types.        |
-| `.distinctUntilChanged()`             | Prevent redundant updates.                                |
-| `.onEach { }`                         | Observe every value change.                               |
-| `.onEachBefore { }`                   | Run side effects **before** applying a value.             |
-| `.animated()`                         | Animate value changes with `ValueAnimator`.               |
-| `mutablePropertyOf(initialValue)`     | Create a simple in-memory mutable property delegate.      |
-| `bySharedPreference`, `byString`, ... | Property delegates for Android SharedPreferences.         |
-| `.closable()`                         | Automatically close a closable when assigning a new one.  |
+| Module | API | Description |
+|---|---|---|
+| **Core** | `propertyOf(get, set)` | Create a property delegate from any getter & setter pair. |
+| **Core** | `mutablePropertyOf(initial)` / `V.asProperty()` | Create an in-memory mutable property delegate. |
+| **Core** | `.map(to, from)` | Transform values between exposed and stored types. |
+| **Core** | `.distinctUntilChanged()` | Prevent redundant updates when assigned value is unchanged. |
+| **Core** | `.onEach { }` / `.onEachBefore { }` | Observe changes or run side effects before/after assignment. |
+| **Core** | `.closable()` | Automatically close `AutoCloseable` resources upon replacing. |
+| **Core** | `byThreadLocal { ... }` | Type-safe `ThreadLocal` property delegation. |
+| **Core** | `byAtomic()` / `0.byAtomic()` | Thread-safe `AtomicReference`, `AtomicInteger`, etc. delegation. |
+| **Core** | `byDeclaredField` / `byFirstDeclaredField` | Reflection field access with optional field caching. |
+| **Core** | `.switchMap()` / `.flatMap()` | Delegate dynamically to child properties based on parent value. |
+| **Core** | `StateFlow.getValue()` / `MutableStateFlow.setValue()` | Direct Kotlin Coroutines `StateFlow` property delegation. |
+| **Android** | `bySharedPreference`, `byString`, `byInt`, ... | Type-safe Android `SharedPreferences` property delegates. |
+| **Android** | `.animated()` | Animate View numerical properties with `ValueAnimator`. |
+| **Android** | `view.animatedFloatAwait(value)` | Suspend function animating View properties asynchronously. |
+| **Compose** | `rememberProperty { ... }` | Remember property delegates inside Jetpack Compose UI. |
+| **Compose** | `rememberPropertyState` + `changesComposed()` | Auto-recompose Compose UI when `SharedPreferences` change on disk. |
 
 ---
 
 ## 🔧 Advanced Usage
 
-### 1. Animated Delegation
+### 1. Thread-Safe & Concurrent Delegates
 
 ```kotlin
-var viewAnimatedY by propertyOf(
-    get = { view.translationY },
-    set = { view.translationY = it },
-).animated()
+// ThreadLocal delegation
+var userSession by byThreadLocal { Session() }
 
-viewAnimatedY = 200f // Smoothly animates from current value to 200f
+// Atomic delegation
+var counter by 0.byAtomic()
+counter++ // Atomic update
 ```
 
-### 2. SharedPreferences Composable Delegates
+### 2. Animated View Delegation (Coroutines & Animators)
 
 ```kotlin
-var userId: Long by prefs.byLong("user_id", defaultValue = -1L)
-var loggedIn: Boolean by prefs.byBoolean("logged_in")
+// Property assignment triggers animation
+var translationY by view.animatedTranslationY()
+translationY = 200f // Smooth 300ms animation
+
+// Suspend animation in Coroutines
+lifecycleScope.launch {
+    view.animatedFloatAwait(
+        value = 300f,
+        get = { translationY },
+        set = { translationY = it }
+    )
+}
 ```
 
-### 3. Auto-Cancelable Animator Property
+### 3. Jetpack Compose Reactive State
 
 ```kotlin
-var runningAnimator: ValueAnimator? by mutablePropertyOf<ValueAnimator?>(null)
-    .onEachBefore { it?.cancel() }
+@Composable
+fun UserSettingsScreen(prefs: SharedPreferences) {
+    // Automatically triggers Compose recomposition when SharedPreferences change!
+    var darkMode by rememberPropertyState(
+        disposable = prefs.changesComposed()
+    ) { prefs.byBoolean("dark_mode") }
 
-runningAnimator = ValueAnimator.ofFloat(0f, 1f).apply { start() }
+    Switch(checked = darkMode ?: false, onCheckedChange = { darkMode = it })
+}
+```
+
+### 4. Dynamic Delegation with switchMap & flatMap
+
+```kotlin
+var activeTab by propertyOf(TabType.MAIN)
+    .switchMap(
+        childProperty = { tabType ->
+            when (tabType) {
+                TabType.MAIN -> mainContent.by(::content)
+                TabType.SETTINGS -> settingsContent.by(::content)
+            }
+        }
+    )
 ```
 
 ---

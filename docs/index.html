@@ -349,6 +349,51 @@ count++ <span class="token comment">// Updates Compose UI AND SharedPreferences!
           <div class="api-name">mutablePropertyOf(initial)</div>
           <div class="api-desc">Create a simple in-memory mutable property delegate.</div>
         </div>
+
+        <div class="api-item">
+          <div class="api-name">byThreadLocal { factory }</div>
+          <div class="api-desc">Type-safe ThreadLocal property delegate for thread-bound state.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">0.byAtomic() / byAtomic()</div>
+          <div class="api-desc">Thread-safe AtomicInteger, AtomicReference, etc. property delegates.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">byDeclaredField { "_field" }</div>
+          <div class="api-desc">Reflection field delegate with optional field caching.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">.switchMap { child }</div>
+          <div class="api-desc">Switch dynamically to child property delegates based on parent value.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">StateFlow.getValue()</div>
+          <div class="api-desc">Coroutines StateFlow and MutableStateFlow property delegation.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">view.animatedFloatAwait()</div>
+          <div class="api-desc">Suspend function animating View properties asynchronously in Coroutines.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">prefs.changesComposed()</div>
+          <div class="api-desc">Auto-register listener to recompose Compose UI on SharedPreferences changes.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">.validate { condition }</div>
+          <div class="api-desc">Validate values on read/write and throw exception if invalid.</div>
+        </div>
+
+        <div class="api-item">
+          <div class="api-name">.catch { handler }</div>
+          <div class="api-desc">Catch exceptions thrown during property read/write operations.</div>
+        </div>
       </div>
     </div>
   </section>
