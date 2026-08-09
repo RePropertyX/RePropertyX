@@ -108,12 +108,11 @@
 <pre><span class="token comment">// Expressive 1-line delegates!</span>
 <span class="token keyword">val</span> prefs = context.getSharedPreferences(<span class="token string">"user"</span>, MODE_PRIVATE)
 
-<span class="token keyword">var</span> userToken: String? <span class="token keyword">by</span> prefs.byString()
+<span class="token comment">// 1-line nullable delegate bound to "user_token"</span>
+<span class="token keyword">var</span> userToken: String? <span class="token keyword">by</span> prefs.byString(<span class="token string">"user_token"</span>)
 
-
-
-
-<span class="token keyword">var</span> userNickname: String <span class="token keyword">by</span> prefs.byString()
+<span class="token comment">// 1-line non-null delegate with fallback default</span>
+<span class="token keyword">var</span> userNickname: String <span class="token keyword">by</span> prefs.byString(<span class="token string">"user_nickname"</span>)
     .orElse { <span class="token string">"unknown"</span> }</pre>
           </div>
         </div>
@@ -127,15 +126,16 @@
             <span class="code-tag tag-before">Complex</span>
           </div>
           <div class="code-body">
-<pre><span class="token comment">// Manual ValueAnimator orchestration</span>
-<span class="token keyword">var</span> currentAnimator: ValueAnimator? = <span class="token keyword">null</span>
+<pre><span class="token comment">// Manual ValueAnimator management</span>
+<span class="token keyword">var</span> animator: ValueAnimator? = <span class="token keyword">null</span>
 
-<span class="token keyword">fun</span> animateY(targetY: Float) {
-    currentAnimator?.cancel()
-    currentAnimator = ValueAnimator.ofFloat(view.translationY, targetY).apply {
+<span class="token keyword">fun</span> animateY(view: View, targetY: Float) {
+    animator?.cancel()
+    animator = ValueAnimator.ofFloat(view.translationY, targetY).apply {
         duration = <span class="token number">300</span>
-        addUpdateListener { anim ->
-            view.translationY = anim.animatedValue <span class="token keyword">as</span> Float
+        interpolator = FastOutSlowInInterpolator()
+        addUpdateListener {
+            view.translationY = it.animatedValue <span class="token keyword">as</span> Float
         }
         start()
     }
@@ -149,16 +149,14 @@
             <span class="code-tag tag-after">Declarative</span>
           </div>
           <div class="code-body">
-<pre><span class="token comment">// Property assignment triggers smooth animation!</span>
-<span class="token keyword">var</span> translationY <span class="token keyword">by</span> view.animatedTranslationY()
+<pre><span class="token comment">// Declarative property animation</span>
+<span class="token keyword">var</span> View.animatedY <span class="token keyword">by</span> propertyOf(
+    get = { translationY },
+    set = { translationY = it }
+).animated()
 
-<span class="token keyword">fun</span> animateY(targetY: Float) {
-
-    translationY = targetY <span class="token comment">// Smoothly animates view to targetY!</span>
-
-
-
-
+<span class="token keyword">fun</span> animateY(view: View, targetY: Float) {
+    view.animatedY = targetY <span class="token comment">// Smoothly animates to targetY!</span>
 }</pre>
           </div>
         </div>
@@ -181,9 +179,9 @@
 
     Switch(
         checked = darkMode,
-        onCheckedChange = {
-            darkMode = it
-            prefs.edit().putBoolean(<span class="token string">"dark_mode"</span>, it).apply()
+        onCheckedChange = { newSetting ->
+            darkMode = newSetting
+            prefs.edit().putBoolean(<span class="token string">"dark_mode"</span>, newSetting).apply()
         }
     )
 }</pre>
@@ -205,8 +203,8 @@
 
     Switch(
         checked = darkMode,
-        onCheckedChange = {
-            darkMode = it <span class="token comment">// Updates Compose UI AND SharedPreferences!</span>
+        onCheckedChange = { newSetting ->
+            darkMode = newSetting <span class="token comment">// Updates Compose UI AND SharedPreferences!</span>
         }
     )
 }</pre>
