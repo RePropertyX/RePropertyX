@@ -47,6 +47,9 @@ fun <P, R> ReadWriteProperty<P, R?>.orElse(orElse: P.(String) -> R): ReadWritePr
 fun <P, R> ReadOnlyProperty<P, R?>.orElse(orElse: P.(String) -> R): ReadOnlyProperty<P, R> =
     ReadOnlyProperty { thisRef, property -> this@orElse.getValue(thisRef, property) ?: thisRef.orElse(property.name) }
 
+fun <P, R> ReadWriteProperty<P, R?>.or(fallback: R): ReadWriteProperty<P, R> = orElse { fallback }
+fun <P, R> ReadOnlyProperty<P, R?>.or(fallback: R): ReadOnlyProperty<P, R> = orElse { fallback }
+
 fun <P, R> ReadWriteProperty<P, R?>.notNull(message: (P.(String) -> String)? = null): ReadWriteProperty<P, R> =
     orElse { throw IllegalStateException(message?.invoke(this, it) ?: "Property $it is null") }
 

@@ -32,10 +32,20 @@ class DelegatexTest {
     }
 
     @Test
-    fun `ReadOnlyPropert_or`() {
+    fun `or and orElse extension functions`() {
         val readOnly: ReadOnlyProperty<Any?, String?> = ReadOnlyProperty { _, _ -> null }
-        val value by readOnly.orElse { "fallback" }
-        assertEquals("fallback", value)
+        val valWithFn by readOnly.orElse { "fn_fallback" }
+        val valWithValue by readOnly.or("val_fallback")
+
+        assertEquals("fn_fallback", valWithFn)
+        assertEquals("val_fallback", valWithValue)
+
+        val readWrite: ReadWriteProperty<Any?, String?> = delegate<String?>(null)
+        val rwWithFn by readWrite.orElse { "rw_fn" }
+        val rwWithValue by readWrite.or("rw_val")
+
+        assertEquals("rw_fn", rwWithFn)
+        assertEquals("rw_val", rwWithValue)
     }
 
 
