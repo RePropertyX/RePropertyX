@@ -106,15 +106,15 @@
           </div>
           <div class="code-body">
 <pre><span class="token comment">// Expressive 1-line delegates!</span>
+<span class="token keyword">val</span> prefs = context.getSharedPreferences(<span class="token string">"user"</span>, MODE_PRIVATE)
+
 <span class="token keyword">var</span> userToken: String? <span class="token keyword">by</span> prefs.byString()
 
-<span class="token keyword">var</span> userNickname: String <span class="token keyword">by</span> prefs.byString()
-    .or { <span class="token string">"unknown"</span> }
 
-<span class="token comment">// Reactive side effects on value change</span>
-<span class="token keyword">var</span> themeMode: Int <span class="token keyword">by</span> prefs.byInt(<span class="token string">"theme"</span>)
-    .distinctUntilChanged()
-    .onEach { updateTheme(it) }</pre>
+
+
+<span class="token keyword">var</span> userNickname: String <span class="token keyword">by</span> prefs.byString()
+    .orElse { <span class="token string">"unknown"</span> }</pre>
           </div>
         </div>
       </div>
@@ -128,6 +128,8 @@
           </div>
           <div class="code-body">
 <pre><span class="token comment">// Manual ValueAnimator orchestration</span>
+<span class="token keyword">var</span> currentAnimator: ValueAnimator? = <span class="token keyword">null</span>
+
 <span class="token keyword">fun</span> animateY(targetY: Float) {
     currentAnimator?.cancel()
     currentAnimator = ValueAnimator.ofFloat(view.translationY, targetY).apply {
@@ -143,18 +145,21 @@
 
         <div class="code-card">
           <div class="code-header">
-            <span>RePropertyX .animated()</span>
+            <span>With RePropertyX</span>
             <span class="code-tag tag-after">Declarative</span>
           </div>
           <div class="code-body">
 <pre><span class="token comment">// Property assignment triggers smooth animation!</span>
 <span class="token keyword">var</span> translationY <span class="token keyword">by</span> view.animatedTranslationY()
 
-translationY = <span class="token number">200f</span> <span class="token comment">// Smoothly animates view to 200f!</span>
+<span class="token keyword">fun</span> animateY(targetY: Float) {
 
-<span class="token comment">// Custom animation duration & interpolator</span>
-<span class="token keyword">var</span> scaleX <span class="token keyword">by</span> propertyOf({ view.scaleX }, { view.scaleX = it })
-    .animated(duration = <span class="token number">400</span>, interpolator = FastOutSlowInInterpolator())</pre>
+    translationY = targetY <span class="token comment">// Smoothly animates view to targetY!</span>
+
+
+
+
+}</pre>
           </div>
         </div>
       </div>
@@ -167,25 +172,44 @@ translationY = <span class="token number">200f</span> <span class="token comment
             <span class="code-tag tag-before">Disconnected</span>
           </div>
           <div class="code-body">
-<pre><span class="token comment">// Manual LaunchedEffect sync for storage</span>
-<span class="token keyword">var</span> count <span class="token keyword">by</span> remember { mutableStateOf(prefs.getInt(<span class="token string">"count"</span>, <span class="token number">0</span>)) }
+<pre><span class="token comment">// Manual SharedPreferences sync & effect</span>
+<span class="token annotation font-weight-bold">@Composable</span>
+<span class="token keyword">fun</span> PreferenceSwitch(prefs: SharedPreferences) {
+    <span class="token keyword">var</span> darkMode <span class="token keyword">by</span> remember {
+        mutableStateOf(prefs.getBoolean(<span class="token string">"dark_mode"</span>, <span class="token keyword">false</span>))
+    }
 
-LaunchedEffect(count) {
-    prefs.edit().putInt(<span class="token string">"count"</span>, count).apply()
+    Switch(
+        checked = darkMode,
+        onCheckedChange = {
+            darkMode = it
+            prefs.edit().putBoolean(<span class="token string">"dark_mode"</span>, it).apply()
+        }
+    )
 }</pre>
           </div>
         </div>
 
         <div class="code-card">
           <div class="code-header">
-            <span>RePropertyX Compose</span>
+            <span>With RePropertyX</span>
             <span class="code-tag tag-after">Seamless</span>
           </div>
           <div class="code-body">
 <pre><span class="token comment">// Auto-synced MutableState property delegate!</span>
-<span class="token keyword">var</span> count <span class="token keyword">by</span> rememberProperty { prefs.byInt(<span class="token string">"count"</span>) }
+<span class="token annotation font-weight-bold">@Composable</span>
+<span class="token keyword">fun</span> PreferenceSwitch(prefs: SharedPreferences) {
+    <span class="token keyword">var</span> darkMode <span class="token keyword">by</span> rememberPropertyState(
+        disposable = prefs.changesComposed()
+    ) { prefs.byBoolean(<span class="token string">"dark_mode"</span>).orElse { <span class="token keyword">false</span> } }
 
-count++ <span class="token comment">// Updates Compose UI AND SharedPreferences!</span></pre>
+    Switch(
+        checked = darkMode,
+        onCheckedChange = {
+            darkMode = it <span class="token comment">// Updates Compose UI AND SharedPreferences!</span>
+        }
+    )
+}</pre>
           </div>
         </div>
       </div>

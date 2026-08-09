@@ -19,7 +19,7 @@ package com.github.repropertyx.android
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.github.repropertyx.by
-import com.github.repropertyx.or
+import com.github.repropertyx.orElse
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -81,19 +81,19 @@ fun SharedPreferences.byLong(key: (SharedPreferences.(String) -> String)? = null
     by(bySharedPreferenceLong(key))
 
 fun SharedPreferences.byString(key: String): ReadWriteProperty<SharedPreferences, String?> = byString { key }
-fun SharedPreferences.byString(key: String, default: String): ReadWriteProperty<SharedPreferences, String> = byString { key }.or(default)
+fun SharedPreferences.byString(key: String, default: String): ReadWriteProperty<SharedPreferences, String> = byString { key }.orElse { default }
 
 fun SharedPreferences.byInt(key: String): ReadWriteProperty<SharedPreferences, Int?> = byInt { key }
-fun SharedPreferences.byInt(key: String, default: Int): ReadWriteProperty<SharedPreferences, Int> = byInt { key }.or(default)
+fun SharedPreferences.byInt(key: String, default: Int): ReadWriteProperty<SharedPreferences, Int> = byInt { key }.orElse { default }
 
 fun SharedPreferences.byBoolean(key: String): ReadWriteProperty<SharedPreferences, Boolean?> = byBoolean { key }
-fun SharedPreferences.byBoolean(key: String, default: Boolean): ReadWriteProperty<SharedPreferences, Boolean> = byBoolean { key }.or(default)
+fun SharedPreferences.byBoolean(key: String, default: Boolean): ReadWriteProperty<SharedPreferences, Boolean> = byBoolean { key }.orElse { default }
 
 fun SharedPreferences.byLong(key: String): ReadWriteProperty<SharedPreferences, Long?> = byLong { key }
-fun SharedPreferences.byLong(key: String, default: Long): ReadWriteProperty<SharedPreferences, Long> = byLong { key }.or(default)
+fun SharedPreferences.byLong(key: String, default: Long): ReadWriteProperty<SharedPreferences, Long> = byLong { key }.orElse { default }
 
 fun SharedPreferences.byFloat(key: String): ReadWriteProperty<SharedPreferences, Float?> = byFloat { key }
-fun SharedPreferences.byFloat(key: String, default: Float): ReadWriteProperty<SharedPreferences, Float> = byFloat { key }.or(default)
+fun SharedPreferences.byFloat(key: String, default: Float): ReadWriteProperty<SharedPreferences, Float> = byFloat { key }.orElse { default }
 
 fun SharedPreferences.getStringOrNull(key: String): String? =
     if (contains(key)) getString(key, null)

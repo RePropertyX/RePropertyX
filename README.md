@@ -90,7 +90,7 @@ var userNickname: String
 
 ```kotlin
 var userToken: String? by prefs.byString()
-var userNickname: String by prefs.byString { "${it}_${userToken}" }.or { "unknown" }
+var userNickname: String by prefs.byString { "${it}_${userToken}" }.orElse { "unknown" }
 ```
 
 Or fully reactive:
@@ -116,6 +116,7 @@ peekHeight = 200 // smooth animation + event callback!
 | **Core** | `propertyOf(get, set)` | Create a property delegate from any getter & setter pair. |
 | **Core** | `mutablePropertyOf(initial)` / `V.asProperty()` | Create an in-memory mutable property delegate. |
 | **Core** | `.map(to, from)` | Transform values between exposed and stored types. |
+| **Core** | `.orElse { fallback }` / `.notNull()` | Provide a fallback value or throw an exception when the delegate returns null. |
 | **Core** | `.distinctUntilChanged()` | Prevent redundant updates when assigned value is unchanged. |
 | **Core** | `.onEach { }` / `.onEachBefore { }` | Observe changes or run side effects before/after assignment. |
 | **Core** | `.closable()` | Automatically close `AutoCloseable` resources upon replacing. |
