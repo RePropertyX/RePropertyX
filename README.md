@@ -74,77 +74,84 @@ dependencies {
 
 ## 🔀 Bi-Directional Operator Pipeline
 
-ReProperty delegates act as bi-directional reactive pipelines. Operators independently transform and filter values along the **Read (`getValue`)** and **Write (`setValue`)** paths:
+ReProperty delegates act as bi-directional reactive pipelines. Operators independently transform and filter values along the **Read (`getValue`)** and **Write (`setValue`)** paths.
+
+### 🔮 Operator Marble Diagrams
+
+#### 1. `.distinctWrite()` — Suppress Duplicate Writes (`setValue`)
 
 ```mermaid
-flowchart TD
-    subgraph ReadPath ["📖 Read Path (getValue)"]
+flowchart LR
+    subgraph Input ["Input Assignments"]
         direction LR
-        S1[("Storage / Source")] --> G1["getValue()"]
-        G1 --> DR[".distinctRead()"]
-        DR --> M1[".map (Read Transform)"]
-        M1 --> OR[".orElse()"]
-        OR --> R1["Caller Property"]
+        a1[" 1 "] --> a2[" 1 "] --> a3[" 2 "] --> a4[" 2 "] --> a5[" 1 "]
     end
 
-    subgraph WritePath ["✍️ Write Path (setValue)"]
+    Input ==> OP[" .distinctWrite() "]
+    OP ==> Output
+
+    subgraph Output ["Emitted Writes to Storage"]
         direction LR
-        W1["Caller Assignment"] --> V1[".validate()"]
-        V1 --> DW[".distinctWrite()"]
-        DW --> OEB[".onEachBefore()"]
-        OEB --> M2[".map (Write Transform)"]
-        M2 --> S2["setValue()"]
-        S2 --> OE[".onEach()"]
-        OE --> S3[("Storage / Source")]
+        b1[" 1 "] --> b2[" ✖ (Dropped) "] --> b3[" 2 "] --> b4[" ✖ (Dropped) "] --> b5[" 1 "]
     end
 ```
 
-### 🔮 Operator Marble Diagrams (Rx-Style)
+---
 
-#### 1. `.distinctWrite()` (Suppress redundant `setValue` calls)
+#### 2. `.distinctRead()` — Cache & Suppress Duplicate Reads (`getValue`)
 
-```
-Input Assignments: ───( 1 )───────( 1 )───────( 2 )───────( 2 )───────( 1 )───>
-                   ┌────────────────────────────────────────────────────────┐
-                   │  .distinctWrite()                                      │
-                   └────────────────────────────────────────────────────────┘
-Emitted Writes   : ───( 1 )───────────────✖───( 2 )───────────────✖───( 1 )───>
-```
+```mermaid
+flowchart LR
+    subgraph Storage ["Storage Values"]
+        direction LR
+        s1[" 'A' "] --> s2[" 'A' "] --> s3[" 'B' "] --> s4[" 'B' "]
+    end
 
-#### 2. `.distinctRead()` (Cache & suppress redundant `getValue` evaluations)
+    Storage ==> OP[" .distinctRead() "]
+    OP ==> Output
 
-```
-Storage Values   : ───( "A" )─────( "A" )─────( "B" )─────( "B" )─────( "A" )─>
-                   ┌────────────────────────────────────────────────────────┐
-                   │  .distinctRead()                                       │
-                   └────────────────────────────────────────────────────────┘
-Returned Values  : ───( "A" )─────────────✖───( "B" )─────────────✖───( "A" )─>
+    subgraph Output ["Returned Property Values"]
+        direction LR
+        r1[" 'A' "] --> r2[" ✖ (Cached) "] --> r3[" 'B' "] --> r4[" ✖ (Cached) "]
+    end
 ```
 
-#### 3. `.map(readTransform, writeTransform)` (Bi-Directional Transformation)
+---
 
+#### 3. `.map(readTransform, writeTransform)` — Bi-Directional Transformation
+
+```mermaid
+flowchart LR
+    subgraph ReadIn ["Read Input (String)"]
+        direction LR
+        ri1[" '10' "] --> ri2[" '20' "]
+    end
+
+    ReadIn ==> ROP[" .map { it.toInt() } "] ==> ReadOut
+
+    subgraph ReadOut ["Read Output (Int)"]
+        direction LR
+        ro1[" 10 "] --> ro2[" 20 "]
+    end
 ```
-Read  (getValue) : ───( "10" )────────────────( "20" )────────────────────────>
-                   ┌────────────────────────────────────────────────────────┐
-                   │  .map(to = { it.toInt() }, from = { it.toString() })   │
-                   └────────────────────────────────────────────────────────┘
-Returned Int     : ───(  10  )────────────────(  20  )────────────────────────>
 
-Write (setValue) : ───(  30  )────────────────(  40  )────────────────────────>
-                   ┌────────────────────────────────────────────────────────┐
-                   │  .map(to = { it.toInt() }, from = { it.toString() })   │
-                   └────────────────────────────────────────────────────────┘
-Stored String    : ───( "30" )────────────────( "40" )────────────────────────>
-```
+---
 
-#### 4. `.orElse { fallback }` (Null Fallback Stream)
+#### 4. `.orElse { fallback }` — Null Fallback Stream
 
-```
-Read Values      : ───( "Alice" )─────────────( null )────────────( "Bob" )───>
-                   ┌────────────────────────────────────────────────────────┐
-                   │  .orElse { "Guest" }                                  │
-                   └────────────────────────────────────────────────────────┘
-Returned Values  : ───( "Alice" )─────────────( "Guest" )──────────( "Bob" )───>
+```mermaid
+flowchart LR
+    subgraph Storage ["Storage Values"]
+        direction LR
+        n1[" 'Alice' "] --> n2[" null "] --> n3[" 'Bob' "]
+    end
+
+    Storage ==> OP[" .orElse { 'Guest' } "] ==> Output
+
+    subgraph Output ["Non-Null Property"]
+        direction LR
+        o1[" 'Alice' "] --> o2[" 'Guest' "] --> o3[" 'Bob' "]
+    end
 ```
 
 ---
