@@ -143,65 +143,22 @@ class DelegatexTest {
     }
 
     @Test
-    fun `distinctWrite prevents redundant write calls`() {
+    fun `distinctUntilChanged prevents redundant write calls`() {
         var writeCount = 0
         var backingValue = 0
         var prop by propertyOf(
             get = { backingValue },
             set = { backingValue = it; writeCount++ }
-        ).distinctWrite()
+        ).distinctUntilChanged()
 
         prop = 10
         assertEquals(1, writeCount)
 
-        prop = 10 // Same value, should be ignored by distinctWrite
+        prop = 10 // Same value, should be ignored
         assertEquals(1, writeCount)
 
         prop = 20
         assertEquals(2, writeCount)
-    }
-
-    @Test
-    fun `distinctRead caches redundant read calls`() {
-        var readCount = 0
-        var backingValue = 100
-        val prop by propertyOf(
-            get = { readCount++; backingValue }
-        ).distinctRead()
-
-        val v1 = prop
-        assertEquals(1, readCount)
-        assertEquals(100, v1)
-
-        val v2 = prop
-        assertEquals(100, v2)
-
-        backingValue = 200
-        val v3 = prop
-        assertEquals(200, v3)
-    }
-
-    @Test
-    fun `distinctUntilChanged with read and write flags`() {
-        var writeCount = 0
-        var readCount = 0
-        var backingValue = 1
-        var prop by propertyOf(
-            get = { readCount++; backingValue },
-            set = { backingValue = it; writeCount++ }
-        ).distinctUntilChanged(read = true, write = true)
-
-        prop = 5
-        assertEquals(1, writeCount)
-
-        prop = 5
-        assertEquals(1, writeCount)
-
-        val r1 = prop
-        assertEquals(5, r1)
-
-        val r2 = prop
-        assertEquals(5, r2)
     }
 
     @Test

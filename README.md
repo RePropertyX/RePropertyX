@@ -78,7 +78,7 @@ ReProperty delegates act as bi-directional reactive pipelines. Operators indepen
 
 ### 🔮 Operator Marble Diagrams (Rx-Style)
 
-#### 1. `.distinctWrite()` — Suppress Duplicate Writes (`setValue`)
+#### 1. `.distinctUntilChanged()` — Suppress Duplicate Writes (`setValue`)
 
 ```mermaid
 flowchart TD
@@ -87,7 +87,7 @@ flowchart TD
         I1[" 1 "] --> I2[" 1 "] --> I3[" 2 "] --> I4[" 2 "] --> I5[" 1 "]
     end
 
-    OP[" .distinctWrite() (Filter Duplicate Writes) "]
+    OP[" .distinctUntilChanged() (Filter Duplicate Writes) "]
 
     subgraph Outputs ["Emitted Writes to Storage"]
         direction LR
@@ -99,30 +99,6 @@ flowchart TD
     I3 ==> OP ==> O3
     I4 --> OP --> O4
     I5 ==> OP ==> O5
-```
-
----
-
-#### 2. `.distinctRead()` — Cache & Suppress Duplicate Reads (`getValue`)
-
-```mermaid
-flowchart TD
-    subgraph Storage ["Storage Values"]
-        direction LR
-        S1[" 'A' "] --> S2[" 'A' "] --> S3[" 'B' "] --> S4[" 'B' "]
-    end
-
-    OP[" .distinctRead() (Cache Duplicate Reads) "]
-
-    subgraph Reads ["Returned Property Values"]
-        direction LR
-        R1[" 'A' "] --> R2[" ✖ (Cached) "] --> R3[" 'B' "] --> R4[" ✖ (Cached) "]
-    end
-
-    S1 ==> OP ==> R1
-    S2 --> OP --> R2
-    S3 ==> OP ==> R3
-    S4 --> OP --> R4
 ```
 
 ---
@@ -218,7 +194,7 @@ peekHeight = 200 // smooth animation + event callback!
 | **Core** | `mutablePropertyOf(initial)` / `V.asProperty()` | Create an in-memory mutable property delegate. |
 | **Core** | `.map(to, from)` | Transform values between exposed and stored types. |
 | **Core** | `.orElse { fallback }` / `.notNull()` | Provide a fallback value or throw an exception when the delegate returns null. |
-| **Core** | `.distinctWrite()` / `.distinctRead()` / `.distinctUntilChanged(read, write)` | Prevent redundant writes (`setValue`) or filter unchanged reads (`getValue`). |
+| **Core** | `.distinctUntilChanged()` | Prevent redundant writes (`setValue`) when assigned value is unchanged. |
 | **Core** | `.onEach { }` / `.onEachBefore { }` | Observe changes or run side effects before/after assignment. |
 | **Core** | `.closable()` | Automatically close `AutoCloseable` resources upon replacing. |
 | **Core** | `byThreadLocal { ... }` | Type-safe `ThreadLocal` property delegation. |
