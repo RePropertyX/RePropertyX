@@ -231,8 +231,6 @@
           <div class="pipeline-nodes">
             <div class="pipeline-node node-source">Storage / Source</div>
             <div class="pipeline-arrow">➔</div>
-            <div class="pipeline-node node-op">.distinctRead()</div>
-            <div class="pipeline-arrow">➔</div>
             <div class="pipeline-node node-op">.map (Read)</div>
             <div class="pipeline-arrow">➔</div>
             <div class="pipeline-node node-op">.orElse()</div>
@@ -253,7 +251,7 @@
             <div class="pipeline-arrow">➔</div>
             <div class="pipeline-node node-op">.validate()</div>
             <div class="pipeline-arrow">➔</div>
-            <div class="pipeline-node node-op">.distinctWrite()</div>
+            <div class="pipeline-node node-op">.distinctUntilChanged()</div>
             <div class="pipeline-arrow">➔</div>
             <div class="pipeline-node node-op">.onEachBefore()</div>
             <div class="pipeline-arrow">➔</div>
@@ -500,8 +498,8 @@
         </div>
 
         <div class="api-item">
-          <div class="api-name">.distinctWrite() / .distinctRead()</div>
-          <div class="api-desc">Controllable filtering for Write (setValue) and Read (getValue) operations.</div>
+          <div class="api-name">.distinctUntilChanged()</div>
+          <div class="api-desc">Prevent redundant property assignments if assigned value is unchanged.</div>
         </div>
 
         <div class="api-item">
