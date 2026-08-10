@@ -670,6 +670,149 @@ body {
   font-size: 1.1rem;
 }
 
+/* Rx-Style Marble Diagrams Component */
+.marble-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.marble-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.marble-tab {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.marble-tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFF;
+}
+
+.marble-tab.active {
+  background: var(--gradient-primary);
+  color: #FFF;
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(127, 82, 255, 0.4);
+}
+
+.marble-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.marble-card-header {
+  margin-bottom: 24px;
+}
+
+.marble-title {
+  font-family: 'Fira Code', monospace;
+  font-size: 1.25rem;
+  color: var(--accent-cyan);
+  margin: 10px 0 6px;
+}
+
+.marble-subdesc {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.marble-diagram {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.marble-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stream-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stream-line {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+  padding: 12px 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.marble {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: 'Fira Code', monospace;
+  flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.m-cyan { background: #06B6D4; color: #000; box-shadow: 0 0 12px rgba(6, 182, 212, 0.6); }
+.m-purple { background: #7F52FF; color: #FFF; box-shadow: 0 0 12px rgba(127, 82, 255, 0.6); }
+.m-green { background: #10B981; color: #000; box-shadow: 0 0 12px rgba(16, 185, 129, 0.6); }
+.m-amber { background: #FBBF24; color: #000; box-shadow: 0 0 12px rgba(251, 191, 36, 0.6); }
+.m-null { background: #6B7280; color: #FFF; font-style: italic; }
+.m-suppressed {
+  background: rgba(239, 68, 68, 0.2);
+  color: #EF4444;
+  border: 1px dashed #EF4444;
+  box-shadow: none;
+}
+
+.stream-arrow {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  margin-left: auto;
+}
+
+.marble-operator-box {
+  background: rgba(127, 82, 255, 0.15);
+  border: 1.5px dashed var(--accent-purple);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  text-align: center;
+  font-family: 'Fira Code', monospace;
+  font-weight: 700;
+  color: #FFF;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+}
+
 /* Syntax Highlighting overrides */
 .token.keyword { color: #F472B6; }
 .token.property { color: #38BDF8; }

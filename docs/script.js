@@ -62,4 +62,19 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
+  // Marble Diagram Tab Switching
+  window.showMarble = function(marbleId) {
+    const marbleTabs = document.querySelectorAll('.marble-tab');
+    const marbleCards = document.querySelectorAll('.marble-content');
+
+    marbleTabs.forEach(tab => tab.classList.remove('active'));
+    marbleCards.forEach(card => card.style.display = 'none');
+
+    const activeTab = Array.from(marbleTabs).find(t => t.getAttribute('onclick').includes(marbleId));
+    if (activeTab) activeTab.classList.add('active');
+
+    const activeCard = document.getElementById(`marble-${marbleId}`);
+    if (activeCard) activeCard.style.display = 'block';
+  };
 });

@@ -266,6 +266,171 @@
     </div>
   </section>
 
+  <!-- Rx-Style Marble Diagrams Section -->
+  <section class="section" id="marbles">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Rx-Style Marble Diagrams</h2>
+        <p class="section-desc">ReactiveX-style Marble Diagrams illustrating how ReProperty operators filter and transform value streams across Read & Write directions.</p>
+      </div>
+
+      <div class="marble-wrapper">
+        <div class="marble-tabs">
+          <button class="marble-tab active" onclick="showMarble('distinct-write')">.distinctWrite()</button>
+          <button class="marble-tab" onclick="showMarble('distinct-read')">.distinctRead()</button>
+          <button class="marble-tab" onclick="showMarble('map')">.map()</button>
+          <button class="marble-tab" onclick="showMarble('or-else')">.orElse()</button>
+        </div>
+
+        <!-- Marble Card 1: .distinctWrite() -->
+        <div class="marble-card marble-content" id="marble-distinct-write">
+          <div class="marble-card-header">
+            <span class="badge-direction badge-write">✍️ Write Direction (setValue)</span>
+            <h3 class="marble-title">.distinctWrite()</h3>
+            <p class="marble-subdesc">Filters out redundant <code>setValue</code> assignments when the incoming value matches the current property value.</p>
+          </div>
+
+          <div class="marble-diagram">
+            <div class="marble-stream">
+              <span class="stream-label">Input Assignments</span>
+              <div class="stream-line">
+                <div class="marble m-cyan">1</div>
+                <div class="marble m-cyan">1</div>
+                <div class="marble m-purple">2</div>
+                <div class="marble m-purple">2</div>
+                <div class="marble m-cyan">1</div>
+                <div class="stream-arrow">►</div>
+              </div>
+            </div>
+
+            <div class="marble-operator-box">
+              <span>.distinctWrite()</span>
+            </div>
+
+            <div class="marble-stream">
+              <span class="stream-label">Emitted Writes</span>
+              <div class="stream-line">
+                <div class="marble m-cyan">1</div>
+                <div class="marble m-suppressed" title="Suppressed duplicate">✖</div>
+                <div class="marble m-purple">2</div>
+                <div class="marble m-suppressed" title="Suppressed duplicate">✖</div>
+                <div class="marble m-cyan">1</div>
+                <div class="stream-arrow">►</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Marble Card 2: .distinctRead() -->
+        <div class="marble-card marble-content" id="marble-distinct-read" style="display: none;">
+          <div class="marble-card-header">
+            <span class="badge-direction badge-read">📖 Read Direction (getValue)</span>
+            <h3 class="marble-title">.distinctRead()</h3>
+            <p class="marble-subdesc">Caches read values and suppresses redundant <code>getValue</code> evaluations if storage value has not changed.</p>
+          </div>
+
+          <div class="marble-diagram">
+            <div class="marble-stream">
+              <span class="stream-label">Storage Values</span>
+              <div class="stream-line">
+                <div class="marble m-green">"A"</div>
+                <div class="marble m-green">"A"</div>
+                <div class="marble m-amber">"B"</div>
+                <div class="marble m-amber">"B"</div>
+                <div class="marble m-green">"A"</div>
+                <div class="stream-arrow">►</div>
+              </div>
+            </div>
+
+            <div class="marble-operator-box">
+              <span>.distinctRead()</span>
+            </div>
+
+            <div class="marble-stream">
+              <span class="stream-label">Returned Values</span>
+              <div class="stream-line">
+                <div class="marble m-green">"A"</div>
+                <div class="marble m-suppressed" title="Cached value returned">✖</div>
+                <div class="marble m-amber">"B"</div>
+                <div class="marble m-suppressed" title="Cached value returned">✖</div>
+                <div class="marble m-green">"A"</div>
+                <div class="stream-arrow">►</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Marble Card 3: .map() -->
+        <div class="marble-card marble-content" id="marble-map" style="display: none;">
+          <div class="marble-card-header">
+            <span class="badge-direction badge-read">📖 Read & ✍️ Write Bi-Directional</span>
+            <h3 class="marble-title">.map(to = { it.toInt() }, from = { it.toString() })</h3>
+            <p class="marble-subdesc">Transforms value types in both Read and Write directions.</p>
+          </div>
+
+          <div class="marble-diagram">
+            <div class="marble-stream">
+              <span class="stream-label">Read Input (String)</span>
+              <div class="stream-line">
+                <div class="marble m-green">"10"</div>
+                <div class="marble m-green">"20"</div>
+                <div class="stream-arrow">►</div>
+              </div>
+            </div>
+
+            <div class="marble-operator-box">
+              <span>to = { it.toInt() }</span>
+            </div>
+
+            <div class="marble-stream">
+              <span class="stream-label">Read Output (Int)</span>
+              <div class="stream-line">
+                <div class="marble m-cyan">10</div>
+                <div class="marble m-cyan">20</div>
+                <div class="stream-arrow">►</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Marble Card 4: .orElse() -->
+        <div class="marble-card marble-content" id="marble-or-else" style="display: none;">
+          <div class="marble-card-header">
+            <span class="badge-direction badge-read">📖 Read Direction (getValue)</span>
+            <h3 class="marble-title">.orElse { "Guest" }</h3>
+            <p class="marble-subdesc">Provides a default fallback value whenever the underlying property returns null.</p>
+          </div>
+
+          <div class="marble-diagram">
+            <div class="marble-stream">
+              <span class="stream-label">Read Values</span>
+              <div class="stream-line">
+                <div class="marble m-cyan">"Alice"</div>
+                <div class="marble m-null">null</div>
+                <div class="marble m-cyan">"Bob"</div>
+                <div class="stream-arrow">►</div>
+              </div>
+            </div>
+
+            <div class="marble-operator-box">
+              <span>.orElse { "Guest" }</span>
+            </div>
+
+            <div class="marble-stream">
+              <span class="stream-label">Returned Non-Null</span>
+              <div class="stream-line">
+                <div class="marble m-cyan">"Alice"</div>
+                <div class="marble m-amber">"Guest"</div>
+                <div class="marble m-cyan">"Bob"</div>
+                <div class="stream-arrow">►</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Features Cards -->
   <section class="section" id="features">
     <div class="container">
