@@ -80,52 +80,95 @@ ReProperty delegates act as bi-directional reactive pipelines. Operators indepen
 
 #### 1. `.distinctWrite()` — Suppress Duplicate Writes (`setValue`)
 
-```
-Input (setValue) :  ( 1 ) ───────> ( 1 ) ───────> ( 2 ) ───────> ( 2 ) ───────> ( 1 )
-                      │              │              │              │              │
-                     [       .distinctWrite()  (Suppress Duplicate Writes)        ]
-                      │              │              │              │              │
-                      ▼              ▼              ▼              ▼              ▼
-Output (Storage) :  ( 1 ) ───────> ( ✖ ) ───────> ( 2 ) ───────> ( ✖ ) ───────> ( 1 )
+```mermaid
+flowchart TD
+    subgraph Inputs ["Input Assignments (setValue)"]
+        direction LR
+        I1[" 1 "] --> I2[" 1 "] --> I3[" 2 "] --> I4[" 2 "] --> I5[" 1 "]
+    end
+
+    OP[" .distinctWrite() (Filter Duplicate Writes) "]
+
+    subgraph Outputs ["Emitted Writes to Storage"]
+        direction LR
+        O1[" 1 "] --> O2[" ✖ (Dropped) "] --> O3[" 2 "] --> O4[" ✖ (Dropped) "] --> O5[" 1 "]
+    end
+
+    I1 ==> OP ==> O1
+    I2 --> OP --> O2
+    I3 ==> OP ==> O3
+    I4 --> OP --> O4
+    I5 ==> OP ==> O5
 ```
 
 ---
 
 #### 2. `.distinctRead()` — Cache & Suppress Duplicate Reads (`getValue`)
 
-```
-Storage Values   :  ( "A" ) ──────> ( "A" ) ──────> ( "B" ) ──────> ( "B" ) ──────> ( "A" )
-                      │               │               │               │               │
-                     [       .distinctRead()  (Cache Duplicate Reads)            ]
-                      │               │               │               │               │
-                      ▼               ▼               ▼               ▼               ▼
-Exposed Values   :  ( "A" ) ──────> ( ✖ ) ──────> ( "B" ) ──────> ( ✖ ) ──────> ( "A" )
+```mermaid
+flowchart TD
+    subgraph Storage ["Storage Values"]
+        direction LR
+        S1[" 'A' "] --> S2[" 'A' "] --> S3[" 'B' "] --> S4[" 'B' "]
+    end
+
+    OP[" .distinctRead() (Cache Duplicate Reads) "]
+
+    subgraph Reads ["Returned Property Values"]
+        direction LR
+        R1[" 'A' "] --> R2[" ✖ (Cached) "] --> R3[" 'B' "] --> R4[" ✖ (Cached) "]
+    end
+
+    S1 ==> OP ==> R1
+    S2 --> OP --> R2
+    S3 ==> OP ==> R3
+    S4 --> OP --> R4
 ```
 
 ---
 
 #### 3. `.map(readTransform, writeTransform)` — Bi-Directional Transformation
 
-```
-Read  (getValue) :  ( "10" ) ────────────> ( "20" ) ────────────> ( "30" )
-                       │                      │                      │
-                      [  .map { it.toInt() }  (Read Transform String -> Int)  ]
-                       │                      │                      │
-                       ▼                      ▼                      ▼
-Exposed Int      :  (  10  ) ────────────> (  20  ) ────────────> (  30  )
+```mermaid
+flowchart TD
+    subgraph ReadIn ["Read Input (String)"]
+        direction LR
+        RI1[" '10' "] --> RI2[" '20' "] --> RI3[" '30' "]
+    end
+
+    OP[" .map { it.toInt() } (Read Transform) "]
+
+    subgraph ReadOut ["Read Output (Int)"]
+        direction LR
+        RO1[" 10 "] --> RO2[" 20 "] --> RO3[" 30 "]
+    end
+
+    RI1 ==> OP ==> RO1
+    RI2 ==> OP ==> RO2
+    RI3 ==> OP ==> RO3
 ```
 
 ---
 
 #### 4. `.orElse { fallback }` — Null Fallback Stream
 
-```
-Storage Values   :  ( "Alice" ) ─────────> ( null ) ──────────> ( "Bob" )
-                       │                      │                    │
-                      [   .orElse { "Guest" }  (Null Fallback)     ]
-                       │                      │                    │
-                       ▼                      ▼                    ▼
-Exposed Values   :  ( "Alice" ) ─────────> ( "Guest" ) ───────> ( "Bob" )
+```mermaid
+flowchart TD
+    subgraph Storage ["Storage Values"]
+        direction LR
+        V1[" 'Alice' "] --> V2[" null "] --> V3[" 'Bob' "]
+    end
+
+    OP[" .orElse { 'Guest' } (Null Fallback) "]
+
+    subgraph Exposed ["Exposed Property Values"]
+        direction LR
+        E1[" 'Alice' "] --> E2[" 'Guest' "] --> E3[" 'Bob' "]
+    end
+
+    V1 ==> OP ==> E1
+    V2 ==> OP ==> E2
+    V3 ==> OP ==> E3
 ```
 
 ---
