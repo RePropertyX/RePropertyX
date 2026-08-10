@@ -72,6 +72,35 @@ dependencies {
 
 ---
 
+## 🔀 Bi-Directional Operator Pipeline
+
+ReProperty delegates act as bi-directional reactive pipelines. Operators independently transform and filter values along the **Read (`getValue`)** and **Write (`setValue`)** paths:
+
+```mermaid
+flowchart TD
+    subgraph ReadPath ["📖 Read Path (getValue)"]
+        direction LR
+        S1[("Storage / Source")] --> G1["getValue()"]
+        G1 --> DR[".distinctRead()"]
+        DR --> M1[".map (Read Transform)"]
+        M1 --> OR[".orElse()"]
+        OR --> R1["Caller Property"]
+    end
+
+    subgraph WritePath ["✍️ Write Path (setValue)"]
+        direction LR
+        W1["Caller Assignment"] --> V1[".validate()"]
+        V1 --> DW[".distinctWrite()"]
+        DW --> OEB[".onEachBefore()"]
+        OEB --> M2[".map (Write Transform)"]
+        M2 --> S2["setValue()"]
+        S2 --> OE[".onEach()"]
+        OE --> S3[("Storage / Source")]
+    end
+```
+
+---
+
 ## ✨ Quick Example
 
 ### Before RePropertyX
@@ -117,7 +146,7 @@ peekHeight = 200 // smooth animation + event callback!
 | **Core** | `mutablePropertyOf(initial)` / `V.asProperty()` | Create an in-memory mutable property delegate. |
 | **Core** | `.map(to, from)` | Transform values between exposed and stored types. |
 | **Core** | `.orElse { fallback }` / `.notNull()` | Provide a fallback value or throw an exception when the delegate returns null. |
-| **Core** | `.distinctUntilChanged()` | Prevent redundant updates when assigned value is unchanged. |
+| **Core** | `.distinctWrite()` / `.distinctRead()` / `.distinctUntilChanged(read, write)` | Prevent redundant writes (`setValue`) or filter unchanged reads (`getValue`). |
 | **Core** | `.onEach { }` / `.onEachBefore { }` | Observe changes or run side effects before/after assignment. |
 | **Core** | `.closable()` | Automatically close `AutoCloseable` resources upon replacing. |
 | **Core** | `byThreadLocal { ... }` | Type-safe `ThreadLocal` property delegation. |

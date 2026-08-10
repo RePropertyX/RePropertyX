@@ -214,6 +214,58 @@
     </div>
   </section>
 
+  <!-- Bi-Directional Pipeline Section -->
+  <section class="section" id="pipeline">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Bi-Directional Operator Pipeline</h2>
+        <p class="section-desc">Like Rx Observable diagrams, ReProperty delegates process values independently across Read (getValue) and Write (setValue) directions.</p>
+      </div>
+
+      <div class="pipeline-card">
+        <div class="pipeline-row pipeline-read">
+          <div class="pipeline-header">
+            <span class="badge-direction badge-read">📖 Read Flow (getValue)</span>
+            <span class="pipeline-subtext">Storage ➔ Read Operators ➔ Caller</span>
+          </div>
+          <div class="pipeline-nodes">
+            <div class="pipeline-node node-source">Storage / Source</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node node-op">.distinctRead()</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node node-op">.map (Read)</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node node-op">.orElse()</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node node-target">Caller Property</div>
+          </div>
+        </div>
+
+        <div class="pipeline-divider"></div>
+
+        <div class="pipeline-row pipeline-write">
+          <div class="pipeline-header">
+            <span class="badge-direction badge-write">✍️ Write Flow (setValue)</span>
+            <span class="pipeline-subtext">Assignment ➔ Write Operators ➔ Storage</span>
+          </div>
+          <div class="pipeline-nodes">
+            <div class="pipeline-node node-target">Caller Assignment</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node node-op">.validate()</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node node-op">.distinctWrite()</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node node-op">.onEachBefore()</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node node-op">.map (Write)</div>
+            <div class="pipeline-arrow">➔</div>
+            <div class="pipeline-node node-source">Storage / Setter</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Features Cards -->
   <section class="section" id="features">
     <div class="container">
@@ -323,8 +375,8 @@
         </div>
 
         <div class="api-item">
-          <div class="api-name">.distinctUntilChanged()</div>
-          <div class="api-desc">Prevent redundant property assignments if value is unchanged.</div>
+          <div class="api-name">.distinctWrite() / .distinctRead()</div>
+          <div class="api-desc">Controllable filtering for Write (setValue) and Read (getValue) operations.</div>
         </div>
 
         <div class="api-item">

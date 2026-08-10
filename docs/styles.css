@@ -574,6 +574,102 @@ body {
   opacity: 1;
 }
 
+/* Pipeline Architecture Diagram Card */
+.pipeline-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-card);
+}
+
+.pipeline-row {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pipeline-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.badge-direction {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.badge-read {
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.badge-write {
+  background: rgba(127, 82, 255, 0.15);
+  color: var(--accent-purple);
+  border: 1px solid rgba(127, 82, 255, 0.4);
+}
+
+.pipeline-subtext {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.pipeline-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+  margin: 28px 0;
+}
+
+.pipeline-nodes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 8px 0;
+}
+
+.pipeline-node {
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  font-family: 'Fira Code', monospace;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.node-source {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFF;
+}
+
+.node-op {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: var(--accent-green);
+}
+
+.node-target {
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  color: #FBBF24;
+}
+
+.pipeline-arrow {
+  color: var(--text-dim);
+  font-size: 1.1rem;
+}
+
 /* Syntax Highlighting overrides */
 .token.keyword { color: #F472B6; }
 .token.property { color: #38BDF8; }

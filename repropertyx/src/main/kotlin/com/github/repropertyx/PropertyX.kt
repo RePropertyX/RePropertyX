@@ -343,15 +343,93 @@ fun <P, T> ReadWriteProperty<P, String?>.serialized(
  *     .onEach { println("Changed to $it") }
  * ```
  */
-fun <T, V> ReadWriteProperty<T, V>.distinctUntilChanged(
+/**
+ * Filters write operations (setValue) so that the underlying delegate is only updated
+ * if the new value is distinct from the current value according to [onEqual].
+ */
+fun <T, V> ReadWriteProperty<T, V>.distinctWriteUntilChanged(
     onEqual: T.(old: V, new: V) -> Boolean = { old, new -> old == new }
 ): ReadWriteProperty<T, V> = object : ReadWriteProperty<T, V> by this {
     override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
-        val oldValue = this@distinctUntilChanged.getValue(thisRef, property)
+        val oldValue = this@distinctWriteUntilChanged.getValue(thisRef, property)
         if (!thisRef.onEqual(oldValue, value)) {
-            this@distinctUntilChanged.setValue(thisRef, property, value)
+            this@distinctWriteUntilChanged.setValue(thisRef, property, value)
         }
     }
+}
+
+fun <T, V> ReadWriteProperty<T, V>.distinctWrite(
+    onEqual: T.(old: V, new: V) -> Boolean = { old, new -> old == new }
+): ReadWriteProperty<T, V> = distinctWriteUntilChanged(onEqual)
+
+/**
+ * Filters read operations (getValue) so that if the underlying property returns an equal value
+ * according to [onEqual], the cached value is returned without triggering new read side-effects.
+ */
+fun <T, V> ReadOnlyProperty<T, V>.distinctReadUntilChanged(
+    onEqual: T.(old: V?, new: V) -> Boolean = { old, new -> old == new }
+): ReadOnlyProperty<T, V> {
+    var hasRead = false
+    var cachedValue: V? = null
+    return ReadOnlyProperty { thisRef, property ->
+        val newValue = this@distinctReadUntilChanged.getValue(thisRef, property)
+        if (!hasRead || !thisRef.onEqual(cachedValue, newValue)) {
+            cachedValue = newValue
+            hasRead = true
+        }
+        @Suppress("UNCHECKED_CAST")
+        cachedValue as V
+    }
+}
+
+fun <T, V> ReadOnlyProperty<T, V>.distinctRead(
+    onEqual: T.(old: V?, new: V) -> Boolean = { old, new -> old == new }
+): ReadOnlyProperty<T, V> = distinctReadUntilChanged(onEqual)
+
+fun <T, V> ReadWriteProperty<T, V>.distinctReadUntilChanged(
+    onEqual: T.(old: V?, new: V) -> Boolean = { old, new -> old == new }
+): ReadWriteProperty<T, V> {
+    var hasRead = false
+    var cachedValue: V? = null
+    return object : ReadWriteProperty<T, V> by this {
+        override fun getValue(thisRef: T, property: KProperty<*>): V {
+            val newValue = this@distinctReadUntilChanged.getValue(thisRef, property)
+            if (!hasRead || !thisRef.onEqual(cachedValue, newValue)) {
+                cachedValue = newValue
+                hasRead = true
+            }
+            @Suppress("UNCHECKED_CAST")
+            return cachedValue as V
+        }
+    }
+}
+
+fun <T, V> ReadWriteProperty<T, V>.distinctRead(
+    onEqual: T.(old: V?, new: V) -> Boolean = { old, new -> old == new }
+): ReadWriteProperty<T, V> = distinctReadUntilChanged(onEqual)
+
+/**
+ * Configurable distinct filtering for both Read and Write operations.
+ *
+ * @param read Whether to filter getValue operations when the read value is unchanged
+ * @param write Whether to filter setValue operations when the written value is unchanged
+ * @param onEqual Equality check function
+ */
+fun <T, V> ReadWriteProperty<T, V>.distinctUntilChanged(
+    read: Boolean = false,
+    write: Boolean = true,
+    onEqual: T.(old: V, new: V) -> Boolean = { old, new -> old == new }
+): ReadWriteProperty<T, V> {
+    var prop: ReadWriteProperty<T, V> = this
+    if (write) {
+        prop = prop.distinctWriteUntilChanged(onEqual)
+    }
+    if (read) {
+        prop = prop.distinctReadUntilChanged { old, new ->
+            if (old == null) false else onEqual(old, new)
+        }
+    }
+    return prop
 }
 
 /**
