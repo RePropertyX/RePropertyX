@@ -141,37 +141,77 @@ peekHeight = 200 // smooth animation + event callback!
 
 ### 1. 🛡️ Bounds Clamping & Validation (`.clamp()`, `.validateIf()`)
 
-| Approach | Code Example |
-|---|---|
-| ❌ **Traditional (Manual Setters)** | ```kotlin<br>private var _volume = 50<br>var volume: Int<br>    get() = _volume<br>    set(v) { _volume = v.coerceIn(0, 100) }<br>``` |
-| ✅ **RePropertyX** | ```kotlin<br>var volume: Int by mutablePropertyOf(50).clamp(min = 0, max = 100)<br>``` |
+**❌ Traditional (Manual Setters):**
+```kotlin
+private var _volume = 50
+var volume: Int
+    get() = _volume
+    set(v) { _volume = v.coerceIn(0, 100) }
+```
+
+**✅ RePropertyX:**
+```kotlin
+var volume: Int by mutablePropertyOf(50).clamp(min = 0, max = 100)
+```
 
 ---
 
 ### 2. ↩️ Undo / Redo History Stack (`.withHistory()`)
 
-| Approach | Code Example |
-|---|---|
-| ❌ **Traditional (Manual Stacks)** | ```kotlin<br>private val history = mutableListOf<String>()<br>private var index = -1<br>fun updateText(v: String) { history.add(v); index++ }<br>fun undo() { if (index > 0) index-- }<br>``` |
-| ✅ **RePropertyX** | ```kotlin<br>val textProp = mutablePropertyOf("Hello").withHistory(maxSize = 10)<br>var text: String by textProp<br><br>text = "World"<br>textProp.undo() // Instantly reverts back to "Hello"!<br>``` |
+**❌ Traditional (Manual Stacks):**
+```kotlin
+private val history = mutableListOf<String>()
+private var index = -1
+
+fun updateText(v: String) { history.add(v); index++ }
+fun undo() { if (index > 0) index-- }
+```
+
+**✅ RePropertyX:**
+```kotlin
+val textProp = mutablePropertyOf("Hello").withHistory(maxSize = 10)
+var text: String by textProp
+
+text = "World"
+textProp.undo() // Instantly reverts back to "Hello"!
+```
 
 ---
 
 ### 3. ⏳ TTL Auto-Expiry Caching (`.expiringIn()`)
 
-| Approach | Code Example |
-|---|---|
-| ❌ **Traditional (Manual Timestamps)** | ```kotlin<br>private var token: String? = null<br>private var lastFetchTime = 0L<br>fun getToken(): String? {<br>    return if (System.currentTimeMillis() - lastFetchTime > 300_000) null else token<br>}<br>``` |
-| ✅ **RePropertyX** | ```kotlin<br>var token: String? by delegate<String?>("session_token").expiringIn(5.minutes)<br>``` |
+**❌ Traditional (Manual Timestamps):**
+```kotlin
+private var token: String? = null
+private var lastFetchTime = 0L
+
+fun getToken(): String? {
+    return if (System.currentTimeMillis() - lastFetchTime > 300_000) null else token
+}
+```
+
+**✅ RePropertyX:**
+```kotlin
+var token: String? by delegate<String?>("session_token").expiringIn(5.minutes)
+```
 
 ---
 
 ### 4. 📱 Android SavedStateHandle Process Death (`savedStateHandle.byProperty()`)
 
-| Approach | Code Example |
-|---|---|
-| ❌ **Traditional (Manual SavedStateHandle)** | ```kotlin<br>var query: String<br>    get() = savedStateHandle.get<String>("query") ?: ""<br>    set(v) { savedStateHandle["query"] = v }<br>``` |
-| ✅ **RePropertyX** | ```kotlin<br>var query: String by savedStateHandle.byProperty("query", default = "")<br>    .distinctUntilChanged()<br>    .onEach { log(it) }<br>``` |
+**❌ Traditional (Manual SavedStateHandle):**
+```kotlin
+var query: String
+    get() = savedStateHandle.get<String>("query") ?: ""
+    set(v) { savedStateHandle["query"] = v }
+```
+
+**✅ RePropertyX:**
+```kotlin
+var query: String by savedStateHandle.byProperty("query", default = "")
+    .distinctUntilChanged()
+    .onEach { log(it) }
+```
 
 ---
 
