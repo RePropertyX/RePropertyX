@@ -11,5 +11,3 @@ module:repropertyx-compose-android
 com.github.repropertyx.compose
 module:repropertyx-datastore-android
 com.github.repropertyx.datastore
-module:repropertyx-room-android
-com.github.repropertyx.room
