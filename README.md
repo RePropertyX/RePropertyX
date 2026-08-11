@@ -5,7 +5,7 @@
 # RePropertyX
 
 <p align="left">
-  <a href="https://jitpack.io/#RePropertyX/RePropertyX"><img src="https://jitpack.io/v/RePropertyX/RePropertyX.svg" alt="JitPack"/></a>
+  <a href="https://jitpack.io/#RePropertyX/RePropertyX"><img src="https://img.shields.io/badge/JitPack-1.1.0-brightgreen.svg" alt="JitPack 1.1.0"/></a>
   <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx/1.1.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx-brightgreen.svg" alt="Javadocs Core"/></a>
   <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-android/1.1.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx--android-brightgreen.svg" alt="Javadocs Android"/></a>
   <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-compose-android/1.1.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx--compose--android-brightgreen.svg" alt="Javadocs Compose"/></a>
