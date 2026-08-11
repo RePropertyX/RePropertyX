@@ -214,6 +214,90 @@
     </div>
   </section>
 
+  <!-- Features Cards -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Built for Modern Kotlin</h2>
+        <p class="section-desc">Composable, reactive, and modular extensions for property delegates.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3 class="feature-title">Functional Composition</h3>
+          <p class="feature-desc">Chain operations like <code>.map()</code>, <code>.distinctUntilChanged()</code>, and <code>.flatMap()</code> on any property delegate.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎬</div>
+          <h3 class="feature-title">Smooth Animations</h3>
+          <p class="feature-desc">Turn any numerical View property into a smooth, auto-cancelable animation with <code>.animated()</code>.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">💾</div>
+          <h3 class="feature-title">SharedPreferences</h3>
+          <p class="feature-desc">Type-safe storage delegates for primitive types, String sets, and serialized objects with reactive observers.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3 class="feature-title">Jetpack Compose</h3>
+          <p class="feature-desc">Bind properties directly to Compose <code>MutableState</code> with <code>rememberProperty()</code> for reactive UI updates.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modules & Javadocs Section -->
+  <section class="section" id="modules">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Modules & Documentation</h2>
+        <p class="section-desc">Explore API documentation and module breakdown for JVM, Android, and Compose integration.</p>
+      </div>
+
+      <div class="modules-grid">
+        <div class="module-card">
+          <div class="module-header">
+            <span class="module-badge badge-core">Core</span>
+            <h3 class="module-name">repropertyx</h3>
+          </div>
+          <p class="module-desc">Core property delegation primitives, operators (map, distinct, onEach, flatMap), Atomic/ThreadLocal helpers, and Closable resource management.</p>
+          <div class="module-actions">
+            <a href="api/repropertyx/com.github.repropertyx/index.html" class="btn-module">View Dokka API Docs →</a>
+            <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx/1.0.0/javadoc/" target="_blank" class="btn-module-alt">JitPack Javadoc</a>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-header">
+            <span class="module-badge badge-android">Android</span>
+            <h3 class="module-name">repropertyx-android</h3>
+          </div>
+          <p class="module-desc">Android SharedPreferences delegates, View numerical animations (ValueAnimator), suspend animation extensions, and View lifecycle integrations.</p>
+          <div class="module-actions">
+            <a href="api/repropertyx-android/com.github.repropertyx.android/index.html" class="btn-module">View Dokka API Docs →</a>
+            <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-android/1.0.0/javadoc/" target="_blank" class="btn-module-alt">JitPack Javadoc</a>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-header">
+            <span class="module-badge badge-compose">Compose</span>
+            <h3 class="module-name">repropertyx-compose-android</h3>
+          </div>
+          <p class="module-desc">Jetpack Compose UI bindings. Converts any property delegate into Compose MutableState with automatic SharedPreferences disk-change recomposition.</p>
+          <div class="module-actions">
+            <a href="api/repropertyx-compose-android/com.github.repropertyx.compose/index.html" class="btn-module">View Dokka API Docs →</a>
+            <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-compose-android/1.0.0/javadoc/" target="_blank" class="btn-module-alt">JitPack Javadoc</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Bi-Directional Pipeline Section -->
   <section class="section" id="pipeline">
     <div class="container">
@@ -385,92 +469,6 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features Cards -->
-  <section class="section" id="features">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Built for Modern Kotlin</h2>
-        <p class="section-desc">Composable, reactive, and modular extensions for property delegates.</p>
-      </div>
-
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">⚡</div>
-          <h3 class="feature-title">Functional Composition</h3>
-          <p class="feature-desc">Chain operations like <code>.map()</code>, <code>.distinctUntilChanged()</code>, and <code>.flatMap()</code> on any property delegate.</p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🎬</div>
-          <h3 class="feature-title">Smooth Animations</h3>
-          <p class="feature-desc">Turn any numerical View property into a smooth, auto-cancelable animation with <code>.animated()</code>.</p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">💾</div>
-          <h3 class="feature-title">SharedPreferences</h3>
-          <p class="feature-desc">Type-safe storage delegates for primitive types, String sets, and serialized objects with reactive observers.</p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🎨</div>
-          <h3 class="feature-title">Jetpack Compose</h3>
-          <p class="feature-desc">Bind properties directly to Compose <code>MutableState</code> with <code>rememberProperty()</code> for reactive UI updates.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Modules & Javadocs Section -->
-  <section class="section" id="modules">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Modules & Documentation</h2>
-        <p class="section-desc">RePropertyX is split into focused, lightweight modules. Access Javadocs directly on JitPack.</p>
-      </div>
-
-      <div class="modules-grid">
-        <!-- Module 1 -->
-        <div class="module-card">
-          <div>
-            <span class="module-badge">repropertyx</span>
-            <h3 class="module-title">Core JVM</h3>
-            <p class="module-desc">Core delegation toolkit for Kotlin JVM. Property creation, functional composition, caching, and reactive side-effects.</p>
-          </div>
-          <div class="module-actions">
-            <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx/1.0.0/javadoc/" target="_blank" class="btn-action btn-javadoc">JitPack Javadoc</a>
-          </div>
-        </div>
-
-        <!-- Module 2 -->
-        <div class="module-card">
-          <div>
-            <span class="module-badge">repropertyx-android</span>
-            <h3 class="module-title">Android Extensions</h3>
-            <p class="module-desc">Android SharedPreferences delegates, View property delegation, and smooth ValueAnimator integration.</p>
-          </div>
-          <div class="module-actions">
-            <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-android/1.0.0/javadoc/" target="_blank" class="btn-action btn-javadoc">JitPack Javadoc</a>
-          </div>
-        </div>
-
-        <!-- Module 3 -->
-        <div class="module-card">
-          <div>
-            <span class="module-badge">repropertyx-compose-android</span>
-            <h3 class="module-title">Jetpack Compose</h3>
-            <p class="module-desc">Compose MutableState bindings, <code>rememberProperty</code>, and reactive preference synchronization for Compose UI.</p>
-          </div>
-          <div class="module-actions">
-            <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-compose-android/1.0.0/javadoc/" target="_blank" class="btn-action btn-javadoc">JitPack Javadoc</a>
-          </div>
-        </div>
-      </div>
-    </div>
   </section>
 
   <!-- API Reference & Cheatsheet -->

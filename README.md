@@ -72,6 +72,67 @@ dependencies {
 
 ---
 
+## ✨ Quick Example
+
+### Before RePropertyX
+
+```kotlin
+val prefs = context.getSharedPreferences("user", MODE_PRIVATE)
+var userToken: String?
+    get() = prefs.getString("user_token", null)
+    set(value) { prefs.edit().putString("user_token", value).apply() }
+var userNickname: String
+    get() = prefs.getString("userNickname_${userToken}", null) ?: "unknown"
+    set(value) { prefs.edit().putString("userNickname_${userToken}", value).apply() }
+```
+
+### After RePropertyX
+
+```kotlin
+var userToken: String? by prefs.byString()
+var userNickname: String by prefs.byString { "${it}_${userToken}" }.orElse { "unknown" }
+```
+
+Or fully reactive:
+
+```kotlin
+var peekHeight by propertyOf(
+    get = { bottomSheetBehavior.peekHeight },
+    set = { bottomSheetBehavior.peekHeight = it },
+)
+.distinctUntilChanged()
+.animated()
+.onEach { println("PeekHeight changed to $it") }
+
+peekHeight = 200 // smooth animation + event callback!
+```
+
+---
+
+## 💡 Key APIs
+
+| Module | API | Description |
+|---|---|---|
+| **Core** | `propertyOf(get, set)` | Create a property delegate from any getter & setter pair. |
+| **Core** | `mutablePropertyOf(initial)` / `V.asProperty()` | Create an in-memory mutable property delegate. |
+| **Core** | `.map(to, from)` | Transform values between exposed and stored types. |
+| **Core** | `.orElse { fallback }` / `.notNull()` | Provide a fallback value or throw an exception when the delegate returns null. |
+| **Core** | `.distinctUntilChanged()` | Prevent redundant writes (`setValue`) when assigned value is unchanged. |
+| **Core** | `.onEach { }` / `.onEachBefore { }` | Observe changes or run side effects before/after assignment. |
+| **Core** | `.closable()` | Automatically close `AutoCloseable` resources upon replacing. |
+| **Core** | `byThreadLocal { ... }` | Type-safe `ThreadLocal` property delegation. |
+| **Core** | `byAtomic()` / `0.byAtomic()` | Thread-safe `AtomicReference`, `AtomicInteger`, etc. delegation. |
+| **Core** | `byDeclaredField` / `byFirstDeclaredField` | Reflection field access with optional field caching. |
+| **Core** | `.switchMap()` / `.flatMap()` | Delegate dynamically to child properties based on parent value. |
+| **Core** | `StateFlow.getValue()` / `MutableStateFlow.setValue()` | Direct Kotlin Coroutines `StateFlow` property delegation. |
+| **Android** | `bySharedPreference`, `byString`, `byInt`, ... | Type-safe Android `SharedPreferences` property delegates. |
+| **Android** | `.animated()` | Animate View numerical properties with `ValueAnimator`. |
+| **Android** | `view.animatedFloatAwait(value)` | Suspend function animating View properties asynchronously. |
+| **Compose** | `rememberProperty { ... }` | Remember property delegates inside Jetpack Compose UI. |
+| **Compose** | `rememberPropertyState` + `changesComposed()` | Auto-recompose Compose UI when `SharedPreferences` change on disk. |
+
+---
+
 ## 🔀 Bi-Directional Operator Pipeline
 
 ReProperty delegates act as bi-directional reactive pipelines. Operators independently transform and filter values along the **Read (`getValue`)** and **Write (`setValue`)** paths.
@@ -146,67 +207,6 @@ flowchart TD
     V2 ==> OP ==> E2
     V3 ==> OP ==> E3
 ```
-
----
-
-## ✨ Quick Example
-
-### Before RePropertyX
-
-```kotlin
-val prefs = context.getSharedPreferences("user", MODE_PRIVATE)
-var userToken: String?
-    get() = prefs.getString("user_token", null)
-    set(value) { prefs.edit().putString("user_token", value).apply() }
-var userNickname: String
-    get() = prefs.getString("userNickname_${userToken}", null) ?: "unknown"
-    set(value) { prefs.edit().putString("userNickname_${userToken}", value).apply() }
-```
-
-### After RePropertyX
-
-```kotlin
-var userToken: String? by prefs.byString()
-var userNickname: String by prefs.byString { "${it}_${userToken}" }.orElse { "unknown" }
-```
-
-Or fully reactive:
-
-```kotlin
-var peekHeight by propertyOf(
-    get = { bottomSheetBehavior.peekHeight },
-    set = { bottomSheetBehavior.peekHeight = it },
-)
-.distinctUntilChanged()
-.animated()
-.onEach { println("PeekHeight changed to $it") }
-
-peekHeight = 200 // smooth animation + event callback!
-```
-
----
-
-## 💡 Key APIs
-
-| Module | API | Description |
-|---|---|---|
-| **Core** | `propertyOf(get, set)` | Create a property delegate from any getter & setter pair. |
-| **Core** | `mutablePropertyOf(initial)` / `V.asProperty()` | Create an in-memory mutable property delegate. |
-| **Core** | `.map(to, from)` | Transform values between exposed and stored types. |
-| **Core** | `.orElse { fallback }` / `.notNull()` | Provide a fallback value or throw an exception when the delegate returns null. |
-| **Core** | `.distinctUntilChanged()` | Prevent redundant writes (`setValue`) when assigned value is unchanged. |
-| **Core** | `.onEach { }` / `.onEachBefore { }` | Observe changes or run side effects before/after assignment. |
-| **Core** | `.closable()` | Automatically close `AutoCloseable` resources upon replacing. |
-| **Core** | `byThreadLocal { ... }` | Type-safe `ThreadLocal` property delegation. |
-| **Core** | `byAtomic()` / `0.byAtomic()` | Thread-safe `AtomicReference`, `AtomicInteger`, etc. delegation. |
-| **Core** | `byDeclaredField` / `byFirstDeclaredField` | Reflection field access with optional field caching. |
-| **Core** | `.switchMap()` / `.flatMap()` | Delegate dynamically to child properties based on parent value. |
-| **Core** | `StateFlow.getValue()` / `MutableStateFlow.setValue()` | Direct Kotlin Coroutines `StateFlow` property delegation. |
-| **Android** | `bySharedPreference`, `byString`, `byInt`, ... | Type-safe Android `SharedPreferences` property delegates. |
-| **Android** | `.animated()` | Animate View numerical properties with `ValueAnimator`. |
-| **Android** | `view.animatedFloatAwait(value)` | Suspend function animating View properties asynchronously. |
-| **Compose** | `rememberProperty { ... }` | Remember property delegates inside Jetpack Compose UI. |
-| **Compose** | `rememberPropertyState` + `changesComposed()` | Auto-recompose Compose UI when `SharedPreferences` change on disk. |
 
 ---
 
