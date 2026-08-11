@@ -130,6 +130,8 @@ peekHeight = 200 // smooth animation + event callback!
 | **Android** | `view.animatedFloatAwait(value)` | Suspend function animating View properties asynchronously. |
 | **Compose** | `rememberProperty { ... }` | Remember property delegates inside Jetpack Compose UI. |
 | **Compose** | `rememberPropertyState` + `changesComposed()` | Auto-recompose Compose UI when `SharedPreferences` change on disk. |
+| **DataStore** | `dataStore.byString()`, `byInt()`, ... | Type-safe Jetpack DataStore<Preferences> property delegates. |
+| **Room** | `dao.byDaoProperty(get, set)` / `byDaoQuery(get)` | Type-safe Android Room Database & DAO property delegates. |
 
 ---
 
