@@ -6,9 +6,11 @@
 
 <p align="left">
   <a href="https://jitpack.io/#RePropertyX/RePropertyX"><img src="https://jitpack.io/v/RePropertyX/RePropertyX.svg" alt="JitPack"/></a>
-  <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx/1.0.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx-brightgreen.svg" alt="Javadocs Core"/></a>
-  <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-android/1.0.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx--android-brightgreen.svg" alt="Javadocs Android"/></a>
-  <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-compose-android/1.0.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx--compose--android-brightgreen.svg" alt="Javadocs Compose"/></a>
+  <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx/1.1.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx-brightgreen.svg" alt="Javadocs Core"/></a>
+  <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-android/1.1.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx--android-brightgreen.svg" alt="Javadocs Android"/></a>
+  <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-compose-android/1.1.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx--compose--android-brightgreen.svg" alt="Javadocs Compose"/></a>
+  <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-datastore-android/1.1.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx--datastore--android-brightgreen.svg" alt="Javadocs DataStore"/></a>
+  <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-room-android/1.1.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx--room--android-brightgreen.svg" alt="Javadocs Room"/></a>
   <a href="https://repropertyx.github.io/RePropertyX/"><img src="https://img.shields.io/badge/Website-Official%20Site-7F52FF.svg?logo=googlechrome&logoColor=white" alt="Official Website"/></a>
   <a href="https://jitci.com/gh/RePropertyX/RePropertyX"><img src="https://jitci.com/gh/RePropertyX/RePropertyX/svg" alt="JitCI"/></a>
   <a href="https://github.com/RePropertyX/RePropertyX/actions"><img src="https://github.com/RePropertyX/RePropertyX/actions/workflows/docs.yml/badge.svg" alt="Docs CI"/></a>
@@ -30,7 +32,7 @@ Instead of manually writing boilerplate `get` / `set` logic for properties, RePr
 
 - **Compose delegates** just like functional streams: `.map()`, `.distinctUntilChanged()`, `.onEach()`
 - **Animate values** with `.animated()` — no more writing manual `ValueAnimator` code.
-- **Store state safely** with `bySharedPreferences()` and other storage delegates.
+- **Store state safely** with `bySharedPreferences()`, `byDataStore()`, and `byRoom()` delegates.
 - **Write tests with confidence** — small, composable delegates are easy to mock.
 
 ---
@@ -53,13 +55,19 @@ Add dependencies to your module's `build.gradle.kts`:
 ```kotlin
 dependencies {
     // Core JVM property delegates
-    implementation("com.github.RePropertyX.RePropertyX:repropertyx:1.0.0")
+    implementation("com.github.RePropertyX.RePropertyX:repropertyx:1.1.0")
 
     // Android extensions (SharedPreferences, View animations)
-    implementation("com.github.RePropertyX.RePropertyX:repropertyx-android:1.0.0")
+    implementation("com.github.RePropertyX.RePropertyX:repropertyx-android:1.1.0")
 
     // Compose extensions (MutableState & Compose bindings)
-    implementation("com.github.RePropertyX.RePropertyX:repropertyx-compose-android:1.0.0")
+    implementation("com.github.RePropertyX.RePropertyX:repropertyx-compose-android:1.1.0")
+
+    // DataStore extensions (Jetpack DataStore<Preferences>)
+    implementation("com.github.RePropertyX.RePropertyX:repropertyx-datastore-android:1.1.0")
+
+    // Room extensions (Android Room Database & DAO query delegates)
+    implementation("com.github.RePropertyX.RePropertyX:repropertyx-room-android:1.1.0")
 }
 ```
 
