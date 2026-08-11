@@ -124,11 +124,54 @@ peekHeight = 200 // smooth animation + event callback!
 | **Core** | `byDeclaredField` / `byFirstDeclaredField` | Reflection field access with optional field caching. |
 | **Core** | `.switchMap()` / `.flatMap()` | Delegate dynamically to child properties based on parent value. |
 | **Core** | `StateFlow.getValue()` / `MutableStateFlow.setValue()` | Direct Kotlin Coroutines `StateFlow` property delegation. |
+| **Core** | `.clamp(min, max)` | Clamp numerical write values within min..max range. |
+| **Core** | `.validateIf { predicate }` | Conditionally allow or skip write operations based on a predicate. |
+| **Core** | `.withHistory(maxSize)` | Attach undo/redo stack (`.undo()`, `.redo()`) to any property delegate. |
+| **Core** | `.expiringIn(ttlMillis)` | Automatically expire and return `null` after TTL duration. |
+| **Android** | `savedStateHandle.byProperty(key, default)` | Delegate to Android `SavedStateHandle` for Process Death survival. |
 | **Android** | `bySharedPreference`, `byString`, `byInt`, ... | Type-safe Android `SharedPreferences` property delegates. |
 | **Android** | `.animated()` | Animate View numerical properties with `ValueAnimator`. |
 | **Android** | `view.animatedFloatAwait(value)` | Suspend function animating View properties asynchronously. |
 | **Compose** | `rememberProperty { ... }` | Remember property delegates inside Jetpack Compose UI. |
 | **Compose** | `rememberPropertyState` + `changesComposed()` | Auto-recompose Compose UI when `SharedPreferences` change on disk. |
+
+---
+
+## ⚡ Feature Comparisons (Before vs. After)
+
+### 1. 🛡️ Bounds Clamping & Validation (`.clamp()`, `.validateIf()`)
+
+| Approach | Code Example |
+|---|---|
+| ❌ **Traditional (Manual Setters)** | ```kotlin<br>private var _volume = 50<br>var volume: Int<br>    get() = _volume<br>    set(v) { _volume = v.coerceIn(0, 100) }<br>``` |
+| ✅ **RePropertyX** | ```kotlin<br>var volume: Int by mutablePropertyOf(50).clamp(min = 0, max = 100)<br>``` |
+
+---
+
+### 2. ↩️ Undo / Redo History Stack (`.withHistory()`)
+
+| Approach | Code Example |
+|---|---|
+| ❌ **Traditional (Manual Stacks)** | ```kotlin<br>private val history = mutableListOf<String>()<br>private var index = -1<br>fun updateText(v: String) { history.add(v); index++ }<br>fun undo() { if (index > 0) index-- }<br>``` |
+| ✅ **RePropertyX** | ```kotlin<br>val textProp = mutablePropertyOf("Hello").withHistory(maxSize = 10)<br>var text: String by textProp<br><br>text = "World"<br>textProp.undo() // Instantly reverts back to "Hello"!<br>``` |
+
+---
+
+### 3. ⏳ TTL Auto-Expiry Caching (`.expiringIn()`)
+
+| Approach | Code Example |
+|---|---|
+| ❌ **Traditional (Manual Timestamps)** | ```kotlin<br>private var token: String? = null<br>private var lastFetchTime = 0L<br>fun getToken(): String? {<br>    return if (System.currentTimeMillis() - lastFetchTime > 300_000) null else token<br>}<br>``` |
+| ✅ **RePropertyX** | ```kotlin<br>var token: String? by delegate<String?>("session_token").expiringIn(5.minutes)<br>``` |
+
+---
+
+### 4. 📱 Android SavedStateHandle Process Death (`savedStateHandle.byProperty()`)
+
+| Approach | Code Example |
+|---|---|
+| ❌ **Traditional (Manual SavedStateHandle)** | ```kotlin<br>var query: String<br>    get() = savedStateHandle.get<String>("query") ?: ""<br>    set(v) { savedStateHandle["query"] = v }<br>``` |
+| ✅ **RePropertyX** | ```kotlin<br>var query: String by savedStateHandle.byProperty("query", default = "")<br>    .distinctUntilChanged()<br>    .onEach { log(it) }<br>``` |
 
 ---
 

@@ -60,11 +60,14 @@ dependencies {
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.interpolator:interpolator:1.0.0")
+    api("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.7.0")
     //implementation("androidx.appcompat:appcompat:1.6.1")
     
     // Use JUnit4; avoid kotlin-test to prevent capability conflicts during lint
 
     // Mockito for testing
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.10.1")
     testImplementation("org.mockito:mockito-core:5.7.0")
     testImplementation("org.mockito:mockito-junit-jupiter:5.7.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")

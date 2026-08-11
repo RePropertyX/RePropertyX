@@ -296,6 +296,69 @@ class DelegatexTest {
     }
 
     @Test
+    fun `clamp operator constrains numerical values to min and max`() {
+        var volume: Int by intDelegate(50).clamp(min = 0, max = 100)
+
+        volume = 150
+        assertEquals(100, volume)
+
+        volume = -50
+        assertEquals(0, volume)
+
+        volume = 75
+        assertEquals(75, volume)
+    }
+
+    @Test
+    fun `validateIf operator filters invalid assignments`() {
+        var invalidCount = 0
+        var age: Int by intDelegate(18).validateIf(onInvalid = { invalidCount++ }) { it >= 0 }
+
+        age = 25
+        assertEquals(25, age)
+
+        age = -5
+        assertEquals(25, age)
+        assertEquals(1, invalidCount)
+    }
+
+    @Test
+    fun `withHistory supports undo and redo operations`() {
+        val historyProp = mutablePropertyOf("A").withHistory(maxSize = 5)
+        var text: String by historyProp
+
+        assertEquals("A", text)
+        text = "B"
+        text = "C"
+        assertEquals("C", text)
+
+        assertTrue(historyProp.canUndo)
+        historyProp.undo()
+        assertEquals("B", text)
+
+        historyProp.undo()
+        assertEquals("A", text)
+
+        assertTrue(historyProp.canRedo)
+        historyProp.redo()
+        assertEquals("B", text)
+    }
+
+    @Test
+    fun `expiringIn operator expires property after TTL`() {
+        var simulatedTime = 1000L
+        var token: String? by delegate<String?>("initial").expiringIn(ttlMillis = 5000L, clock = { simulatedTime })
+
+        assertEquals("initial", token)
+
+        simulatedTime = 3000L
+        assertEquals("initial", token)
+
+        simulatedTime = 7000L // 7000 - 1000 > 5000 -> Expired!
+        assertNull(token)
+    }
+
+    @Test
     fun `takeIf test`() {
         val adultAge: Int? by User().asProperty().map(to = { it.age }, from = { copy(age = it) }).orElse { 0 }.takeIf { it > 18 }
         assertEquals(null, adultAge)

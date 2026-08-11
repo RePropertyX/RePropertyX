@@ -71,6 +71,8 @@
         <button class="tab-btn active" data-tab="prefs">SharedPreferences</button>
         <button class="tab-btn" data-tab="anim">View Animations</button>
         <button class="tab-btn" data-tab="compose">Jetpack Compose</button>
+        <button class="tab-btn" data-tab="history">Undo / Redo</button>
+        <button class="tab-btn" data-tab="savedstate">SavedStateHandle</button>
       </div>
 
       <!-- Tab 1: SharedPreferences -->
@@ -206,6 +208,82 @@
             darkMode = newSetting <span class="token comment">// Updates Compose UI AND SharedPreferences!</span>
         }
     )
+}</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Undo / Redo -->
+      <div class="comparison-grid comparison-content" id="tab-history" style="display: none;">
+        <div class="code-card">
+          <div class="code-header">
+            <span>Traditional Stack Management</span>
+            <span class="code-tag tag-before">Boilerplate</span>
+          </div>
+          <div class="code-body">
+<pre><span class="token comment">// Manual list stack & index tracking</span>
+<span class="token keyword">private val</span> history = mutableListOf&lt;String&gt;()
+<span class="token keyword">private var</span> index = -1
+
+<span class="token keyword">fun</span> updateText(value: String) {
+    history.add(value)
+    index++
+}
+
+<span class="token keyword">fun</span> undo(): String? {
+    <span class="token keyword">if</span> (index > 0) index--
+    <span class="token keyword">return if</span> (index >= 0) history[index] <span class="token keyword">else null</span>
+}</pre>
+          </div>
+        </div>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span>With RePropertyX</span>
+            <span class="code-tag tag-after">1-Line Extension</span>
+          </div>
+          <div class="code-body">
+<pre><span class="token comment">// 1-line Undo/Redo stack property wrapper!</span>
+<span class="token keyword">val</span> textProp = mutablePropertyOf(<span class="token string">"Hello"</span>).withHistory(maxSize = 10)
+<span class="token keyword">var</span> text: String <span class="token keyword">by</span> textProp
+
+text = <span class="token string">"World"</span>
+textProp.undo() <span class="token comment">// Instantly reverts back to "Hello"!</span>
+textProp.redo() <span class="token comment">// Redoes change back to "World"!</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 5: SavedStateHandle -->
+      <div class="comparison-grid comparison-content" id="tab-savedstate" style="display: none;">
+        <div class="code-card">
+          <div class="code-header">
+            <span>Manual SavedStateHandle</span>
+            <span class="code-tag tag-before">Repetitive</span>
+          </div>
+          <div class="code-body">
+<pre><span class="token comment">// Manual SavedStateHandle get/set getters</span>
+<span class="token keyword">class</span> SearchViewModel(state: SavedStateHandle) : ViewModel() {
+    <span class="token keyword">var</span> query: String
+        <span class="token keyword">get</span>() = state.get&lt;String&gt;(<span class="token string">"query"</span>) ?: <span class="token string">""</span>
+        <span class="token keyword">set</span>(value) {
+            state[<span class="token string">"query"</span>] = value
+        }
+}</pre>
+          </div>
+        </div>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span>With RePropertyX</span>
+            <span class="code-tag tag-after">Composable & Safe</span>
+          </div>
+          <div class="code-body">
+<pre><span class="token comment">// Expressive SavedStateHandle delegate + Operators!</span>
+<span class="token keyword">class</span> SearchViewModel(state: SavedStateHandle) : ViewModel() {
+    <span class="token keyword">var</span> query: String <span class="token keyword">by</span> state.byProperty(<span class="token string">"query"</span>, default = <span class="token string">""</span>)
+        .distinctUntilChanged()
+        .onEach { logSearch(it) }
 }</pre>
           </div>
         </div>

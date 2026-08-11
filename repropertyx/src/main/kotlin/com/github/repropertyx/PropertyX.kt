@@ -620,3 +620,121 @@ fun <T: ReadWriteProperty<P, V>, P, V> Lazy<T>.by() = object : ReadWriteProperty
         this@by.value.setValue(thisRef, property, value)
     }
 }
+
+/**
+ * Clamps numerical write values to the range between [min] and [max].
+ */
+fun <T, V> ReadWriteProperty<T, V>.clamp(min: V, max: V): ReadWriteProperty<T, V> where V : Comparable<V> =
+    object : ReadWriteProperty<T, V> by this {
+        override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
+            val clampedValue = when {
+                value < min -> min
+                value > max -> max
+                else -> value
+            }
+            this@clamp.setValue(thisRef, property, clampedValue)
+        }
+    }
+
+/**
+ * Validates write operations using a [predicate] function before applying them to the property.
+ * If [predicate] returns false, the write operation is skipped and [onInvalid] is optionally invoked.
+ */
+fun <T, V> ReadWriteProperty<T, V>.validateIf(
+    onInvalid: (value: V) -> Unit = {},
+    predicate: (value: V) -> Boolean
+): ReadWriteProperty<T, V> = object : ReadWriteProperty<T, V> by this {
+    override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
+        if (predicate(value)) {
+            this@validateIf.setValue(thisRef, property, value)
+        } else {
+            onInvalid(value)
+        }
+    }
+}
+
+/**
+ * Property delegate decorator that maintains an undo/redo history stack of assigned values.
+ */
+class HistoryPropertyDelegate<T, V>(
+    private val delegate: ReadWriteProperty<T, V>,
+    private val maxSize: Int = 10
+) : ReadWriteProperty<T, V> {
+    private val history = mutableListOf<V>()
+    private var currentIndex = -1
+
+    override fun getValue(thisRef: T, property: KProperty<*>): V {
+        return if (currentIndex >= 0 && currentIndex < history.size) {
+            history[currentIndex]
+        } else {
+            delegate.getValue(thisRef, property)
+        }
+    }
+
+    override fun setValue(thisRef: T, property: KProperty<*>, value: V) {
+        if (currentIndex < 0) {
+            val initial = delegate.getValue(thisRef, property)
+            history.add(initial)
+            currentIndex = 0
+        }
+        while (history.size > currentIndex + 1) {
+            history.removeAt(history.size - 1)
+        }
+        history.add(value)
+        if (history.size > maxSize + 1) {
+            history.removeAt(0)
+        } else {
+            currentIndex++
+        }
+        delegate.setValue(thisRef, property, value)
+    }
+
+    fun undo(): Boolean {
+        if (currentIndex > 0) {
+            currentIndex--
+            return true
+        }
+        return false
+    }
+
+    fun redo(): Boolean {
+        if (currentIndex < history.size - 1) {
+            currentIndex++
+            return true
+        }
+        return false
+    }
+
+    val canUndo: Boolean get() = currentIndex > 0
+    val canRedo: Boolean get() = currentIndex < history.size - 1
+}
+
+fun <T, V> ReadWriteProperty<T, V>.withHistory(maxSize: Int = 10): HistoryPropertyDelegate<T, V> =
+    HistoryPropertyDelegate(this, maxSize)
+
+/**
+ * Wraps a nullable property delegate to automatically expire and return null after [ttlMillis] milliseconds.
+ */
+fun <T, V> ReadWriteProperty<T, V?>.expiringIn(
+    ttlMillis: Long,
+    clock: () -> Long = { System.currentTimeMillis() }
+): ReadWriteProperty<T, V?> = object : ReadWriteProperty<T, V?> {
+    private var lastUpdateTime: Long = 0L
+
+    override fun getValue(thisRef: T, property: KProperty<*>): V? {
+        val currentTime = clock()
+        if (lastUpdateTime == 0L) {
+            lastUpdateTime = currentTime
+        }
+        return if ((currentTime - lastUpdateTime) > ttlMillis) {
+            null
+        } else {
+            this@expiringIn.getValue(thisRef, property)
+        }
+    }
+
+    override fun setValue(thisRef: T, property: KProperty<*>, value: V?) {
+        lastUpdateTime = if (value == null) 0L else clock()
+        this@expiringIn.setValue(thisRef, property, value)
+    }
+}
