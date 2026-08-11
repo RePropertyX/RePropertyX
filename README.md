@@ -9,7 +9,6 @@
   <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx/1.1.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx-brightgreen.svg" alt="Javadocs Core"/></a>
   <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-android/1.1.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx--android-brightgreen.svg" alt="Javadocs Android"/></a>
   <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-compose-android/1.1.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx--compose--android-brightgreen.svg" alt="Javadocs Compose"/></a>
-  <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-datastore-android/1.1.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx--datastore--android-brightgreen.svg" alt="Javadocs DataStore"/></a>
   <a href="https://repropertyx.github.io/RePropertyX/"><img src="https://img.shields.io/badge/Website-Official%20Site-7F52FF.svg?logo=googlechrome&logoColor=white" alt="Official Website"/></a>
   <a href="https://github.com/RePropertyX/RePropertyX/actions"><img src="https://github.com/RePropertyX/RePropertyX/actions/workflows/docs.yml/badge.svg" alt="Docs CI"/></a>
   <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-1.9.20-7F52FF.svg?logo=kotlin&logoColor=white" alt="Kotlin"/></a>
@@ -30,7 +29,7 @@ Instead of manually writing boilerplate `get` / `set` logic for properties, RePr
 
 - **Compose delegates** just like functional streams: `.map()`, `.distinctUntilChanged()`, `.onEach()`
 - **Animate values** with `.animated()` — no more writing manual `ValueAnimator` code.
-- **Store state safely** with `bySharedPreferences()` and `byDataStore()` delegates.
+- **Store state safely** with `bySharedPreferences()` delegates.
 - **Write tests with confidence** — small, composable delegates are easy to mock.
 
 ---
@@ -60,9 +59,6 @@ dependencies {
 
     // Compose extensions (MutableState & Compose bindings)
     implementation("com.github.RePropertyX.RePropertyX:repropertyx-compose-android:1.1.0")
-
-    // DataStore extensions (Jetpack DataStore<Preferences>)
-    implementation("com.github.RePropertyX.RePropertyX:repropertyx-datastore-android:1.1.0")
 }
 ```
 
@@ -133,7 +129,6 @@ peekHeight = 200 // smooth animation + event callback!
 | **Android** | `view.animatedFloatAwait(value)` | Suspend function animating View properties asynchronously. |
 | **Compose** | `rememberProperty { ... }` | Remember property delegates inside Jetpack Compose UI. |
 | **Compose** | `rememberPropertyState` + `changesComposed()` | Auto-recompose Compose UI when `SharedPreferences` change on disk. |
-| **DataStore** | `dataStore.byString()`, `byInt()`, ... | Type-safe Jetpack DataStore<Preferences> property delegates. |
 
 ---
 
