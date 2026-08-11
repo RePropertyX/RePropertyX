@@ -1,63 +1,87 @@
 package com.github.repropertyx.room
 
 import com.github.repropertyx.orElse
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class RoomPropertyXTest {
 
-    private lateinit var fakeDao: FakeUserDao
+    private lateinit var fakePrefStore: FakeRoomPrefStore
 
     @Before
     fun setUp() {
-        fakeDao = FakeUserDao()
+        fakePrefStore = FakeRoomPrefStore()
     }
 
     @Test
-    fun `byDaoProperty delegates get and set to DAO`() {
-        var userScore: Int by fakeDao.byDaoProperty(
-            get = { getScore() },
-            set = { setScore(it) }
+    fun `RoomPreferenceStore delegates byString and byInt to Room table`() {
+        var username: String? by fakePrefStore.byString("user_name")
+        var score: Int by fakePrefStore.byInt("user_score", default = 0)
+
+        assertNull(username)
+        assertEquals(0, score)
+
+        username = "Alice"
+        score = 100
+
+        assertEquals("Alice", username)
+        assertEquals(100, score)
+    }
+
+    @Test
+    fun `RoomPreferenceStore works with orElse fallback`() {
+        var theme: String by fakePrefStore.byString("app_theme").orElse { "System" }
+
+        assertEquals("System", theme)
+
+        theme = "Dark"
+        assertEquals("Dark", theme)
+    }
+
+    @Test
+    fun `byRoomState provides non-blocking reads and async writes`() = runTest {
+        val testScope = TestScope(UnconfinedTestDispatcher(testScheduler))
+        val roomFlow = MutableStateFlow("LIGHT")
+        var dbUpdatedValue = ""
+
+        val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+        var currentTheme: String by byRoomState(
+            queryFlow = roomFlow,
+            initialValue = "LIGHT",
+            scope = testScope,
+            dispatcher = testDispatcher,
+            onUpdate = { dbUpdatedValue = it }
         )
 
-        assertEquals(0, userScore)
+        assertEquals("LIGHT", currentTheme)
 
-        userScore = 100
-        assertEquals(100, userScore)
-    }
+        currentTheme = "DARK"
+        assertEquals("DARK", currentTheme)
+        assertEquals("DARK", dbUpdatedValue)
 
-    @Test
-    fun `byDaoQuery provides read-only access to DAO query`() {
-        val userName: String by fakeDao.byDaoQuery { getName() }
-
-        assertEquals("Alice", userName)
-    }
-
-    @Test
-    fun `byDaoProperty works seamlessly with ReProperty operators`() {
-        var status: String by fakeDao.byDaoProperty(
-            get = { getStatus() },
-            set = { setStatus(it) }
-        ).orElse { "Offline" }
-
-        assertEquals("Offline", status)
-
-        status = "Online"
-        assertEquals("Online", status)
+        roomFlow.value = "CUSTOM"
+        assertEquals("CUSTOM", currentTheme)
     }
 }
 
-class FakeUserDao {
-    private var score: Int = 0
-    private var name: String = "Alice"
-    private var status: String? = null
+class FakeRoomPrefStore : RoomPreferenceStore {
+    private val map = mutableMapOf<String, String>()
 
-    fun getScore(): Int = score
-    fun setScore(value: Int) { score = value }
+    override fun getPreference(key: String): String? = map[key]
 
-    fun getName(): String = name
-
-    fun getStatus(): String? = status
-    fun setStatus(value: String?) { status = value }
+    override fun setPreference(key: String, value: String?) {
+        if (value == null) {
+            map.remove(key)
+        } else {
+            map[key] = value
+        }
+    }
 }
