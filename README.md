@@ -12,7 +12,6 @@
   <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-datastore-android/1.1.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx--datastore--android-brightgreen.svg" alt="Javadocs DataStore"/></a>
   <a href="https://javadoc.jitpack.io/com/github/RePropertyX/RePropertyX/repropertyx-room-android/1.1.0/javadoc/"><img src="https://img.shields.io/badge/javadoc-repropertyx--room--android-brightgreen.svg" alt="Javadocs Room"/></a>
   <a href="https://repropertyx.github.io/RePropertyX/"><img src="https://img.shields.io/badge/Website-Official%20Site-7F52FF.svg?logo=googlechrome&logoColor=white" alt="Official Website"/></a>
-  <a href="https://jitci.com/gh/RePropertyX/RePropertyX"><img src="https://jitci.com/gh/RePropertyX/RePropertyX/svg" alt="JitCI"/></a>
   <a href="https://github.com/RePropertyX/RePropertyX/actions"><img src="https://github.com/RePropertyX/RePropertyX/actions/workflows/docs.yml/badge.svg" alt="Docs CI"/></a>
   <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-1.9.20-7F52FF.svg?logo=kotlin&logoColor=white" alt="Kotlin"/></a>
   <a href="https://developer.android.com"><img src="https://img.shields.io/badge/Android-API%2021%2B-3DDC84.svg?logo=android&logoColor=white" alt="Android API 21+"/></a>
