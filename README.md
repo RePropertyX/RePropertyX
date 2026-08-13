@@ -124,6 +124,7 @@ peekHeight = 200 // smooth animation + event callback!
 | **Core** | `byDeclaredField` / `byFirstDeclaredField` | Reflection field access with optional field caching. |
 | **Core** | `.switchMap()` / `.flatMap()` | Delegate dynamically to child properties based on parent value. |
 | **Core** | `StateFlow.getValue()` / `MutableStateFlow.setValue()` | Direct Kotlin Coroutines `StateFlow` property delegation. |
+| **Core** | `.cached(maxAge, maxStale, forceCache)` | HTTP-style caching mechanism (`maxAge`, `maxStale`, `forceCache`, `invalidate()`). |
 | **Core** | `.clamp(min, max)` | Clamp numerical write values within min..max range. |
 | **Core** | `.validateIf { predicate }` | Conditionally allow or skip write operations based on a predicate. |
 | **Core** | `.withHistory(maxSize)` | Attach undo/redo stack (`.undo()`, `.redo()`) to any property delegate. |
@@ -138,6 +139,38 @@ peekHeight = 200 // smooth animation + event callback!
 ---
 
 ## ⚡ Feature Comparisons (Before vs. After)
+
+### 0. 📦 Rich Cache Control (`.cached(maxAge, maxStale, forceCache)`)
+
+**❌ Traditional (Manual Cache Controls):**
+```kotlin
+private var cachedUser: User? = null
+private var cachedAt: Long = 0L
+
+fun getUser(): User {
+    val now = System.currentTimeMillis()
+    if (cachedUser != null && (now - cachedAt <= 300_000 || isOffline)) {
+        return cachedUser!!
+    }
+    cachedUser = fetchUserFromNetwork()
+    cachedAt = now
+    return cachedUser!!
+}
+```
+
+**✅ RePropertyX:**
+```kotlin
+// HTTP-style cache control (maxAge = 5m, maxStale = 10m, invalidate, forceCache)
+val userProp = propertyOf(get = { fetchUserFromNetwork() }, set = {})
+    .cached(maxAgeMillis = 5.minutes, maxStaleMillis = 10.minutes)
+
+var user: User by userProp
+
+// Force invalidate cache to re-fetch on next read:
+userProp.invalidate()
+```
+
+---
 
 ### 1. 🛡️ Bounds Clamping & Validation (`.clamp()`, `.validateIf()`)
 
