@@ -68,15 +68,58 @@
       </div>
 
       <div class="tab-buttons">
-        <button class="tab-btn active" data-tab="prefs">SharedPreferences</button>
+        <button class="tab-btn active" data-tab="cache">Cache Control</button>
+        <button class="tab-btn" data-tab="prefs">SharedPreferences</button>
         <button class="tab-btn" data-tab="anim">View Animations</button>
         <button class="tab-btn" data-tab="compose">Jetpack Compose</button>
         <button class="tab-btn" data-tab="history">Undo / Redo</button>
         <button class="tab-btn" data-tab="savedstate">SavedStateHandle</button>
       </div>
 
+      <!-- Tab 0: Cache Control -->
+      <div class="comparison-grid comparison-content" id="tab-cache">
+        <div class="code-card">
+          <div class="code-header">
+            <span>Traditional Cache Management</span>
+            <span class="code-tag tag-before">Boilerplate</span>
+          </div>
+          <div class="code-body">
+<pre><span class="token comment">// Manual timestamp tracking & fallback logic</span>
+<span class="token keyword">private var</span> cachedUser: User? = <span class="token keyword">null</span>
+<span class="token keyword">private var</span> cachedAt = 0L
+
+<span class="token keyword">fun</span> getUser(): User {
+    <span class="token keyword">val</span> now = System.currentTimeMillis()
+    <span class="token keyword">if</span> (cachedUser != <span class="token keyword">null</span> && (now - cachedAt &lt;= 300_000 || isOffline)) {
+        <span class="token keyword">return</span> cachedUser!!
+    }
+    cachedUser = fetchUserFromNetwork()
+    cachedAt = now
+    <span class="token keyword">return</span> cachedUser!!
+}</pre>
+          </div>
+        </div>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span>With RePropertyX</span>
+            <span class="code-tag tag-after">HTTP-Style Caching</span>
+          </div>
+          <div class="code-body">
+<pre><span class="token comment">// Declarative maxAge, maxStale & invalidate()!</span>
+<span class="token keyword">val</span> userProp = propertyOf(get = { fetchUserFromNetwork() }, set = {})
+    .cached(maxAgeMillis = 5.minutes, maxStaleMillis = 10.minutes)
+
+<span class="token keyword">var</span> user: User <span class="token keyword">by</span> userProp
+
+<span class="token comment">// Force invalidate cache whenever needed:</span>
+userProp.invalidate()</pre>
+          </div>
+        </div>
+      </div>
+
       <!-- Tab 1: SharedPreferences -->
-      <div class="comparison-grid comparison-content" id="tab-prefs">
+      <div class="comparison-grid comparison-content" id="tab-prefs" style="display: none;">
         <div class="code-card">
           <div class="code-header">
             <span>Traditional Approach</span>
