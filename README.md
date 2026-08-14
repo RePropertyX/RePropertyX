@@ -140,34 +140,34 @@ peekHeight = 200 // smooth animation + event callback!
 
 ## ⚡ Feature Comparisons (Before vs. After)
 
-### 0. 📦 Rich Cache Control (`.cached(maxAge, maxStale, forceCache)`)
+### 5. 📦 Rich Cache Control (`.cached(maxAge, maxStale, forceCache)`)
 
 **❌ Traditional (Manual Cache Controls):**
 ```kotlin
-private var cachedUser: User? = null
+private var cachedConfig: Config? = null
 private var cachedAt: Long = 0L
 
-fun getUser(): User {
+fun getConfig(): Config {
     val now = System.currentTimeMillis()
-    if (cachedUser != null && (now - cachedAt <= 300_000 || isOffline)) {
-        return cachedUser!!
+    if (cachedConfig != null && (now - cachedAt <= 300_000)) {
+        return cachedConfig!!
     }
-    cachedUser = fetchUserFromNetwork()
+    cachedConfig = parseConfigFromDisk()
     cachedAt = now
-    return cachedUser!!
+    return cachedConfig!!
 }
 ```
 
 **✅ RePropertyX:**
 ```kotlin
 // HTTP-style cache control (maxAge = 5m, maxStale = 10m, invalidate, forceCache)
-val userProp = propertyOf(get = { fetchUserFromNetwork() }, set = {})
+val configProp = propertyOf(get = { parseConfigFromDisk() }, set = {})
     .cached(maxAgeMillis = 5.minutes, maxStaleMillis = 10.minutes)
 
-var user: User by userProp
+var config: Config by configProp
 
-// Force invalidate cache to re-fetch on next read:
-userProp.invalidate()
+// Force invalidate cache to re-parse on next read:
+configProp.invalidate()
 ```
 
 ---

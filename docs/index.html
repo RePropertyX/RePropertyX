@@ -68,58 +68,51 @@
       </div>
 
       <div class="tab-buttons">
-        <button class="tab-btn active" data-tab="cache">Cache Control</button>
-        <button class="tab-btn" data-tab="prefs">SharedPreferences</button>
+        <button class="tab-btn active" data-tab="prefs">SharedPreferences</button>
         <button class="tab-btn" data-tab="anim">View Animations</button>
         <button class="tab-btn" data-tab="compose">Jetpack Compose</button>
+        <button class="tab-btn" data-tab="cache">Cache Control</button>
         <button class="tab-btn" data-tab="history">Undo / Redo</button>
         <button class="tab-btn" data-tab="savedstate">SavedStateHandle</button>
       </div>
 
-      <!-- Tab 0: Cache Control -->
-      <div class="comparison-grid comparison-content" id="tab-cache">
+      <!-- Tab 1: SharedPreferences -->
+      <div class="comparison-grid comparison-content" id="tab-prefs">
         <div class="code-card">
           <div class="code-header">
-            <span>Traditional Cache Management</span>
+            <span>Traditional Approach</span>
             <span class="code-tag tag-before">Boilerplate</span>
           </div>
           <div class="code-body">
-<pre><span class="token comment">// Manual timestamp tracking & fallback logic</span>
-<span class="token keyword">private var</span> cachedUser: User? = <span class="token keyword">null</span>
-<span class="token keyword">private var</span> cachedAt = 0L
+<pre><span class="token comment">// Manual getter/setter boilerplate</span>
+<span class="token keyword">val</span> prefs = context.getSharedPreferences(<span class="token string">"user"</span>, MODE_PRIVATE)
 
-<span class="token keyword">fun</span> getUser(): User {
-    <span class="token keyword">val</span> now = System.currentTimeMillis()
-    <span class="token keyword">if</span> (cachedUser != <span class="token keyword">null</span> && (now - cachedAt &lt;= 300_000 || isOffline)) {
-        <span class="token keyword">return</span> cachedUser!!
-    }
-    cachedUser = fetchUserFromNetwork()
-    cachedAt = now
-    <span class="token keyword">return</span> cachedUser!!
-}</pre>
+<span class="token keyword">var</span> userToken: String?
+    <span class="token keyword">get</span>() = prefs.getString(<span class="token string">"user_token"</span>, <span class="token keyword">null</span>)
+    <span class="token keyword">set</span>(value) {
+        prefs.edit().putString(<span class="token string">"user_token"</span>, value).apply()
+    }</pre>
           </div>
         </div>
 
         <div class="code-card">
           <div class="code-header">
             <span>With RePropertyX</span>
-            <span class="code-tag tag-after">HTTP-Style Caching</span>
+            <span class="code-tag tag-after">Clean & Type-Safe</span>
           </div>
           <div class="code-body">
-<pre><span class="token comment">// Declarative maxAge, maxStale & invalidate()!</span>
-<span class="token keyword">val</span> userProp = propertyOf(get = { fetchUserFromNetwork() }, set = {})
-    .cached(maxAgeMillis = 5.minutes, maxStaleMillis = 10.minutes)
+<pre><span class="token comment">// Expressive 1-line delegates!</span>
+<span class="token keyword">val</span> prefs = context.getSharedPreferences(<span class="token string">"user"</span>, MODE_PRIVATE)
 
-<span class="token keyword">var</span> user: User <span class="token keyword">by</span> userProp
+<span class="token comment">// 1-line nullable delegate bound to "user_token"</span>
+<span class="token keyword">var</span> userToken: String? <span class="token keyword">by</span> prefs.byString(<span class="token string">"user_token"</span>)
 
-<span class="token comment">// Force invalidate cache whenever needed:</span>
-userProp.invalidate()</pre>
+<span class="token comment">// 1-line non-null delegate with fallback default</span>
+<span class="token keyword">var</span> userNickname: String <span class="token keyword">by</span> prefs.byString(<span class="token string">"user_nickname"</span>)
+    .orElse { <span class="token string">"unknown"</span> }</pre>
           </div>
         </div>
       </div>
-
-      <!-- Tab 1: SharedPreferences -->
-      <div class="comparison-grid comparison-content" id="tab-prefs" style="display: none;">
         <div class="code-card">
           <div class="code-header">
             <span>Traditional Approach</span>
@@ -256,7 +249,49 @@ userProp.invalidate()</pre>
         </div>
       </div>
 
-      <!-- Tab 4: Undo / Redo -->
+      <!-- Tab 4: Cache Control -->
+      <div class="comparison-grid comparison-content" id="tab-cache" style="display: none;">
+        <div class="code-card">
+          <div class="code-header">
+            <span>Traditional Cache Management</span>
+            <span class="code-tag tag-before">Boilerplate</span>
+          </div>
+          <div class="code-body">
+<pre><span class="token comment">// Manual timestamp tracking & disk cache check</span>
+<span class="token keyword">private var</span> cachedConfig: Config? = <span class="token keyword">null</span>
+<span class="token keyword">private var</span> cachedAt = 0L
+
+<span class="token keyword">fun</span> getConfig(): Config {
+    <span class="token keyword">val</span> now = System.currentTimeMillis()
+    <span class="token keyword">if</span> (cachedConfig != <span class="token keyword">null</span> && (now - cachedAt &lt;= 300_000)) {
+        <span class="token keyword">return</span> cachedConfig!!
+    }
+    cachedConfig = parseConfigFromDisk()
+    cachedAt = now
+    <span class="token keyword">return</span> cachedConfig!!
+}</pre>
+          </div>
+        </div>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span>With RePropertyX</span>
+            <span class="code-tag tag-after">Declarative Caching</span>
+          </div>
+          <div class="code-body">
+<pre><span class="token comment">// Declarative maxAge, maxStale & invalidate()!</span>
+<span class="token keyword">val</span> configProp = propertyOf(get = { parseConfigFromDisk() }, set = {})
+    .cached(maxAgeMillis = 5.minutes, maxStaleMillis = 10.minutes)
+
+<span class="token keyword">var</span> config: Config <span class="token keyword">by</span> configProp
+
+<span class="token comment">// Force invalidate cache whenever needed:</span>
+configProp.invalidate()</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 5: Undo / Redo -->
       <div class="comparison-grid comparison-content" id="tab-history" style="display: none;">
         <div class="code-card">
           <div class="code-header">
