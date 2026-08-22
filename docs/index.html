@@ -92,8 +92,8 @@
     <span class="token keyword">set</span>(value) { prefs.edit().putString(<span class="token string">"user_token"</span>, value).apply() }
 
 <span class="token keyword">var</span> userNickname: String
-    <span class="token keyword">get</span>() = prefs.getString(<span class="token string">"userNickname_\${userToken}"</span>, <span class="token keyword">null</span>) ?: <span class="token string">"unknown"</span>
-    <span class="token keyword">set</span>(value) { prefs.edit().putString(<span class="token string">"userNickname_\${userToken}"</span>, value).apply() }</pre>
+    <span class="token keyword">get</span>() = prefs.getString(<span class="token string">"userNickname_${userToken}"</span>, <span class="token keyword">null</span>) ?: <span class="token string">"unknown"</span>
+    <span class="token keyword">set</span>(value) { prefs.edit().putString(<span class="token string">"userNickname_${userToken}"</span>, value).apply() }</pre>
           </div>
         </div>
 
@@ -106,7 +106,7 @@
 <pre><span class="token comment">// Property name as default key + dynamic key transformation!</span>
 <span class="token keyword">var</span> userToken: String? <span class="token keyword">by</span> prefs.byString()
 
-<span class="token keyword">var</span> userNickname: String <span class="token keyword">by</span> prefs.byString { <span class="token string">"\${it}_\${userToken}"</span> }
+<span class="token keyword">var</span> userNickname: String <span class="token keyword">by</span> prefs.byString { <span class="token string">"${it}_${userToken}"</span> }
     .orElse { <span class="token string">"unknown"</span> }</pre>
           </div>
         </div>
