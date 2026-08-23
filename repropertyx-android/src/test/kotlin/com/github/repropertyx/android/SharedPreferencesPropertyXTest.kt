@@ -37,4 +37,19 @@ class SharedPreferencesPropertyXTest {
         verify(mockEditor).putInt("user_age", 25)
         verify(mockEditor).apply()
     }
+
+    @Test
+    fun testSharedPreferencesEditorExtensionPropertyBatchMutation() {
+        mockPrefs.edit().apply {
+            username = "Andrew"
+            userAge = 25
+        }.apply()
+
+        verify(mockEditor).putString("username", "Andrew")
+        verify(mockEditor).putInt("user_age", 25)
+        verify(mockEditor).apply()
+    }
 }
+
+private var SharedPreferences.Editor.username: String? by byString()
+private var SharedPreferences.Editor.userAge: Int by byInt("user_age", default = 18)

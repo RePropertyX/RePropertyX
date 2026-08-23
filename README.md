@@ -88,13 +88,18 @@ var userNickname: String
 ### After RePropertyX
 
 ```kotlin
-var userToken: String? by prefs.byString()
-var userNickname: String by prefs.byString { "${it}_${userToken}" }.orElse { "unknown" }
+// 1. Declare Extension Properties on SharedPreferences & Editor:
+var SharedPreferences.userToken: String? by byString()
+var SharedPreferences.Editor.username: String? by byString()
+var SharedPreferences.Editor.age: Int by byInt("user_age", default = 18)
 
-// Batch mutations directly on SharedPreferences.Editor!
-prefs.edit().apply {
-    var username: String? by byString()
+// 2. Import & Batch Mutate on Editor in 1 Transaction!
+import com.example.username
+import com.example.age
+
+sharedPreferences.edit().apply {
     username = "Andrew"
+    age = 25
 }.apply()
 ```
 

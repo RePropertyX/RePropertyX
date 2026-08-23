@@ -103,16 +103,18 @@
             <span class="code-tag tag-after">Clean & Expressive</span>
           </div>
           <div class="code-body">
-<pre><span class="token comment">// Property name as default key + dynamic key transformation!</span>
-<span class="token keyword">var</span> userToken: String? <span class="token keyword">by</span> prefs.byString()
+<pre><span class="token comment">// 1. Declare Extension Properties on SharedPreferences & Editor:</span>
+<span class="token keyword">var</span> SharedPreferences.userToken: String? <span class="token keyword">by</span> byString()
+<span class="token keyword">var</span> SharedPreferences.Editor.username: String? <span class="token keyword">by</span> byString()
+<span class="token keyword">var</span> SharedPreferences.Editor.age: Int <span class="token keyword">by</span> byInt(<span class="token string">"user_age"</span>, default = <span class="token number">18</span>)
 
-<span class="token keyword">var</span> userNickname: String <span class="token keyword">by</span> prefs.byString { <span class="token string">"${it}_${userToken}"</span> }
-    .orElse { <span class="token string">"unknown"</span> }
+<span class="token comment">// 2. Import & Batch Mutate on Editor in 1 Transaction!</span>
+<span class="token keyword">import</span> com.example.username
+<span class="token keyword">import</span> com.example.age
 
-<span class="token comment">// Batch mutation directly on SharedPreferences.Editor!</span>
-prefs.edit().apply {
-    <span class="token keyword">var</span> username: String? <span class="token keyword">by</span> byString()
+sharedPreferences.edit().apply {
     username = <span class="token string">"Andrew"</span>
+    age = <span class="token number">25</span>
 }.apply()</pre>
           </div>
         </div>
