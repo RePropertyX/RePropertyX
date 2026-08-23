@@ -103,20 +103,11 @@
             <span class="code-tag tag-after">Clean & Expressive</span>
           </div>
           <div class="code-body">
-<pre><span class="token comment">// 1. Declare Extension Properties on SharedPreferences & Scope:</span>
-<span class="token keyword">var</span> SharedPreferences.userToken: String? <span class="token keyword">by</span> byString()
-<span class="token keyword">var</span> SharedPreferencesEditorScope.username: String? <span class="token keyword">by</span> byString()
-<span class="token keyword">var</span> SharedPreferencesEditorScope.age: Int <span class="token keyword">by</span> byInt(<span class="token string">"user_age"</span>, default = <span class="token number">18</span>)
+<pre><span class="token comment">// Property name as default key + dynamic key transformation!</span>
+<span class="token keyword">var</span> userToken: String? <span class="token keyword">by</span> prefs.byString()
 
-<span class="token comment">// 2. Import & Batch Mutate with Real Disk Reads!</span>
-<span class="token keyword">import</span> com.example.username
-<span class="token keyword">import</span> com.example.age
-
-prefs.batch {
-    println(username) <span class="token comment">// Reads real disk value if clean!</span>
-    username = <span class="token string">"Andrew"</span> <span class="token comment">// Writes to Editor buffer</span>
-    age = <span class="token number">25</span>
-} <span class="token comment">// Automatically applies changes to Disk!</span></pre>
+<span class="token keyword">var</span> userNickname: String <span class="token keyword">by</span> prefs.byString { <span class="token string">"${it}_${userToken}"</span> }
+    .orElse { <span class="token string">"unknown"</span> }</pre>
           </div>
         </div>
       </div>

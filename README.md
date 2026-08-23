@@ -88,20 +88,8 @@ var userNickname: String
 ### After RePropertyX
 
 ```kotlin
-// 1. Declare Extension Properties on SharedPreferences & Scope:
-var SharedPreferences.userToken: String? by byString()
-var SharedPreferencesEditorScope.username: String? by byString()
-var SharedPreferencesEditorScope.age: Int by byInt("user_age", default = 18)
-
-// 2. Import & Batch Mutate with Real Disk Reads!
-import com.example.username
-import com.example.age
-
-prefs.batch {
-    println(username) // Reads real disk value if clean!
-    username = "Andrew" // Writes to Editor buffer
-    age = 25
-} // Automatically applies changes to Disk!
+var userToken: String? by prefs.byString()
+var userNickname: String by prefs.byString { "${it}_${userToken}" }.orElse { "unknown" }
 ```
 
 Or fully reactive:
