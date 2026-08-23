@@ -1,0 +1,40 @@
+package com.github.repropertyx.android
+
+import android.content.SharedPreferences
+import org.junit.Before
+import org.junit.Test
+import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
+
+class SharedPreferencesPropertyXTest {
+
+    private lateinit var mockPrefs: SharedPreferences
+    private lateinit var mockEditor: SharedPreferences.Editor
+
+    @Before
+    fun setUp() {
+        mockPrefs = mock(SharedPreferences::class.java)
+        mockEditor = mock(SharedPreferences.Editor::class.java)
+        `when`(mockPrefs.edit()).thenReturn(mockEditor)
+        `when`(mockEditor.putString(anyString(), anyString())).thenReturn(mockEditor)
+        `when`(mockEditor.putInt(anyString(), anyInt())).thenReturn(mockEditor)
+    }
+
+    @Test
+    fun testSharedPreferencesEditorBatchMutation() {
+        mockEditor.apply {
+            var username: String? by byString()
+            var age: Int by byInt("user_age", default = 18)
+
+            username = "Andrew"
+            age = 25
+        }.apply()
+
+        verify(mockEditor).putString("username", "Andrew")
+        verify(mockEditor).putInt("user_age", 25)
+        verify(mockEditor).apply()
+    }
+}

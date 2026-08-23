@@ -90,6 +90,12 @@ var userNickname: String
 ```kotlin
 var userToken: String? by prefs.byString()
 var userNickname: String by prefs.byString { "${it}_${userToken}" }.orElse { "unknown" }
+
+// Batch mutations directly on SharedPreferences.Editor!
+prefs.edit().apply {
+    var username: String? by byString()
+    username = "Andrew"
+}.apply()
 ```
 
 Or fully reactive:

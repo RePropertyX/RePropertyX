@@ -95,6 +95,51 @@ fun SharedPreferences.byLong(key: String, default: Long): ReadWriteProperty<Shar
 fun SharedPreferences.byFloat(key: String): ReadWriteProperty<SharedPreferences, Float?> = byFloat { key }
 fun SharedPreferences.byFloat(key: String, default: Float): ReadWriteProperty<SharedPreferences, Float> = byFloat { key }.orElse { default }
 
+/**
+ * Creates a [ReadWriteProperty] delegate for mutating values on [SharedPreferences.Editor].
+ */
+inline fun <T> bySharedPreferenceEditor(
+    crossinline setter: SharedPreferences.Editor.(String, T?) -> SharedPreferences.Editor,
+    noinline key: (SharedPreferences.Editor.(String) -> String)? = null
+): ReadWriteProperty<SharedPreferences.Editor, T?> =
+    object : ReadWriteProperty<SharedPreferences.Editor, T?> {
+        private var writeOnlyValue: T? = null
+
+        override fun getValue(thisRef: SharedPreferences.Editor, property: KProperty<*>): T? = writeOnlyValue
+
+        override fun setValue(thisRef: SharedPreferences.Editor, property: KProperty<*>, value: T?) {
+            writeOnlyValue = value
+            thisRef.setter(key?.invoke(thisRef, property.name) ?: property.name, value)
+        }
+    }
+
+fun SharedPreferences.Editor.byString(key: (SharedPreferences.Editor.(String) -> String)? = null): ReadWriteProperty<Any?, String?> =
+    by(bySharedPreferenceEditorString(key))
+
+fun bySharedPreferenceEditorString(key: (SharedPreferences.Editor.(String) -> String)? = null) =
+    bySharedPreferenceEditor<String>({ k, v -> put(k, v) }, key)
+
+fun SharedPreferences.Editor.byString(key: String): ReadWriteProperty<Any?, String?> = byString { key }
+fun SharedPreferences.Editor.byString(key: String, default: String): ReadWriteProperty<Any?, String> = byString { key }.orElse { default }
+
+fun SharedPreferences.Editor.byInt(key: (SharedPreferences.Editor.(String) -> String)? = null): ReadWriteProperty<Any?, Int?> =
+    by(bySharedPreferenceEditorInt(key))
+
+fun bySharedPreferenceEditorInt(key: (SharedPreferences.Editor.(String) -> String)? = null) =
+    bySharedPreferenceEditor<Int>({ k, v -> put(k, v) }, key)
+
+fun SharedPreferences.Editor.byInt(key: String): ReadWriteProperty<Any?, Int?> = byInt { key }
+fun SharedPreferences.Editor.byInt(key: String, default: Int): ReadWriteProperty<Any?, Int> = byInt { key }.orElse { default }
+
+fun SharedPreferences.Editor.byBoolean(key: (SharedPreferences.Editor.(String) -> String)? = null): ReadWriteProperty<Any?, Boolean?> =
+    by(bySharedPreferenceEditorBoolean(key))
+
+fun bySharedPreferenceEditorBoolean(key: (SharedPreferences.Editor.(String) -> String)? = null) =
+    bySharedPreferenceEditor<Boolean>({ k, v -> put(k, v) }, key)
+
+fun SharedPreferences.Editor.byBoolean(key: String): ReadWriteProperty<Any?, Boolean?> = byBoolean { key }
+fun SharedPreferences.Editor.byBoolean(key: String, default: Boolean): ReadWriteProperty<Any?, Boolean> = byBoolean { key }.orElse { default }
+
 fun SharedPreferences.getStringOrNull(key: String): String? =
     if (contains(key)) getString(key, null)
     else null
