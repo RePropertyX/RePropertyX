@@ -50,6 +50,23 @@ class SharedPreferencesPropertyXTest {
         verify(mockEditor).putInt("user_age", 25)
         verify(mockEditor).apply()
     }
+
+    @Test
+    fun testSharedPreferencesEditorScopeDiskReadBeforeMutation() {
+        `when`(mockPrefs.contains("username")).thenReturn(true)
+        `when`(mockPrefs.getString("username", null)).thenReturn("OldUser")
+
+        mockPrefs.batch {
+            var username: String? by byString()
+            org.junit.Assert.assertEquals("OldUser", username)
+
+            username = "NewUser"
+            org.junit.Assert.assertEquals("NewUser", username)
+        }
+
+        verify(mockEditor).putString("username", "NewUser")
+        verify(mockEditor).apply()
+    }
 }
 
 private var SharedPreferences.Editor.username: String? by bySharedPreferenceEditorString()

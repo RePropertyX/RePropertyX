@@ -96,6 +96,89 @@ fun SharedPreferences.byFloat(key: String): ReadWriteProperty<SharedPreferences,
 fun SharedPreferences.byFloat(key: String, default: Float): ReadWriteProperty<SharedPreferences, Float> = byFloat { key }.orElse { default }
 
 /**
+ * A scope combining [SharedPreferences] for reading disk values and [SharedPreferences.Editor] for batch writing.
+ */
+class SharedPreferencesEditorScope(
+    val prefs: SharedPreferences,
+    val editor: SharedPreferences.Editor
+)
+
+/**
+ * Executes the given [action] on a [SharedPreferencesEditorScope] with automatic commit or apply.
+ */
+inline fun SharedPreferences.batch(
+    commit: Boolean = false,
+    action: SharedPreferencesEditorScope.() -> Unit
+) {
+    val editor = edit()
+    val scope = SharedPreferencesEditorScope(this, editor)
+    scope.action()
+    if (commit) editor.commit() else editor.apply()
+}
+
+inline fun SharedPreferences.editBatch(
+    commit: Boolean = false,
+    action: SharedPreferencesEditorScope.() -> Unit
+) = batch(commit, action)
+
+/**
+ * Creates a [ReadWriteProperty] delegate for [SharedPreferencesEditorScope] that reads from [SharedPreferences]
+ * when clean, and writes to [SharedPreferences.Editor].
+ */
+inline fun <T> bySharedPreferenceEditorScope(
+    crossinline getter: SharedPreferences.(String) -> T?,
+    crossinline setter: SharedPreferences.Editor.(String, T?) -> SharedPreferences.Editor,
+    noinline key: (SharedPreferencesEditorScope.(String) -> String)? = null
+): ReadWriteProperty<SharedPreferencesEditorScope, T?> =
+    object : ReadWriteProperty<SharedPreferencesEditorScope, T?> {
+        private var writeOnlyValue: T? = null
+        private var isWritten = false
+
+        override fun getValue(thisRef: SharedPreferencesEditorScope, property: KProperty<*>): T? {
+            return if (isWritten) {
+                writeOnlyValue
+            } else {
+                val resolvedKey = key?.invoke(thisRef, property.name) ?: property.name
+                thisRef.prefs.getter(resolvedKey)
+            }
+        }
+
+        override fun setValue(thisRef: SharedPreferencesEditorScope, property: KProperty<*>, value: T?) {
+            writeOnlyValue = value
+            isWritten = true
+            val resolvedKey = key?.invoke(thisRef, property.name) ?: property.name
+            thisRef.editor.setter(resolvedKey, value)
+        }
+    }
+
+fun SharedPreferencesEditorScope.byString(key: (SharedPreferencesEditorScope.(String) -> String)? = null): ReadWriteProperty<Any?, String?> =
+    by(bySharedPreferenceEditorScopeString(key))
+
+fun bySharedPreferenceEditorScopeString(key: (SharedPreferencesEditorScope.(String) -> String)? = null) =
+    bySharedPreferenceEditorScope(SharedPreferences::getStringOrNull, { k, v -> put(k, v) }, key)
+
+fun SharedPreferencesEditorScope.byString(key: String): ReadWriteProperty<Any?, String?> = byString { key }
+fun SharedPreferencesEditorScope.byString(key: String, default: String): ReadWriteProperty<Any?, String> = byString { key }.orElse { default }
+
+fun SharedPreferencesEditorScope.byInt(key: (SharedPreferencesEditorScope.(String) -> String)? = null): ReadWriteProperty<Any?, Int?> =
+    by(bySharedPreferenceEditorScopeInt(key))
+
+fun bySharedPreferenceEditorScopeInt(key: (SharedPreferencesEditorScope.(String) -> String)? = null) =
+    bySharedPreferenceEditorScope(SharedPreferences::getIntOrNull, { k, v -> put(k, v) }, key)
+
+fun SharedPreferencesEditorScope.byInt(key: String): ReadWriteProperty<Any?, Int?> = byInt { key }
+fun SharedPreferencesEditorScope.byInt(key: String, default: Int): ReadWriteProperty<Any?, Int> = byInt { key }.orElse { default }
+
+fun SharedPreferencesEditorScope.byBoolean(key: (SharedPreferencesEditorScope.(String) -> String)? = null): ReadWriteProperty<Any?, Boolean?> =
+    by(bySharedPreferenceEditorScopeBoolean(key))
+
+fun bySharedPreferenceEditorScopeBoolean(key: (SharedPreferencesEditorScope.(String) -> String)? = null) =
+    bySharedPreferenceEditorScope(SharedPreferences::getBooleanOrNull, { k, v -> put(k, v) }, key)
+
+fun SharedPreferencesEditorScope.byBoolean(key: String): ReadWriteProperty<Any?, Boolean?> = byBoolean { key }
+fun SharedPreferencesEditorScope.byBoolean(key: String, default: Boolean): ReadWriteProperty<Any?, Boolean> = byBoolean { key }.orElse { default }
+
+/**
  * Creates a [ReadWriteProperty] delegate for mutating values on [SharedPreferences.Editor].
  */
 inline fun <T> bySharedPreferenceEditor(
