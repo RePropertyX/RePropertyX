@@ -1,6 +1,7 @@
 package com.github.repropertyx.android
 
 import android.content.SharedPreferences
+import com.github.repropertyx.orElse
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
@@ -51,5 +52,5 @@ class SharedPreferencesPropertyXTest {
     }
 }
 
-private var SharedPreferences.Editor.username: String? by byString()
-private var SharedPreferences.Editor.userAge: Int by byInt("user_age", default = 18)
+private var SharedPreferences.Editor.username: String? by bySharedPreferenceEditorString()
+private var SharedPreferences.Editor.userAge: Int by bySharedPreferenceEditorInt { "user_age" }.orElse { 18 }
