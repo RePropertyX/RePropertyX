@@ -9,6 +9,9 @@
   <meta property="og:description" content="Composable, reactive, and animated Kotlin property delegates for Android & JVM.">
   <meta property="og:type" content="website">
   <link rel="icon" type="image/svg+xml" href="art/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -336,26 +339,42 @@ textProp.redo() <span class="token comment">// Redoes change back to "World"!</s
 
       <div class="features-grid">
         <div class="feature-card">
-          <div class="feature-icon">⚡</div>
-          <h3 class="feature-title">Functional Composition</h3>
+          <div class="feature-head">
+            <span class="feature-icon-inline" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </span>
+            <h3 class="feature-title">Functional Composition</h3>
+          </div>
           <p class="feature-desc">Chain operations like <code>.map()</code>, <code>.distinctUntilChanged()</code>, and <code>.flatMap()</code> on any property delegate.</p>
         </div>
 
         <div class="feature-card">
-          <div class="feature-icon">🎬</div>
-          <h3 class="feature-title">Smooth Animations</h3>
+          <div class="feature-head">
+            <span class="feature-icon-inline" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3l14 9-14 9V3z"/></svg>
+            </span>
+            <h3 class="feature-title">Smooth Animations</h3>
+          </div>
           <p class="feature-desc">Turn any numerical View property into a smooth, auto-cancelable animation with <code>.animated()</code>.</p>
         </div>
 
         <div class="feature-card">
-          <div class="feature-icon">💾</div>
-          <h3 class="feature-title">SharedPreferences</h3>
+          <div class="feature-head">
+            <span class="feature-icon-inline" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            </span>
+            <h3 class="feature-title">SharedPreferences</h3>
+          </div>
           <p class="feature-desc">Type-safe storage delegates for primitive types, String sets, and serialized objects with reactive observers.</p>
         </div>
 
         <div class="feature-card">
-          <div class="feature-icon">🎨</div>
-          <h3 class="feature-title">Jetpack Compose</h3>
+          <div class="feature-head">
+            <span class="feature-icon-inline" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            </span>
+            <h3 class="feature-title">Jetpack Compose</h3>
+          </div>
           <p class="feature-desc">Bind properties directly to Compose <code>MutableState</code> with <code>rememberProperty()</code> for reactive UI updates.</p>
         </div>
       </div>
